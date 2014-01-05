@@ -1,0 +1,5 @@
+To use the singletons in your own class (for example, the gyro)
+	1) Include the header file (#include /components/TKOGyro.h) in your class.
+	2) DO NOT make any instances of the class (eg. TKOGyro *gyroInst;) and do not worry about initializing the gyro.
+	3) Wherever you want to call a gyro function, simply call TKOGyro::inst()->blahblahfunction()
+		a) Do not call any singleton functions in the constructor of your class, as this is dangerous and could cause exceptions

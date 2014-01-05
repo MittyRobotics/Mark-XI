@@ -1,0 +1,27 @@
+//Last edited by Vadim Korolik
+//on 09/08/2013
+#ifndef __TKODRIVE_H
+#define __TKODRIVE_H
+
+#include "../Definitions.h"
+#include "../log/TKOLogger.h"
+
+class TKODrive
+{
+public:
+	static TKODrive* inst();
+	void switchToSpeed();
+	void Start();
+	void Stop();
+	bool VerifyJags();
+private:
+	TKODrive();
+	~TKODrive();
+	CANJaguar drive1, drive2, drive3, drive4; // define motors
+	Joystick stick1, stick2, stick3, stick4; // define joysticks
+	Task *driveTask;
+	static TKODrive* m_Instance;
+	void TankDrive();
+	static void DriveRunner();
+};
+#endif
