@@ -28,6 +28,7 @@ TKOLogger::TKOLogger()
 	stat("logT.txt", &filestatus);
 	printf("File: %i%s", (int)filestatus.st_size, " bytes\n");
 	addMessage("-------Logger booted---------");
+	AddToSingletonList();
 	
 	printf("Initialized logger\n");
 }
@@ -35,6 +36,7 @@ TKOLogger::~TKOLogger()
 {
 	delete logTask;
 	messageBuffer->clear();
+	m_Instance = NULL;
 }
 void TKOLogger::Start()
 {

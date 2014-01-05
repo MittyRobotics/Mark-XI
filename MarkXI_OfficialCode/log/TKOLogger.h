@@ -4,6 +4,8 @@
 #define __TKOLOGGER_H
 
 #include "../Definitions.h"
+#include "Base.h"
+#include "SensorBase.h"
 #include <fstream>
 #include <Task.h>
 #include <string>
@@ -38,7 +40,7 @@ using namespace std;
  * of the buffer vector, writes it to the end of the log, and
  * deletes it from the buffer.
  */
-class TKOLogger
+class TKOLogger: public SensorBase
 {
 	public:
 		static TKOLogger* inst();
@@ -48,6 +50,7 @@ class TKOLogger
 		void Stop();
 		
 	private:
+		DISALLOW_COPY_AND_ASSIGN(TKOLogger);
 		TKOLogger();
 		~TKOLogger();
 		Task *logTask;
