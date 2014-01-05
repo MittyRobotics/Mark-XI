@@ -44,19 +44,19 @@ class TKOLogger: public SensorBase
 {
 	public:
 		static TKOLogger* inst();
-		void addCMessage(string message, float val);
 		void addMessage(const char *format, ...);
+		void Printf(const char *format, ...);
 		void Start();
 		void Stop();
 		
 	private:
 		DISALLOW_COPY_AND_ASSIGN(TKOLogger);
 		SEM_ID _printSem;
+		SEM_ID _bufSem;
 		TKOLogger();
 		~TKOLogger();
 		Task *logTask;
 		static void LogRunner();
-		void addToBuf(string message);
 		void writeBuffer();
 		static TKOLogger* m_Instance;
 		ofstream logFile;
