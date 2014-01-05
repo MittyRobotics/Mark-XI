@@ -9,7 +9,7 @@
 #include <fstream>
 #include <Task.h>
 #include <string>
-#include <vector>
+#include <queue>
 #include <sstream>
 #include <iostream>
 #include <ostream>
@@ -44,20 +44,22 @@ class TKOLogger: public SensorBase
 {
 	public:
 		static TKOLogger* inst();
-		void addMessage(string message);
 		void addCMessage(string message, float val);
+		void addMessage(const char *format, ...);
 		void Start();
 		void Stop();
 		
 	private:
 		DISALLOW_COPY_AND_ASSIGN(TKOLogger);
+		SEM_ID _printSem;
 		TKOLogger();
 		~TKOLogger();
 		Task *logTask;
 		static void LogRunner();
+		void addToBuf(string message);
 		void writeBuffer();
 		static TKOLogger* m_Instance;
 		ofstream logFile;
-		vector<string> *messageBuffer;
+		queue<string> messBuffer;
 };
 #endif

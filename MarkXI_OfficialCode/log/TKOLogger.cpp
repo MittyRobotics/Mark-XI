@@ -35,7 +35,6 @@ TKOLogger::TKOLogger()
 TKOLogger::~TKOLogger()
 {
 	delete logTask;
-	messageBuffer->clear();
 	m_Instance = NULL;
 }
 void TKOLogger::Start()
@@ -50,6 +49,12 @@ void TKOLogger::Start()
 }
 void TKOLogger::Stop()
 {
+	//before actually stopping or closing file, make sure that buffer is emtied and flushed
+	while (messBuffer.size() > 0)
+	{
+		writeBuffer();
+	}
+	
 	if (logTask->Verify())
 		logTask->Stop();
 	if (logFile.is_open())
@@ -84,11 +89,11 @@ void TKOLogger::writeBuffer()
 {
 	if (logFile.is_open())
 	{
-		if(messageBuffer->size() > 0)
+		if(messBuffer.size() > 0)
 		{
-			logFile << messageBuffer->back();
+			logFile << messBuffer.front();
 			logFile << "\n";
-			messageBuffer->pop_back();
+			messBuffer.pop();
 		}
 	}
 	if (logFile.bad() or not logFile.is_open())
@@ -98,27 +103,30 @@ void TKOLogger::writeBuffer()
 	}
 
 }
-void TKOLogger::addMessage(string message)
+void TKOLogger::addToBuf(string message)
 {
-	if (messageBuffer->size() >= messageBuffer->max_size())
-	{
-		printf("CRITICAL LOGGER BUFFER OVERFLOW \n");
-		logFile << "CRITICAL LOGGER BUFFER OVERFLOW \n";
-		printf("CURRENT BUFFER SIZE: %i", messageBuffer->size());
-		printf("\n");
-		printf("MAX BUFFER SIZE: %i", messageBuffer->max_size());
-		printf("\n");
-		return;
-	}
 	std::ostringstream newMess;
 	newMess << "Time:   " << GetTime() << "          Message: " << message;
-	messageBuffer->push_back(newMess.str());
-//	printf("Buffer size: %i\n", messageBuffer->size());
+	messBuffer.push(newMess.str());
 }
 
 void TKOLogger::addCMessage(string message, float val)
 {
 	ostringstream temp;
 	temp << "Time:   " << GetTime() << "        " << message << ":   " << val;
-	addMessage(temp.str());
+	addToBuf(temp.str());
+}
+
+void TKOLogger::addMessage(const char *format, ...)
+{
+	char s[256];
+	va_list args;
+	va_start(args, format);
+	vsprintf(s, format, args);
+	va_end(args);
+	string temp = s;
+	{
+		Synchronized sem(_printSem);
+		addToBuf(temp);
+	}
 }
