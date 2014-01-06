@@ -1,0 +1,16 @@
+#include "DriveAtom.h"
+#include <cstring>
+
+// add in the motors and jags some where
+
+Drive_Atom *Drive_Atom::getInstance()
+{
+	if(_inst == NULL)
+		_inst = new Drive_Atom();
+	return _inst;
+}
+
+void Drive_Atom::run()
+{
+	// do really cool things with the motors here
+}

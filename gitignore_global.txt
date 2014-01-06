@@ -25,6 +25,8 @@ Thumbs.db
 *.d
 *.o
 *.out
+#ignore the files that finder creates on mac
+.DS_Store
 .metadata/
 PPC603gnu/
 #.cproject
