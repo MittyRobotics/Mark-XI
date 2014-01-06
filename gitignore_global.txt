@@ -27,3 +27,7 @@ Thumbs.db
 *.out
 .metadata/
 PPC603gnu/
+.cproject
+.project
+.wrmakefile
+.wrproject
