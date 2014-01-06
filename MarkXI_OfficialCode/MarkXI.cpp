@@ -126,7 +126,7 @@ void MarkXI::OperatorControl()
 		MarkXI::Operator();
 		if (loopTimer.Get() > 0.1)
 		{
-			TKOLogger::inst()->addCMessage("!!!CRITICAL Operator loop very long, length", loopTimer.Get());
+			TKOLogger::inst()->addMessage("!!!CRITICAL Operator loop very long, length", loopTimer.Get());
 			printf("!!!CRITICAL Operator loop very long, %f%s\n", loopTimer.Get(), " seconds.");
 		}
 		DSLog(1, "Dist: %f\n", TKOVision::inst()->lastDist);
@@ -145,7 +145,7 @@ void MarkXI::Operator()
 {
 	if (stick1. GetRawButton(11))
 		TKOGyro::inst()->reset();
-	if (stick1.GetTrigger())
+	if (stick1.GetTrigger())    //for testing!!!
 		printf("%f\n", GetFPGATime());
 	if (stick1.GetRawButton(8))
 		RegDrive();
