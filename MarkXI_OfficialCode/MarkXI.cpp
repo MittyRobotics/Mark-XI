@@ -19,7 +19,7 @@
  * For shooter, create calibration curve, best fit equation of shoot power VS. ball flight dist
  * Use equation to calculate needed power for desired distance 
  * -----------------------------LAST DONE-------------------------------*
- * 01/04
+ * 01/04 
  * 		Preparing as a core for build season
  * 		Updated vision to 2014 vision sample
  * 		improving logging, adding in more places
