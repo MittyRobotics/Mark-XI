@@ -1,7 +1,7 @@
 #include "DriveAtom.h"
 #include <cstring>
 
-// add in the motors and jags some where
+// add in the motors and jags some where near here
 
 Drive_Atom *Drive_Atom::getInstance()
 {
@@ -13,4 +13,5 @@ Drive_Atom *Drive_Atom::getInstance()
 void Drive_Atom::run()
 {
 	// do really cool things with the motors here
+	// like drive in a straight line
 }
