@@ -103,19 +103,6 @@ void TKOLogger::writeBuffer()
 	}
 
 }
-void TKOLogger::addToBuf(string message)
-{
-	std::ostringstream newMess;
-	newMess << "Time:   " << GetTime() << "          Message: " << message;
-	messBuffer.push(newMess.str());
-}
-
-void TKOLogger::addCMessage(string message, float val)
-{
-	ostringstream temp;
-	temp << "Time:   " << GetTime() << "        " << message << ":   " << val;
-	addToBuf(temp.str());
-}
 
 void TKOLogger::addMessage(const char *format, ...)
 {
@@ -124,9 +111,24 @@ void TKOLogger::addMessage(const char *format, ...)
 	va_start(args, format);
 	vsprintf(s, format, args);
 	va_end(args);
-	string temp = s;
+	std::ostringstream newMess;
+	newMess << "Time:   " << GetTime() << "          Message: " << s;
+	string newMessStr = newMess.str();
+	{
+		Synchronized sem(_bufSem);     // TODO: make other uses of messBuffer thread-safe with _bufSem
+		messBuffer.push(newMessStr);   // TODO: what happens to tasks when robot is disabled?
+	}
+}
+
+void TKOLogger::Printf(const char *format, ...)
+{
+	char s[256];
+	va_list args;
+	va_start(args, format);
+	vsprintf(s, format, args);
+	va_end(args);
 	{
 		Synchronized sem(_printSem);
-		addToBuf(temp);
+		printf(s);
 	}
 }
