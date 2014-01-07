@@ -12,8 +12,6 @@
 
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
  * Auton, vision tests
- * Change auton to tasked.
- * 		Add joystick class for sticks to be implemented everywhere
  * Add logging to more stuff, auton and vision
  * 
  * For shooter, create calibration curve, best fit equation of shoot power VS. ball flight dist
