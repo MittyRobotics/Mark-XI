@@ -2,7 +2,7 @@
 //on 01/04/2014
 #include "TKOShooter.h"
 
-TKOShooter* TKOShooter::tkoShooterInstance = NULL;
+TKOShooter* TKOShooter::m_Instance = NULL;
 ///Constructor for the TKOShooter class
 
 TKOShooter::TKOShooter()
@@ -10,19 +10,19 @@ TKOShooter::TKOShooter()
 }
 TKOShooter* TKOShooter::inst()
 {
-	if (!tkoShooterInstance)
+	if (!m_Instance)
 	{
 		printf("TKOVision instance is null\n");
-		tkoShooterInstance = new TKOShooter;
+		m_Instance = new TKOShooter;
 	}
-	return tkoShooterInstance;
+	return m_Instance;
 }
 
 void TKOShooter::ShooterTaskRunner()
 {
 	while (true)
 	{
-		tkoShooterInstance->shooterProcess();
+		m_Instance->shooterProcess();
 	}
 }
 

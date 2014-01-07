@@ -16,7 +16,7 @@ class TKOShooter
 		void Stop();
 	private:
 		Task *shooterTask;
-		static TKOShooter* m_Instance;
+		static TKOShooter* tkoShooterInstance;
 		static void ShooterTaskRunner();
 		void shooterProcess();
 		bool needToShoot;
