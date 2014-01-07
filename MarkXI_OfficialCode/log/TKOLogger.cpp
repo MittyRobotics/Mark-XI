@@ -15,9 +15,9 @@ TKOLogger* TKOLogger::m_Instance = NULL;
 TKOLogger::TKOLogger()
 {
 	printf("Constructing logger\n");
-	logTask = new Task("Logging", (FUNCPTR) LogRunner);
-	logTask->SetPriority(254);
-	logFile.open("logT.txt", ios::app);
+	logTask = new Task("Logging", (FUNCPTR) LogRunner); // create a new task called Logging which runs LogRunner
+	logTask->SetPriority(254); // use the constants first/wpilib provides?
+	logFile.open("logT.txt", ios::app); // open logT.txt in append mode
 	printf("Done initializing logger\n");
 	if (logFile.is_open())
 	{
@@ -29,7 +29,7 @@ TKOLogger::TKOLogger()
 	printf("File: %i%s", (int)filestatus.st_size, " bytes\n");
 	addMessage("-------Logger booted---------");
 	AddToSingletonList();
-	
+
 	printf("Initialized logger\n");
 }
 TKOLogger::~TKOLogger()
@@ -39,7 +39,7 @@ TKOLogger::~TKOLogger()
 }
 void TKOLogger::Start()
 {
-	logFile.open("logT.txt", ios::app);
+	logFile.open("logT.txt", ios::app); // TODO open the file twice???
 	logTask->Start();
 	if (logFile.is_open())
 		printf("Logfile OPEN!!!!\n");
@@ -54,7 +54,7 @@ void TKOLogger::Stop()
 	{
 		writeBuffer();
 	}
-	
+
 	if (logTask->Verify())
 		logTask->Stop();
 	if (logFile.is_open())
@@ -75,7 +75,7 @@ void TKOLogger::LogRunner()
 			printf("Invalid Logger instance\n");
 			break;
 		}
-		m_Instance->writeBuffer();
+		m_Instance->writeBuffer(); // TODO is this thread safe???
 		Wait(0.025);
 	}
 }
@@ -85,6 +85,7 @@ TKOLogger* TKOLogger::inst()
 		m_Instance = new TKOLogger;
 	return m_Instance;
 }
+
 void TKOLogger::writeBuffer()
 {
 	if (logFile.is_open())
@@ -114,6 +115,8 @@ void TKOLogger::addMessage(const char *format, ...)
 	std::ostringstream newMess;
 	newMess << "Time:   " << GetTime() << "          Message: " << s;
 	string newMessStr = newMess.str();
+
+    // suggest leaving a blank line seperating the sem object from the rest of the code
 	{
 		Synchronized sem(_bufSem);     // TODO: make other uses of messBuffer thread-safe with _bufSem
 		messBuffer.push(newMessStr);   // TODO: what happens to tasks when robot is disabled?
@@ -127,6 +130,8 @@ void TKOLogger::Printf(const char *format, ...)
 	va_start(args, format);
 	vsprintf(s, format, args);
 	va_end(args);
+
+    // same here as line 119
 	{
 		Synchronized sem(_printSem);
 		printf(s);
