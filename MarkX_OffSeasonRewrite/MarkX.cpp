@@ -36,7 +36,6 @@ class MarkX: public SimpleRobot
 	public:
 		Joystick stick1, stick2, stick3, stick4; // define joysticks
 		DriverStation *ds; // define driver station object
-		TKOClimber climber;
 		TKOAutonomous auton;
 		void Disabled();
 		void Autonomous();
@@ -53,7 +52,7 @@ class MarkX: public SimpleRobot
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT), // initialize joystick 4 < first EVOM joystick-m,
 			
-			climber(WINCH_1_PORT, WINCH_2_PORT), auton(DRIVE_L1_ID, DRIVE_L2_ID, DRIVE_R1_ID, DRIVE_R2_ID)
+			auton(DRIVE_L1_ID, DRIVE_L2_ID, DRIVE_R1_ID, DRIVE_R2_ID)
 
 		{
 		}
@@ -99,10 +98,6 @@ void MarkX::Autonomous(void)
 		if (ds->GetAlliance() == ds->kRed);
 			TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
-	climber.RetractDump();
-	climber.ClipBack();
-	climber.ArmBack();
-	climber.RatchetBack();
 	Wait(1.);
 	
 	//INSERT REST OF AUTON CODE HERE
@@ -148,10 +143,6 @@ void MarkX::OperatorControl()
 	Timer loopTimer;
 	loopTimer.Start();
 	
-	climber.RetractDump();
-	climber.ClipBack();
-	climber.ArmBack();
-	climber.RatchetBack();
 //	if (not climber.ranCalibration)
 //		climber.calibrateWinch();
 	TKOLogger::inst()->addMessage("--------------Teleoperated started-------------");
@@ -160,20 +151,16 @@ void MarkX::OperatorControl()
 	{
 		loopTimer.Reset();
 		DSClear();
-		if (climber.ranCalibration)
-		{
-			climber.winch1PID.SetSetpoint(climber.oldSetpoint);
-			climber.winch2PID.SetSetpoint(climber.oldSetpoint);
-		}
 		MarkX::Operator();
 		if (loopTimer.Get() > 0.1)
 		{
-			TKOLogger::inst()->addCMessage("!!!CRITICAL Operator loop very long, length", loopTimer.Get());
+			//TKOLogger::inst()->addMessage("!!!CRITICAL Operator loop very long, length", loopTimer.Get());
 			printf("!!!CRITICAL Operator loop very long, %f%s\n", loopTimer.Get(), " seconds.");
 		}
+		DSLog(1, "%f", TKOVision::inst()->lastDist);
 		DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		DSLog(4, "Clock %f\n", GetClock());
-		DSLog(5, "")
+		DSLog(5, "%f", GetTime());
 		Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}
@@ -185,13 +172,8 @@ void MarkX::Operator()
 {
 	if (stick4.GetRawButton(6))
 	{
-		climber.Dump();
-		TKOLogger::inst()->addCMessage("Dumped, Game time", ds->GetMatchTime());
-		printf("Dump!\n");
+		printf("%f", GetFPGATime());
 	}
-	if (stick4.GetRawButton(7))
-		climber.RetractDump();
-	
 	if (stick1. GetRawButton(11))
 		TKOGyro::inst()->reset();
 	if (stick1.GetRawButton(8))
@@ -199,7 +181,6 @@ void MarkX::Operator()
 	if (stick1.GetRawButton(9))
 		GyroDrive();
 	
-	climber.MoveWinchWithStick();
 }
 
 void MarkX::RegDrive()

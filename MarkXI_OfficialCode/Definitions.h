@@ -11,12 +11,6 @@
 #include "Vision/BinaryImage.h"
 #include "Math.h"
 #include "stdlib.h"
-#include "component/TKORelay.h"
-#include "log/TKOLogger.h"
-#include "drive/TKODrive.h"
-#include "drive/TKOGDrive.h"
-#include "component/TKOGyro.h"
-#include "evom/TKOShooter.h"
 #include <cstring>
 
 /*!

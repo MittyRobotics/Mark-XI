@@ -30,17 +30,17 @@ VisionFunc* VisionFunc::inst()
  * @param outer True if the particle should be treated as an outer target, false to treat it as a center target
  * @return The estimated distance to the target in Inches.
  */
-double VisionFunc::computeDistance (BinaryImage *image, ParticleAnalysisReport *report, bool outer) {
-	double rectShort, height;
+double VisionFunc::computeDistance (BinaryImage *image, ParticleAnalysisReport *report) {
+	double rectLong, height;
 	int targetHeight;
 	
-	imaqMeasureParticle(image->GetImaqImage(), report->particleIndex, 0, IMAQ_MT_EQUIVALENT_RECT_SHORT_SIDE, &rectShort);
-	//using the smaller of the estimated rectangle short side and the bounding rectangle height results in better performance
+	imaqMeasureParticle(image->GetImaqImage(), report->particleIndex, 0, IMAQ_MT_EQUIVALENT_RECT_LONG_SIDE, &rectLong);
+	//using the smaller of the estimated rectangle long side and the bounding rectangle height results in better performance
 	//on skewed rectangles
-	height = min(report->boundingRect.height, rectShort);
-	targetHeight = outer ? 29 : 21;
+	height = min(report->boundingRect.height, rectLong);
+	targetHeight = 32;
 	
-	return X_IMAGE_RES * targetHeight / (height * 12 * 2 * tan(VIEW_ANGLE*PI/(180*2)));
+	return Y_IMAGE_RES * targetHeight / (height * 12 * 2 * tan(VIEW_ANGLE*PI/(180*2)));
 }
 
 /**
@@ -54,9 +54,9 @@ double VisionFunc::computeDistance (BinaryImage *image, ParticleAnalysisReport *
  * @param outer	Indicates whether the particle aspect ratio should be compared to the ratio for the inner target or the outer
  * @return The aspect ratio score (0-100)
  */
-double VisionFunc::scoreAspectRatio(BinaryImage *image, ParticleAnalysisReport *report, bool outer){
+double VisionFunc::scoreAspectRatio(BinaryImage *image, ParticleAnalysisReport *report, bool vertical){
 	double rectLong, rectShort, idealAspectRatio, aspectRatio;
-	idealAspectRatio = outer ? (62/29) : (62/20);	//Dimensions of goal opening + 4 inches on all 4 sides for reflective tape
+	idealAspectRatio = vertical ? (4.0/32) : (23.5/4);	//Vertical reflector 4" wide x 32" tall, horizontal 23.5" wide x 4" tall
 	
 	imaqMeasureParticle(image->GetImaqImage(), report->particleIndex, 0, IMAQ_MT_EQUIVALENT_RECT_LONG_SIDE, &rectLong);
 	imaqMeasureParticle(image->GetImaqImage(), report->particleIndex, 0, IMAQ_MT_EQUIVALENT_RECT_SHORT_SIDE, &rectShort);
@@ -64,33 +64,31 @@ double VisionFunc::scoreAspectRatio(BinaryImage *image, ParticleAnalysisReport *
 	//Divide width by height to measure aspect ratio
 	if(report->boundingRect.width > report->boundingRect.height){
 		//particle is wider than it is tall, divide long by short
-		aspectRatio = 100*(1-fabs((1-((rectLong/rectShort)/idealAspectRatio))));
+		aspectRatio = ratioToScore(((rectLong/rectShort)/idealAspectRatio));
 	} else {
 		//particle is taller than it is wide, divide short by long
-		aspectRatio = 100*(1-fabs((1-((rectShort/rectLong)/idealAspectRatio))));
+		aspectRatio = ratioToScore(((rectShort/rectLong)/idealAspectRatio));
 	}
-	return (max(0, min(aspectRatio, 100)));		//force to be in range 0-100
+	return aspectRatio;		//force to be in range 0-100
 }
 
 /**
  * Compares scores to defined limits and returns true if the particle appears to be a target
  * 
  * @param scores The structure containing the scores to compare
- * @param outer True if the particle should be treated as an outer target, false to treat it as a center target
+ * @param vertical True if the particle should be treated as a vertical target, false to treat it as a horizontal target
  * 
  * @return True if the particle meets all limits, false otherwise
  */
-bool VisionFunc::scoreCompare(Scores scores, bool outer){
+bool VisionFunc::scoreCompare(Scores scores, bool vertical){
 	bool isTarget = true;
 
 	isTarget &= scores.rectangularity > RECTANGULARITY_LIMIT;
-	if(outer){
-		isTarget &= scores.aspectRatioOuter > ASPECT_RATIO_LIMIT;
+	if(vertical){
+		isTarget &= scores.aspectRatioVertical > ASPECT_RATIO_LIMIT;
 	} else {
-		isTarget &= scores.aspectRatioInner > ASPECT_RATIO_LIMIT;
+		isTarget &= scores.aspectRatioHorizontal > ASPECT_RATIO_LIMIT;
 	}
-	isTarget &= scores.xEdge > X_EDGE_LIMIT;
-	isTarget &= scores.yEdge > Y_EDGE_LIMIT;
 
 	return isTarget;
 }
@@ -108,52 +106,30 @@ double VisionFunc::scoreRectangularity(ParticleAnalysisReport *report){
 	} else {
 		return 0;
 	}	
-}
-
-/**
- * Computes a score based on the match between a template profile and the particle profile in the X direction. This method uses the
- * the column averages and the profile defined at the top of the sample to look for the solid vertical edges with
- * a hollow center.
- * 
- * @param image The image to use, should be the image before the convex hull is performed
- * @param report The Particle Analysis Report for the particle
- * 
- * @return The X Edge Score (0-100)
- */
-double VisionFunc::scoreXEdge(BinaryImage *image, ParticleAnalysisReport *report){
-	double total = 0;
-	LinearAverages *averages = imaqLinearAverages2(image->GetImaqImage(), IMAQ_COLUMN_AVERAGES, report->boundingRect);
-	for(int i=0; i < (averages->columnCount); i++){
-		if(xMin[i*(XMINSIZE-1)/averages->columnCount] < averages->columnAverages[i] 
-		   && averages->columnAverages[i] < xMax[i*(XMAXSIZE-1)/averages->columnCount]){
-			total++;
-		}
-	}
-	total = 100*total/(averages->columnCount);		//convert to score 0-100
-	imaqDispose(averages);							//let IMAQ dispose of the averages struct
-	return total;
-}
-
-/**
- * Computes a score based on the match between a template profile and the particle profile in the Y direction. This method uses the
- * the row averages and the profile defined at the top of the sample to look for the solid horizontal edges with
- * a hollow center
- * 
- * @param image The image to use, should be the image before the convex hull is performed
- * @param report The Particle Analysis Report for the particle
- * 
- * @return The Y Edge score (0-100)
- */
-double VisionFunc::scoreYEdge(BinaryImage *image, ParticleAnalysisReport *report){
-	double total = 0;
-	LinearAverages *averages = imaqLinearAverages2(image->GetImaqImage(), IMAQ_ROW_AVERAGES, report->boundingRect);
-	for(int i=0; i < (averages->rowCount); i++){
-		if(yMin[i*(YMINSIZE-1)/averages->rowCount] < averages->rowAverages[i] 
-		   && averages->rowAverages[i] < yMax[i*(YMAXSIZE-1)/averages->rowCount]){
-			total++;
-		}
-	}
-	total = 100*total/(averages->rowCount);		//convert to score 0-100
-	imaqDispose(averages);						//let IMAQ dispose of the averages struct
-	return total;
 }	
+
+/**
+ * Converts a ratio with ideal value of 1 to a score. The resulting function is piecewise
+ * linear going from (0,0) to (1,100) to (2,0) and is 0 for all inputs outside the range 0-2
+ */
+double VisionFunc::ratioToScore(double ratio)
+{
+	return (max(0, min(100*(1-fabs(1-ratio)), 100)));
+}
+
+/**
+ * Takes in a report on a target and compares the scores to the defined score limits to evaluate
+ * if the target is a hot target or not.
+ * 
+ * Returns True if the target is hot. False if it is not.
+ */
+bool VisionFunc::hotOrNot(TargetReport target)
+{
+	bool isHot = true;
+	
+	isHot &= target.tapeWidthScore >= TAPE_WIDTH_LIMIT;
+	isHot &= target.verticalScore >= VERTICAL_SCORE_LIMIT;
+	isHot &= (target.leftScore > LR_SCORE_LIMIT) | (target.rightScore > LR_SCORE_LIMIT);
+	
+	return isHot;
+}

@@ -1,5 +1,8 @@
 //Last edited by Vadim Korolik
-//on 11/07/2013
+//on 01/04/2014
+#ifndef __TKOVISION_H
+#define __TKOVISION_H
+
 #include "WPILib.h"
 #include "Vision/RGBImage.h"
 #include "Vision/BinaryImage.h"
@@ -16,6 +19,10 @@ class TKOVision
 		void StartProcessing();
 		void StopProcessing();
 		
+		long lastTimestamp;
+		TargetReport lastTargets;
+		double lastDist;
+		
 	private:
 		TKOVision();
 		~TKOVision();
@@ -28,9 +35,11 @@ class TKOVision
 		BinaryImage *thresholdImage; // get just the green target pixels
 		BinaryImage *convexHullImage;
 		BinaryImage *filteredImage;
-		MonoImage *redImage;
 		
 		static TKOVision* m_Instance;
 		
 		static void ProcessRunner();
 };
+
+
+#endif

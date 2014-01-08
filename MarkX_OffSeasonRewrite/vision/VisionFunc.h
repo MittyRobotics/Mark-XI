@@ -1,5 +1,8 @@
 //Last edited by Vadim Korolik
 //on 11/07/2013
+#ifndef __TKOVISIONFUNC_H
+#define __TKOVISIONFUNC_H
+
 #include "WPILib.h"
 #include "Vision/RGBImage.h"
 #include "Vision/BinaryImage.h"
@@ -33,12 +36,12 @@ class VisionFunc
 {	
 	public:
 		static VisionFunc* inst();
-		double VisionFunc::computeDistance (BinaryImage *image, ParticleAnalysisReport *report, bool outer);
-		double VisionFunc::scoreAspectRatio(BinaryImage *image, ParticleAnalysisReport *report, bool outer);
-		bool VisionFunc::scoreCompare(Scores scores, bool outer);
-		double VisionFunc::scoreRectangularity(ParticleAnalysisReport *report);
-		double VisionFunc::scoreXEdge(BinaryImage *image, ParticleAnalysisReport *report);
-		double VisionFunc::scoreYEdge(BinaryImage *image, ParticleAnalysisReport *report);
+		double computeDistance (BinaryImage *image, ParticleAnalysisReport *report);
+		double scoreAspectRatio(BinaryImage *image, ParticleAnalysisReport *report, bool vertical);
+		bool scoreCompare(Scores scores, bool vertical);
+		double scoreRectangularity(ParticleAnalysisReport *report);
+		double ratioToScore(double ratio);
+		bool hotOrNot(TargetReport target);
 		
 	private:
 		VisionFunc();
@@ -46,3 +49,5 @@ class VisionFunc
 		static VisionFunc* m_Instance;
 };
 
+
+#endif

@@ -122,45 +122,46 @@ const int PN_S4R_ID = 2; //Arm Retract
 const int PN_S4E_ID = 1; //Arm Extend
 
 // Camera Constants
-	const int BORDER_SIZE = 3;
-	const int CAMERA_SERVO_PORT = 1;
-	const int CAMERA_PWM_INCREMENT = 1;	
-	
-	const float PI = 3.14159265;
-	const float DEGREES_PER_RADIAN = 180 / PI;
-	
-	//Camera constants used for distance calculation
-	#define X_IMAGE_RES 640		//X Image resolution in pixels, should be 160, 320 or 640
-	//#define VIEW_ANGLE 48		//Axis 206 camera
-	#define VIEW_ANGLE 43.5  //Axis M1011 camera
+//Camera constants used for distance calculation
+	#define Y_IMAGE_RES 480		//X Image resolution in pixels, should be 120, 240 or 480
+	//#define VIEW_ANGLE 49		//Axis M1013
+	//#define VIEW_ANGLE 41.7		//Axis 206 camera
+	#define VIEW_ANGLE 37.4  //Axis M1011 camera
+	#define PI 3.141592653
 	
 	//Score limits used for target identification
-	#define RECTANGULARITY_LIMIT 60
-	#define ASPECT_RATIO_LIMIT 75
-	#define X_EDGE_LIMIT 40
-	#define Y_EDGE_LIMIT 60
+	#define RECTANGULARITY_LIMIT 40
+	#define ASPECT_RATIO_LIMIT 55
+	
+	//Score limits used for hot target determination
+	#define TAPE_WIDTH_LIMIT 50
+	#define VERTICAL_SCORE_LIMIT 50
+	#define LR_SCORE_LIMIT 50
 	
 	//Minimum area of particles to be considered
-	#define AREA_MINIMUM 100 //BACK TO 500
+	#define AREA_MINIMUM 150
 	
-	//Edge profile constants used for hollowness score calculation
-	#define XMAXSIZE 24
-	#define XMINSIZE 24
-	#define YMAXSIZE 24
-	#define YMINSIZE 48
-	const double xMax[XMAXSIZE] = {1, 1, 1, 1, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, 1, 1, 1, 1};
-	const double xMin[XMINSIZE] = {.4, .6, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, 0.6, 0};
-	const double yMax[YMAXSIZE] = {1, 1, 1, 1, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, 1, 1, 1, 1};
-	const double yMin[YMINSIZE] = {.4, .6, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05,
-									.05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05,
-									.05, .05, .6, 0};
-	struct Scores {
-			double rectangularity;
-			double aspectRatioInner;
-			double aspectRatioOuter;
-			double xEdge;
-			double yEdge;
+	//Maximum number of particles to process
+	#define MAX_PARTICLES 10
 
+	//Structure to represent the scores for the various tests used for target identification
+	struct Scores 
+	{
+		double rectangularity;
+		double aspectRatioVertical;
+		double aspectRatioHorizontal;
+	};
+	
+	struct TargetReport 
+	{
+		int verticalIndex;
+		int horizontalIndex;
+		bool Hot;
+		double totalScore;
+		double leftScore;
+		double rightScore;
+		double tapeWidthScore;
+		double verticalScore;
 	};
 
 //WINCH CONSTANTS

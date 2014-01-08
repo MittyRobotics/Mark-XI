@@ -8,7 +8,6 @@
 #include "Vision/BinaryImage.h"
 #include "Math.h"
 #include "../Definitions.h"
-#include "../log/TKOLogger.h"
  
 /**
  * Sample program to use NIVision to find rectangles in the scene that are illuminated

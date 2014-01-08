@@ -8,6 +8,7 @@
 #include <Task.h>
 #include <string>
 #include <vector>
+#include <queue>
 #include <sstream>
 #include <iostream>
 #include <ostream>

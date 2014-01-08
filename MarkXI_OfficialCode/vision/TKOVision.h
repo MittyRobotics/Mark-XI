@@ -8,7 +8,6 @@
 #include "Vision/BinaryImage.h"
 #include "Math.h"
 #include "../Definitions.h"
-#include "../log/TKOLogger.h"
 #include "VisionFunc.h"
 
 class TKOVision
@@ -19,7 +18,8 @@ class TKOVision
 		void StartProcessing();
 		void StopProcessing();
 		
-		long lastTimestamp;
+		double lastTimestamp;
+		double lastProcessingTime;
 		TargetReport lastTargets;
 		double lastDist;
 		

@@ -6,7 +6,7 @@
 //on 11/27/2013
 #include "TKOLogger.h"
 ofstream logFile;
-vector<string> *messageBuffer;
+queue<string> messageBuffer;
 
 TKOLogger* TKOLogger::m_Instance = NULL;
 /*!!!!!!!
@@ -35,7 +35,6 @@ TKOLogger::TKOLogger()
 TKOLogger::~TKOLogger()
 {
 	delete logTask;
-	messageBuffer->clear();
 }
 void TKOLogger::Start()
 {
@@ -50,6 +49,10 @@ void TKOLogger::Start()
 }
 void TKOLogger::Stop()
 {
+	while (messageBuffer.size() > 0)
+	{
+		writeBuffer();
+	}
 	if (logTask->Verify())
 		logTask->Stop();
 	if (logFile.is_open())
@@ -84,11 +87,11 @@ void TKOLogger::writeBuffer()
 {
 	if (logFile.is_open())
 	{
-		if(messageBuffer->size() > 0)
+		if(messageBuffer.size() > 0)
 		{
-			logFile << messageBuffer->back();
+			logFile << messageBuffer.front();
 			logFile << "\n";
-			messageBuffer->pop_back();
+			messageBuffer.pop();
 		}
 	}
 	if (logFile.bad() or not logFile.is_open())
@@ -100,21 +103,9 @@ void TKOLogger::writeBuffer()
 }
 void TKOLogger::addMessage(string message)
 {
-	if (_ds == NULL)
-		_ds = DriverStation::GetInstance();
-	if (messageBuffer->size() >= messageBuffer->max_size())
-	{
-		printf("CRITICAL LOGGER BUFFER OVERFLOW \n");
-		logFile << "CRITICAL LOGGER BUFFER OVERFLOW \n";
-		printf("CURRENT BUFFER SIZE: %i", messageBuffer->size());
-		printf("\n");
-		printf("MAX BUFFER SIZE: %i", messageBuffer->max_size());
-		printf("\n");
-		return;
-	}
 	std::ostringstream newMess;
-	newMess << "Time:   " << DriverStation::GetInstance()->GetMatchTime() << "          Message: " << message;
-	messageBuffer->push_back(newMess.str());
+	newMess << "Time:   " << GetTime() << "          Message: " << message;
+	messageBuffer.push(newMess.str());
 //	printf("Buffer size: %i\n", messageBuffer->size());
 }
 
