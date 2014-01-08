@@ -5,13 +5,12 @@
 
 #include "../Definitions.h"
 #include "../component/TKOGyro.h"
-#include "../component/TKORelay.h"
-#include "../log/TKOLogger.h"
+#include "../evom/TKOClimber.h"
 
 class TKOAutonomous
 {
 	public:
-		TKOAutonomous();
+		TKOAutonomous(int port1, int port2, int port3, int port4);
 		~TKOAutonomous();
 		void autonomousCode();
 		void autonSetup1();
@@ -34,13 +33,10 @@ class TKOAutonomous
 		bool runningAuton;
 		bool autonOption[15];
 		Timer autonTimer;
-		static TKOAutonomous* inst();
+		TKORelay rsFrontLoaderWrist, rsFrontLoaderLift; //Front loader
 	private:
 		CANJaguar drive1, drive2, drive3, drive4;
-		static DriverStation *ds;
-		static TKOAutonomous* m_Instance;
-		Task *autonTask;
-		static void AutonTaskRunner();
+		DriverStation *ds;
 		float rampTargetLeft;
 		float rampTargetRight;
 		float rightTarget;

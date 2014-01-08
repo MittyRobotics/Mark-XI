@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 01/04/2014
+//on 11/07/2013
 #ifndef __DEFINITIONS_H
 #define __DEFINITIONS_H
 
@@ -8,15 +8,8 @@
  */
 #include "WPILib.h"
 #include "Vision/RGBImage.h"
-#include "Vision/BinaryImage.h"
 #include "Math.h"
 #include "stdlib.h"
-#include "component/TKORelay.h"
-#include "log/TKOLogger.h"
-#include "drive/TKODrive.h"
-#include "drive/TKOGDrive.h"
-#include "component/TKOGyro.h"
-#include "evom/TKOShooter.h"
 #include <cstring>
 
 /*!
@@ -35,6 +28,14 @@
 #define space printf("\n");
 #define GO_AWAY NULL;
 
+extern char message[10240];
+extern float data[10240];
+extern short indx;
+//#define writeM(c) ;
+//#define writeMD(c,f) ;
+
+
+//hue
 /*! \mainpage Welcome to TKO 1351's MarkIX's Code Documentation!
  *
  * 	This is the Robot Code for the 2013 Season of Ultimate Ascent
@@ -52,6 +53,12 @@ const int DRIVE_L1_ID = 2;
 const int DRIVE_L2_ID = 3;
 const int DRIVE_R1_ID = 4;
 const int DRIVE_R2_ID = 5;
+const int TURRET_ID = 10;
+const int SHOOTER_PORT = 8;
+const int WINCH_1_PORT = 6;
+const int WINCH_2_PORT = 7;
+const int WINCH_ENC_PORT_A = 9;
+const int WINCH_ENC_PORT_B = 10;
 
 // Spinner constants
 const float RADIUS_WHEELS = 4;
@@ -91,49 +98,69 @@ const int GYRO_PORT = 1;
 const int COMPRESSOR_ID = 1; //Compressor ID
 const int PRESSURE_SWITCH_PORT = 1;
 
+//const int PN_R1_ID = 4; //Loader Wrist
+//const int PN_R2_ID = 3; //Loader Lift
+//const int PN_R3_ID = 2; //Loader Ratchet
+//
+//const int PN_S1R_ID = 8; //Top Dumper Retract
+//const int PN_S1E_ID = 7; //Top Dumper Extend
+//const int PN_S2R_ID = 6; //Shooter Retract
+//const int PN_S2E_ID = 5; //Shooter Extend
+//const int PN_S3R_ID = 4; //Clips Retract
+//const int PN_S3E_ID = 3; //Clips Extend
+//const int PN_S4R_ID = 2; //Arm Retract
+//const int PN_S4E_ID = 1; //Arm Extend
+const int PN_R1_ID = 4; //Loader Wrist
+const int PN_R2_ID = 3; //Loader Lift
+const int PN_R3_ID = 2; //Loader Ratchet
+
+const int PN_S1R_ID = 7; //Top Dumper Retract
+const int PN_S1E_ID = 8; //Top Dumper Extend
+const int PN_S3R_ID = 4; //Clips Retract
+const int PN_S3E_ID = 3; //Clips Extend
+const int PN_S4R_ID = 2; //Arm Retract
+const int PN_S4E_ID = 1; //Arm Extend
 
 // Camera Constants
- 
+	const int BORDER_SIZE = 3;
+	const int CAMERA_SERVO_PORT = 1;
+	const int CAMERA_PWM_INCREMENT = 1;	
+	
+	const float PI = 3.14159265;
+	const float DEGREES_PER_RADIAN = 180 / PI;
+	
 	//Camera constants used for distance calculation
-	#define Y_IMAGE_RES 480		//X Image resolution in pixels, should be 120, 240 or 480
-	//#define VIEW_ANGLE 49		//Axis M1013
-	//#define VIEW_ANGLE 41.7		//Axis 206 camera
-	#define VIEW_ANGLE 37.4  //Axis M1011 camera
-	#define PI 3.141592653
+	#define X_IMAGE_RES 640		//X Image resolution in pixels, should be 160, 320 or 640
+	//#define VIEW_ANGLE 48		//Axis 206 camera
+	#define VIEW_ANGLE 43.5  //Axis M1011 camera
 	
 	//Score limits used for target identification
-	#define RECTANGULARITY_LIMIT 40
-	#define ASPECT_RATIO_LIMIT 55
-	
-	//Score limits used for hot target determination
-	#define TAPE_WIDTH_LIMIT 50
-	#define VERTICAL_SCORE_LIMIT 50
-	#define LR_SCORE_LIMIT 50
+	#define RECTANGULARITY_LIMIT 60
+	#define ASPECT_RATIO_LIMIT 75
+	#define X_EDGE_LIMIT 40
+	#define Y_EDGE_LIMIT 60
 	
 	//Minimum area of particles to be considered
-	#define AREA_MINIMUM 150
+	#define AREA_MINIMUM 100 //BACK TO 500
 	
-	//Maximum number of particles to process
-	#define MAX_PARTICLES 10
+	//Edge profile constants used for hollowness score calculation
+	#define XMAXSIZE 24
+	#define XMINSIZE 24
+	#define YMAXSIZE 24
+	#define YMINSIZE 48
+	const double xMax[XMAXSIZE] = {1, 1, 1, 1, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, 1, 1, 1, 1};
+	const double xMin[XMINSIZE] = {.4, .6, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, .1, 0.6, 0};
+	const double yMax[YMAXSIZE] = {1, 1, 1, 1, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, .5, 1, 1, 1, 1};
+	const double yMin[YMINSIZE] = {.4, .6, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05,
+									.05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05, .05,
+									.05, .05, .6, 0};
+	struct Scores {
+			double rectangularity;
+			double aspectRatioInner;
+			double aspectRatioOuter;
+			double xEdge;
+			double yEdge;
 
-	//Structure to represent the scores for the various tests used for target identification
-	struct Scores 
-	{
-		double rectangularity;
-		double aspectRatioVertical;
-		double aspectRatioHorizontal;
-	};
-	
-	struct TargetReport 
-	{
-		int verticalIndex;
-		int horizontalIndex;
-		bool Hot;
-		double totalScore;
-		double leftScore;
-		double rightScore;
-		double tapeWidthScore;
-		double verticalScore;
 	};
 
 //WINCH CONSTANTS

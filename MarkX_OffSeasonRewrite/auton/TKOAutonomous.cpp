@@ -2,11 +2,10 @@
 //on 02/09/2013|
 #include "TKOAutonomous.h"
 
-TKOAutonomous* TKOAutonomous::m_Instance = NULL;
 ///Constructor for the TKOAutonomous class
 
-TKOAutonomous::TKOAutonomous() :
-	drive1(DRIVE_L1_ID, CANJaguar::kPosition), drive2(DRIVE_L2_ID, CANJaguar::kPercentVbus), drive3(DRIVE_R1_ID, CANJaguar::kPosition), drive4(DRIVE_R2_ID, CANJaguar::kPercentVbus)
+TKOAutonomous::TKOAutonomous(int port1, int port2, int port3, int port4) :
+	rsFrontLoaderWrist(PN_R1_ID), rsFrontLoaderLift(PN_R2_ID), drive1(port1, CANJaguar::kPosition), drive2(port2, CANJaguar::kPercentVbus), drive3(port3, CANJaguar::kPosition), drive4(port4, CANJaguar::kPercentVbus)
 {
 	initAutonomous();
 }
@@ -38,44 +37,9 @@ void TKOAutonomous::initAutonomous()
 	rampRate2 = RAMP_RATE_2;
 	reachedTarget = false;
 	ds = DriverStation::GetInstance();
-
-	autonTask = new Task("TKOAuton", (FUNCPTR) AutonTaskRunner);
-	autonTask->SetPriority(1); //lowest priority, lower than driving etc.
-		
 	printf("Initialized Autonomous Class\n");
 }
 
-TKOAutonomous* TKOAutonomous::inst()
-{
-	if (!m_Instance)
-	{
-		printf("TKOAutonomous instance is null\n");
-		m_Instance = new TKOAutonomous;
-	}
-	return m_Instance;
-}
-
-void TKOAutonomous::AutonTaskRunner()
-{
-	while (m_Instance->autonTimer.Get() < 10 && m_Instance->runningAuton)
-	{
-		if (!ds->IsAutonomous())
-			m_Instance->stopAutonomous();
-
-//		auton.autonomousCode();
-		if (ds->GetDigitalIn(1)) //this is the actual auton configuration, string of atmos chosen here
-			m_Instance->autonSetup1();
-		else if (ds->GetDigitalIn(2))
-			m_Instance->autonSetup2();
-		else if (ds->GetDigitalIn(3))
-			m_Instance->autonSetup3();
-		else
-		{
-			DSLog(1, "Error, no starting setup selected");
-		}
-	}
-	m_Instance->stopAutonomous();
-}
 void TKOAutonomous::startAutonomous()
 {
 	autonTimer.Reset();
@@ -85,14 +49,12 @@ void TKOAutonomous::startAutonomous()
 	leftTarget = 0;
 	runningAuton = true;
 	reachedTarget = false;
-	autonTask->Start();
 	printf("Started Autonomous \n");
 }
 void TKOAutonomous::stopAutonomous()
 {
 	runningAuton = false;
 	autonTimer.Reset();
-	autonTask->Stop();
 	printf("Stopped Autonomous \n");
 	//stop evom tasks
 }
@@ -136,7 +98,12 @@ void TKOAutonomous::autonSetup1() //right corner
 
 	if (not autonOption[3])
 	{
+		//writeMD(24);
+		rsFrontLoaderWrist.SetOn(1);
+		rsFrontLoaderLift.SetOn(1);
 		Wait(1);
+		rsFrontLoaderWrist.SetOn(0);
+		rsFrontLoaderLift.SetOn(0);
 		autonOption[3] = false;
 	}
 	printf("Finished autonSetup 1\n");
@@ -181,7 +148,11 @@ void TKOAutonomous::autonSetup2() //right corner
 
 	if (not autonOption[4])
 	{
-		Wait(1.);
+		rsFrontLoaderWrist.SetOn(1);
+		rsFrontLoaderLift.SetOn(1);
+		Wait(1);
+		rsFrontLoaderWrist.SetOn(0);
+		rsFrontLoaderLift.SetOn(0);
 		autonOption[4] = false;
 	}
 	printf("Finished autonSetup 2\n");
@@ -240,15 +211,18 @@ void TKOAutonomous::autonSetup3() //right corner
 
 	if (not autonOption[6])
 	{
-		Wait(1.);
+		rsFrontLoaderWrist.SetOn(1);
+		rsFrontLoaderLift.SetOn(1);
+		Wait(1);
+		rsFrontLoaderWrist.SetOn(0);
+		rsFrontLoaderLift.SetOn(0);
 		autonOption[6] = false;
 	}
-	printf("Finished autonSetup 3\n");
-	DSLog(3, "Finished autonSetup 3\n");
+	printf("Finished autonSetup 2\n");
+	DSLog(3, "Finished autonSetup 2\n");
 
 	//Stringing them in a row like so
 }
-
 void TKOAutonomous::autonomousCode()
 {
 	if (ds->IsDisabled())

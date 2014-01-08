@@ -36,7 +36,7 @@ TKOVision* TKOVision::inst()
 {
 	if (!m_Instance)
 	{
-		TKOLogger::inst()->addMessage("TKOVision instance is null");
+		//TKOLogger::inst()->addMessage("TKOVision instance is null");
 		m_Instance = new TKOVision;
 	}
 	return m_Instance;
@@ -49,7 +49,7 @@ bool TKOVision::ProccessImageFromCamera()
 	///////////^^^^^////////////// remove
 	if (not picProcessT->IsReady())
 	{
-		TKOLogger::inst()->addMessage("Pic task not ready...");
+		//TKOLogger::inst()->addMessage("Pic task not ready...");
 		return false;
 	}
 	rawImage = new RGBImage();
@@ -57,7 +57,7 @@ bool TKOVision::ProccessImageFromCamera()
 	convexHullImage = new BinaryImage();
 	filteredImage = new BinaryImage();
 
-	TKOLogger::inst()->addMessage("Starting proccessing actually");
+	//TKOLogger::inst()->addMessage("Starting proccessing actually");
 	
 	Threshold redThresh(60,140,70,140,70,140); //USED IN RGB Threshold
 	///this is a red threshold ^
@@ -70,33 +70,33 @@ bool TKOVision::ProccessImageFromCamera()
 
 	if (rawImage == NULL)
 	{
-		TKOLogger::inst()->addMessage("Raw Image null");
+		//TKOLogger::inst()->addMessage("Raw Image null");
 		return false;
 	}
-	TKOLogger::inst()->addMessage("Raw Image not null");
+	//TKOLogger::inst()->addMessage("Raw Image not null");
 	if (AxisCamera::GetInstance().GetImage(rawImage) == false)
 		return false;
-	TKOLogger::inst()->addMessage("Get Image returned true.");
+	//TKOLogger::inst()->addMessage("Get Image returned true.");
 	if (rawImage->GetHeight() == 0 or rawImage->GetWidth() == 0 or rawImage->StatusIsFatal())
 	{
-		TKOLogger::inst()->addMessage("Camera received invalid image.");
+		//TKOLogger::inst()->addMessage("Camera received invalid image.");
 		return false;
 	}
-	TKOLogger::inst()->addMessage("Camera recived a valid image.");
+	//TKOLogger::inst()->addMessage("Camera recived a valid image.");
 		
 	//	rawImage->Write("/pics/rawImage.bmp"); //stack some num pics back?
 	//validated image, up to here only raw image processing
 	
 	thresholdImage = rawImage->ThresholdRGB(greenThresh);
 	//	thresholdImage->Write("/pics/processed/thresholdImage.bmp");
-	TKOLogger::inst()->addMessage("Prosseced RGB Threshold");
+	//TKOLogger::inst()->addMessage("Prosseced RGB Threshold");
 	convexHullImage = thresholdImage->ConvexHull(false); //check difference between true and false
 	//	convexHullImage->Write("/pics/processed/hullImage.bmp");
-	TKOLogger::inst()->addMessage("Prosseced Convex Hull");
+	//TKOLogger::inst()->addMessage("Prosseced Convex Hull");
 	filteredImage = convexHullImage->ParticleFilter(criteria, 1);	//Remove small particles	
 	//	filteredImage->Write("/pics/processed/filteredImage.bmp");
-	TKOLogger::inst()->addMessage("Prosseced Particle Filter");
-	TKOLogger::inst()->addMessage("Done Prossecing");
+	//TKOLogger::inst()->addMessage("Prosseced Particle Filter");
+	//TKOLogger::inst()->addMessage("Done Prossecing");
 	{
 		Scores *scores;
 		TargetReport target;
@@ -122,16 +122,16 @@ bool TKOVision::ProccessImageFromCamera()
 				//Check if the particle is a horizontal target, if not, check if it's a vertical target
 				if(VisionFunc::inst()->scoreCompare(scores[i], false))
 				{
-					TKOLogger::inst()->addMessage("particle: %d  is a Horizontal Target centerX: %d  centerY: %d ", i, report->center_mass_x, report->center_mass_y);
+					//TKOLogger::inst()->addMessage("particle: %d  is a Horizontal Target centerX: %d  centerY: %d ", i, report->center_mass_x, report->center_mass_y);
 					horizontalTargets[horizontalTargetCount++] = i; //Add particle to target array and increment count
 				} else if (VisionFunc::inst()->scoreCompare(scores[i], true)) {
-					TKOLogger::inst()->addMessage("particle: %d  is a Vertical Target centerX: %d  centerY: %d ", i, report->center_mass_x, report->center_mass_y);
+					//TKOLogger::inst()->addMessage("particle: %d  is a Vertical Target centerX: %d  centerY: %d ", i, report->center_mass_x, report->center_mass_y);
 					verticalTargets[verticalTargetCount++] = i;  //Add particle to target array and increment count
 				} else {
-					TKOLogger::inst()->addMessage("particle: %d  is not a Target centerX: %d  centerY: %d ", i, report->center_mass_x, report->center_mass_y);
+					//TKOLogger::inst()->addMessage("particle: %d  is not a Target centerX: %d  centerY: %d ", i, report->center_mass_x, report->center_mass_y);
 				}
-				TKOLogger::inst()->addMessage("Scores rect: %f  ARvert: %f ", scores[i].rectangularity, scores[i].aspectRatioVertical);
-				TKOLogger::inst()->addMessage("ARhoriz: %f  ", scores[i].aspectRatioHorizontal);	
+				//TKOLogger::inst()->addMessage("Scores rect: %f  ARvert: %f ", scores[i].rectangularity, scores[i].aspectRatioVertical);
+				//TKOLogger::inst()->addMessage("ARhoriz: %f  ", scores[i].aspectRatioHorizontal);	
 			}
 
 			//Zero out scores and set verticalIndex to first target in case there are no horizontal targets
@@ -187,11 +187,11 @@ bool TKOVision::ProccessImageFromCamera()
 				lastDist = distance;
 				if(target.Hot)
 				{
-					TKOLogger::inst()->addMessage("Hot target located ");
-					TKOLogger::inst()->addMessage("Distance: ", distance);
+					//TKOLogger::inst()->addMessage("Hot target located ");
+					//TKOLogger::inst()->addMessage("Distance: ", distance);
 				} else {
-					TKOLogger::inst()->addMessage("No hot target present ");
-					TKOLogger::inst()->addMessage("Distance: ", distance);
+					//TKOLogger::inst()->addMessage("No hot target present ");
+					//TKOLogger::inst()->addMessage("Distance: ", distance);
 				}
 			}
 			lastTargets = target;
@@ -205,14 +205,14 @@ bool TKOVision::ProccessImageFromCamera()
 			delete reports;
 		}
 		lastTimestamp = GetFPGATime();
-		TKOLogger::inst()->addMessage("Targets were in image");
-		TKOLogger::inst()->addMessage("Targets were found in image");
-		TKOLogger::inst()->addMessage("Distance from target ", lastDist);
+		//TKOLogger::inst()->addMessage("Targets were in image");
+		//TKOLogger::inst()->addMessage("Targets were found in image");
+		//TKOLogger::inst()->addMessage("Distance from target ", lastDist);
 		return true;
 	}
 				
-	TKOLogger::inst()->addMessage("Processed image from camera");
-	TKOLogger::inst()->addMessage("No targets found.");
+	//TKOLogger::inst()->addMessage("Processed image from camera");
+	//TKOLogger::inst()->addMessage("No targets found.");
 	return false;
 }
 void TKOVision::StartProcessing()
@@ -232,18 +232,18 @@ void TKOVision::ProcessRunner()
 	{
 		if (not AxisCamera::GetInstance().IsFreshImage())
 		{
-			TKOLogger::inst()->addMessage("Stale image...");
+			//TKOLogger::inst()->addMessage("Stale image...");
 			continue;
 		}
 		else
 		{
-			TKOLogger::inst()->addMessage("Running vision processing in the thread. ");
+			//TKOLogger::inst()->addMessage("Running vision processing in the thread. ");
 			processingTime.Reset();
 			processingTime.Start();
 			if (m_Instance->ProccessImageFromCamera())
 			{
-				TKOLogger::inst()->addMessage("PROCESSING SUCCESS ");
-				TKOLogger::inst()->addMessage("Vision processing took ", processingTime.Get());
+				//TKOLogger::inst()->addMessage("PROCESSING SUCCESS ");
+				//TKOLogger::inst()->addMessage("Vision processing took ", processingTime.Get());
 			}
 			processingTime.Stop();
 		}

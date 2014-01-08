@@ -4,7 +4,6 @@
 #define __TKOGYRO_H
 
 #include "../Definitions.h"
-#include "../log/TKOLogger.h"
 
 class TKOGyro
 {

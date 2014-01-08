@@ -5,7 +5,7 @@
 //Last edited by Vadim Korolik
 //on 01/04/2014
 #include "TKOLogger.h"
-
+#include "../Definitions.h"
 TKOLogger* TKOLogger::m_Instance = NULL;
 /*!!!!!!!
  * TO USE:
@@ -27,7 +27,6 @@ TKOLogger::TKOLogger()
 	struct stat filestatus;
 	stat("logT.txt", &filestatus);
 	printf("File: %i%s", (int)filestatus.st_size, " bytes\n");
-	addMessage("-------Logger booted---------");
 	AddToSingletonList();
 
 	printf("Initialized logger\n");
@@ -52,7 +51,7 @@ void TKOLogger::Stop()
 	//before actually stopping or closing file, make sure that buffer is emtied and flushed
 	while (messBuffer.size() > 0)
 	{
-		writeBuffer();
+		TKOLogger::writeBuffer();
 	}
 
 	if (logTask->Verify())
@@ -118,7 +117,7 @@ void TKOLogger::addMessage(const char *format, ...)
 
     // suggest leaving a blank line seperating the sem object from the rest of the code
 	{
-		Synchronized sem(_bufSem);     // TODO: make other uses of messBuffer thread-safe with _bufSem
+		//Synchronized sem(_bufSem);     // TODO: make other uses of messBuffer thread-safe with _bufSem
 		messBuffer.push(newMessStr);   // TODO: what happens to tasks when robot is disabled?
 	}
 }
@@ -133,7 +132,7 @@ void TKOLogger::Printf(const char *format, ...)
 
     // same here as line 119
 	{
-		Synchronized sem(_printSem);
+		//Synchronized sem(_printSem);
 		printf(s);
 	}
 }

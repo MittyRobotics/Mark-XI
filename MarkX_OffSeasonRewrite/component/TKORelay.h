@@ -1,7 +1,6 @@
 #ifndef __TKORELAY_H
 #define __TKORELAY_H
 #include "../Definitions.h"
-#include "../log/TKOLogger.h"
 
 ///Wrapper for WPI Relay Class
 

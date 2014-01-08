@@ -96,7 +96,7 @@ bool TKOGDrive::VerifyJags() //if returns false, jag problems
 			}
 		}
 	}
-	//TKOLogger::inst()->addMessage("DRIVE JAGUAR FAILURE");
+	TKOLogger::inst()->addMessage("DRIVE JAGUAR FAILURE");
 	printf("DRIVE JAGUARS DID NOT VERIFY\n");
 	return false;
 }

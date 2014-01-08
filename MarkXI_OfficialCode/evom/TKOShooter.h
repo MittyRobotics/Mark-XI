@@ -4,6 +4,7 @@
 #define __TKOSHOOTER_H
 
 #include "../Definitions.h"
+#include "../log/TKOLogger.h"
 
 class TKOShooter
 {
