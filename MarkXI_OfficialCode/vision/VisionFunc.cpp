@@ -37,10 +37,11 @@ double VisionFunc::computeDistance (BinaryImage *image, ParticleAnalysisReport *
 	imaqMeasureParticle(image->GetImaqImage(), report->particleIndex, 0, IMAQ_MT_EQUIVALENT_RECT_LONG_SIDE, &rectLong);
 	//using the smaller of the estimated rectangle long side and the bounding rectangle height results in better performance
 	//on skewed rectangles
-	height = min(report->boundingRect.height, rectLong);
+	height = min(report->boundingRect.height, rectLong); //what is rectLong????
+	//i guess it is the length of the particle (verticle rect) in the image, as calculated by imaq and NOT by the boundingRect...
 	targetHeight = 32; //SO THIS IS HEIGHT OF VERTICAL RECTANGLE???
 	
-	return Y_IMAGE_RES * targetHeight / (height * 12 * 2 * tan(VIEW_ANGLE*PI/(180*2)));
+	return Y_IMAGE_RES * targetHeight / (height * 12 * 2 * tan(VIEW_ANGLE*PI/(180*2))); //look into all the hardcoded vars
 }
 
 /**

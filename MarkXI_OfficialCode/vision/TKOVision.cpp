@@ -79,7 +79,7 @@ bool TKOVision::ProccessImageFromCamera()
 		return false;
 	}
 	printf("Raw Image not null");
-	if (AxisCamera::GetInstance().GetImage(rawImage) == false)
+	if (AxisCamera::GetInstance().GetImage(rawImage) == false) //TODO Check that camera is set to proper res in browser
 		return false;
 	printf("Get Image returned true.");
 	if (rawImage->GetHeight() == 0 or rawImage->GetWidth() == 0 or rawImage->StatusIsFatal())
