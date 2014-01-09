@@ -94,10 +94,6 @@ void MarkXI::OperatorControl()
 
 void MarkXI::Operator()
 {
-	if (stick1.GetRawButton(8))
-		RegDrive();
-	if (stick1.GetRawButton(9))
-		GyroDrive();
 	if (stick3.GetTrigger())
 	{
 		if ((GetFPGATime() - TKOVision::inst()->lastTimestamp) <= 1000)
