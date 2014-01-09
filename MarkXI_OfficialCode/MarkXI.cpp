@@ -83,7 +83,7 @@ void MarkXI::OperatorControl()
 		DSClear();
 		
 		DSLog(1, "Dist: %f", TKOVision::inst()->lastDist);
-		DSLog(2, "Hot: %d", TKOVision::inst()->lastTargets.Hot);
+		DSLog(2, "Hot: %d", TKOVision::inst()->lastTarget.Hot);
 		DSLog(3, "Proc %f", TKOVision::inst()->lastProcessingTime);
 		DSLog(4, "Clock %f", GetClock());
 		DSLog(5, "LastT %f", TKOVision::inst()->lastTimestamp);

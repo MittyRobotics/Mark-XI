@@ -17,11 +17,17 @@ class TKOVision
 		bool ProccessImageFromCamera();
 		void StartProcessing();
 		void StopProcessing();
+		double getLastTimestamp();
+		double getLastProcessingTime();
+		double getLastDistance();
+		TargetReport getLastTargetReport();
+		vector<ParticleAnalysisReport> * getLastParticleReport();
 		
 		double lastTimestamp;
 		double lastProcessingTime;
-		TargetReport lastTargets;
 		double lastDist;
+		TargetReport lastTarget;
+		vector<ParticleAnalysisReport> *lastParticleReport;
 		
 	private:
 		TKOVision();
