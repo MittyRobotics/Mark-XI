@@ -16,6 +16,11 @@ Turn_Atom::Turn_Atom(float ang, CANJaguar* drive1, CANJaguar* drive2, CANJaguar*
 
 Turn_Atom::~Turn_Atom(){}
 
+void Turn_Atom::resetEncoders()
+{
+	_drive1->EnableControl(0);
+	_drive3->EnableControl(0);
+}
 
 void Turn_Atom::run()
 {
@@ -24,14 +29,59 @@ void Turn_Atom::run()
 	// do really cool things with the motors here
 	// like turn in circles here
 	
-	while(_gryo.GetAngle() != _angle){
-		_drive1->Set(/*Set a var here idk what a good set point is*/); //same, but for jag 3 since only 1 and 3 have encoders
+	while(_gryo->GetAngle() != _angle){
+		_drive1->Set(9001/*this value is only for testing*/); //same, but for jag 3 since only 1 and 3 have encoders
 		_drive2->Set(-_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second and fourth jags in slave mode
 			
-		_drive3->Set(-/*Set a var here idk what a good set point is (remember that this is negitive of the other or you wont turn) */); //same, but for jag 3 since only 1 and 3 have encoders
+		_drive3->Set(9001/*this value is only for testing*/); //same, but for jag 3 since only 1 and 3 have encoders
 		_drive4->Set(-_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets second and fourth jags in slave mode
 			
 	}
 	
 	
+}
+
+bool Turn_Atom::turn(double target)
+{
+	double currAngle = TKOGyro::inst()->GetAngle();
+//	double currAngle = 0;
+
+	if (_drive1->GetOutputCurrent() > DRIVE_CURRENT_CUTOFF or _drive3->GetOutputCurrent() > DRIVE_CURRENT_CUTOFF)
+	{
+		printf("Crashed into wall...");
+		return true;
+	}
+
+	if (currAngle < target - 1 && !(target < currAngle))
+	{
+		printf("Turning right \n");
+		_drive2->Set(0.7);
+		_drive4->Set(0.7);
+	}
+	if (currAngle + 2.0 >= target)
+	{
+		if (currAngle - 2.0 <= target)
+		{
+			_drive2->Set(0);
+			_drive4->Set(0);
+			printf("Reached goal, breaking out \n");
+
+			if (!reachedTarget)
+			{
+				reachedTarget = true;
+				resetEncoders();
+				printf("Reset position\n"); //All this resetting does not work properly, needs to be fixed
+				//Cannot go without it because when the robot turns, it affects the position
+			}
+			return true;
+		}
+	}
+	if (currAngle > target && !(target > currAngle))
+	{
+		printf("Past target \n");
+		_drive2->Set(-0.8);
+		_drive4->Set(-0.8);
+	}
+	return false;
+
 }

@@ -10,7 +10,7 @@ class Drive_Atom : public Atom{
 	
 	public:
 	// For feet, positive is moving forwaard in relation to the robot
-	Drive_Atom(float feet, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4);
+	Drive_Atom(float feet, float distanceAlreadyTraveled, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4);
 	~Drive_Atom();
 	void run();
 	private:
