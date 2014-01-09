@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 01/07/2014
+//on 01/08/2014
 #include "TKOVision.h"
 
 //TODO
@@ -8,7 +8,7 @@
 //Add writing to cam settings resolution, fps, comp, wb, brightness etc
 
 
-//FIX DATA ACCESS EXCEPTION
+//Throw custom exceptions?
 
 
 TKOVision* TKOVision::m_Instance = NULL;
