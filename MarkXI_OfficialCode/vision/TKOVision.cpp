@@ -8,7 +8,8 @@
 //Add writing to cam settings resolution, fps, comp, wb, brightness etc
 
 
-//FIX DATA ACCESS EXCEPTION
+//Current stable, working, tested version
+//Important "remove" calls in MarkXI for deleting old images.....
 
 
 TKOVision* TKOVision::m_Instance = NULL;
