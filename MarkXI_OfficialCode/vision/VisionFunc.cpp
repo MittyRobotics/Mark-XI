@@ -38,7 +38,7 @@ double VisionFunc::computeDistance (BinaryImage *image, ParticleAnalysisReport *
 	//using the smaller of the estimated rectangle long side and the bounding rectangle height results in better performance
 	//on skewed rectangles
 	height = min(report->boundingRect.height, rectLong);
-	targetHeight = 32;
+	targetHeight = 32; //SO THIS IS HEIGHT OF VERTICAL RECTANGLE???
 	
 	return Y_IMAGE_RES * targetHeight / (height * 12 * 2 * tan(VIEW_ANGLE*PI/(180*2)));
 }
@@ -56,8 +56,9 @@ double VisionFunc::computeDistance (BinaryImage *image, ParticleAnalysisReport *
  */
 double VisionFunc::scoreAspectRatio(BinaryImage *image, ParticleAnalysisReport *report, bool vertical){
 	double rectLong, rectShort, idealAspectRatio, aspectRatio;
-	idealAspectRatio = vertical ? (4.0/18.0) : (24.0/4.0);	//Vertical reflector 4" wide x 32" tall, horizontal 23.5" wide x 4" tall
-	
+	idealAspectRatio = vertical ? (4.0/18.0) : (24.0/4.0);	
+	//Vertical reflector 4" wide x 32" tall, horizontal 23.5" wide x 4" tall
+	//OUR GHETTO: Vertical reflector 4" wide x 18" tall, horizontal 24" wide x 4" tall
 	imaqMeasureParticle(image->GetImaqImage(), report->particleIndex, 0, IMAQ_MT_EQUIVALENT_RECT_LONG_SIDE, &rectLong);
 	imaqMeasureParticle(image->GetImaqImage(), report->particleIndex, 0, IMAQ_MT_EQUIVALENT_RECT_SHORT_SIDE, &rectShort);
 	
