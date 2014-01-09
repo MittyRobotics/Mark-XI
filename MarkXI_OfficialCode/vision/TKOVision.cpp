@@ -21,12 +21,14 @@ TKOVision::TKOVision():
 {
 	picProcessT = new Task("TKOVisProc", (FUNCPTR) ProcessRunner);
 	picProcessT->SetPriority(250); //lowest priority, lower than driving etc.
-	AxisCamera::GetInstance().WriteBrightness(20); //add setting writing
+	lastDist = 0;
+	lastProcessingTime = 0;
+	lastTimestamp = 0;
+	AxisCamera::GetInstance().WriteBrightness(30); //add setting writing
 //	rawImage = new RGBImage();
 //	thresholdImage = new BinaryImage(); // get just the green target pixels
 //	convexHullImage = new BinaryImage();
 //	filteredImage = new BinaryImage();
-//	redImage = new MonoImage();
 }
 TKOVision::~TKOVision()
 {
@@ -59,7 +61,9 @@ bool TKOVision::ProccessImageFromCamera()
 
 	printf("Starting proccessing actually");
 	
-	Threshold redThresh(60,140,70,140,70,140); //USED IN RGB Threshold
+	Threshold redThreshRGB(60,140,70,140,70,140); //USED IN RGB Threshold
+	Threshold redThreshHSV(220,255,60,255,100,255);
+	//Threshold redThreshHSV(84,255,64,255,93,255);
 	///this is a red threshold ^
 	///this is a green threshold
 	Threshold greenThresh(105, 137, 230, 255, 133, 183);	//HSV threshold criteria, ranges are in that order ie. Hue is 60-100
@@ -87,19 +91,20 @@ bool TKOVision::ProccessImageFromCamera()
 	rawImage->Write("/pics/rawImage.bmp"); //stack some num pics back?
 	//validated image, up to here only raw image processing
 	
-	thresholdImage = rawImage->ThresholdRGB(redThresh);
+	thresholdImage = rawImage->ThresholdHSV(redThreshHSV);
 	//	thresholdImage->Write("/pics/processed/thresholdImage.bmp");
-	printf("Prosseced RGB Threshold");
-	convexHullImage = thresholdImage->ConvexHull(false); //check difference between true and false
+	printf("Prosseced HSV Threshold");
+	convexHullImage = thresholdImage->ConvexHull(true); //check difference between true and false
 	//	convexHullImage->Write("/pics/processed/hullImage.bmp");
 	printf("Prosseced Convex Hull");
 	filteredImage = convexHullImage->ParticleFilter(criteria, 1);	//Remove small particles	
-	filteredImage->Write("/pics/processed/filteredImage.bmp");
-	printf("Prosseced Particle Filter");
-	printf("Done Prossecing");
+	//filteredImage->RemoveSmallObjects(true, 20);
+	filteredImage->Write("/pics/filteredImage.bmp");
+	
+	printf("Prosseced Particle Filter\n");
+	printf("Done Prossecing\n");
 	{
 		Scores *scores;
-		TargetReport target;
 		int verticalTargets[MAX_PARTICLES];
 		int horizontalTargets[MAX_PARTICLES];
 		int verticalTargetCount, horizontalTargetCount;
@@ -122,21 +127,22 @@ bool TKOVision::ProccessImageFromCamera()
 				//Check if the particle is a horizontal target, if not, check if it's a vertical target
 				if(VisionFunc::inst()->scoreCompare(scores[i], false))
 				{
-					printf("particle: %d  is a Horizontal Target centerX: %d  centerY: %d ", i, report->center_mass_x, report->center_mass_y);
+					printf("particle: %d  is a Horizontal Target centerX: %d  centerY: %d \n", i, report->center_mass_x, report->center_mass_y);
 					horizontalTargets[horizontalTargetCount++] = i; //Add particle to target array and increment count
 				} else if (VisionFunc::inst()->scoreCompare(scores[i], true)) {
-					printf("particle: %d  is a Vertical Target centerX: %d  centerY: %d ", i, report->center_mass_x, report->center_mass_y);
+					printf("particle: %d  is a Vertical Target centerX: %d  centerY: %d \n", i, report->center_mass_x, report->center_mass_y);
 					verticalTargets[verticalTargetCount++] = i;  //Add particle to target array and increment count
 				} else {
-					printf("particle: %d  is not a Target centerX: %d  centerY: %d ", i, report->center_mass_x, report->center_mass_y);
+					printf("particle: %d  is not a Target centerX: %d  centerY: %d \n", i, report->center_mass_x, report->center_mass_y);
 				}
-				printf("Scores rect: %f  ARvert: %f ", scores[i].rectangularity, scores[i].aspectRatioVertical);
-				printf("ARhoriz: %f  ", scores[i].aspectRatioHorizontal);	
+				printf("Scores rect: %f  ARvert: %f \n", scores[i].rectangularity, scores[i].aspectRatioVertical);
+				printf("ARhoriz: %f \n", scores[i].aspectRatioHorizontal);	
+				printf("Area: %f \n", report->particleArea);	
 			}
 
 			//Zero out scores and set verticalIndex to first target in case there are no horizontal targets
-			target.totalScore = target.leftScore = target.rightScore = target.tapeWidthScore = target.verticalScore = 0;
-			target.verticalIndex = verticalTargets[0];
+			lastTargets.totalScore = lastTargets.leftScore = lastTargets.rightScore = lastTargets.tapeWidthScore = lastTargets.verticalScore = 0;
+			lastTargets.verticalIndex = verticalTargets[0];
 			for (int i = 0; i < verticalTargetCount; i++)
 			{
 				ParticleAnalysisReport *verticalReport = &(reports->at(verticalTargets[i]));
@@ -162,19 +168,19 @@ bool TKOVision::ProccessImageFromCamera()
 					total += tapeWidthScore + verticalScore;
 					
 					//If the target is the best detected so far store the information about it
-					if(total > target.totalScore)
+					if(total > lastTargets.totalScore)
 					{
-						target.horizontalIndex = horizontalTargets[j];
-						target.verticalIndex = verticalTargets[i];
-						target.totalScore = total;
-						target.leftScore = leftScore;
-						target.rightScore = rightScore;
-						target.tapeWidthScore = tapeWidthScore;
-						target.verticalScore = verticalScore;
+						lastTargets.horizontalIndex = horizontalTargets[j];
+						lastTargets.verticalIndex = verticalTargets[i];
+						lastTargets.totalScore = total;
+						lastTargets.leftScore = leftScore;
+						lastTargets.rightScore = rightScore;
+						lastTargets.tapeWidthScore = tapeWidthScore;
+						lastTargets.verticalScore = verticalScore;
 					}
 				}
 				//Determine if the best target is a Hot target
-				target.Hot = VisionFunc::inst()->hotOrNot(target);
+				lastTargets.Hot = VisionFunc::inst()->hotOrNot(lastTargets);
 			}
 			
 			if(verticalTargetCount > 0)
@@ -182,37 +188,37 @@ bool TKOVision::ProccessImageFromCamera()
 				//Information about the target is contained in the "target" structure
 				//To get measurement information such as sizes or locations use the
 				//horizontal or vertical index to get the particle report as shown below
-				ParticleAnalysisReport *distanceReport = &(reports->at(target.verticalIndex));
+				ParticleAnalysisReport *distanceReport = &(reports->at(lastTargets.verticalIndex));
 				double distance = VisionFunc::inst()->computeDistance(filteredImage, distanceReport);
 				lastDist = distance;
-				if(target.Hot)
+				if(lastTargets.Hot)
 				{
-					printf("Hot target located ");
-					printf("Distance: %f", distance);
+					printf("Hot target located \n");
+					printf("Distance: %f\n", distance);
 				} else {
-					printf("No hot target present ");
-					printf("Distance: %f", distance);
+					printf("No hot target present \n");
+					printf("Distance: %f\n", distance);
 				}
 			}
-			lastTargets = target;
 			// be sure to delete images after using them
 			delete filteredImage;
 			delete thresholdImage;
 			delete rawImage;
+			delete convexHullImage;
 			
 			//delete allocated reports and Scores objects also
 			delete scores;
 			delete reports;
 		}
-		lastTimestamp = GetTime();
-		printf("Targets were in image");
-		printf("Targets were found in image");
-		printf("Distance from target %f", lastDist);
+		lastTimestamp = GetClock();
+		printf("Targets were in image\n");
+		printf("Targets were found in image\n");
+		printf("Distance from target %f\n", lastDist);
 		return true;
 	}
 				
-	printf("Processed image from camera");
-	printf("No targets found.");
+	printf("Processed image from camera\n");
+	printf("No targets found.\n");
 	return false;
 }
 void TKOVision::StartProcessing()
@@ -237,16 +243,16 @@ void TKOVision::ProcessRunner()
 		}
 		else
 		{
-			printf("Running vision processing in the thread. ");
+			printf("Running vision processing in the thread. \n");
 			processingTime.Reset();
 			processingTime.Start();
 			if (m_Instance->ProccessImageFromCamera())
 			{
-				printf("PROCESSING SUCCESS ");
-				printf("Vision processing took %f", processingTime.Get());
+				printf("PROCESSING SUCCESS \n");
+				printf("Vision processing took %f\n", processingTime.Get());
 			}
 			processingTime.Stop();
 		}
-		Wait(5. - processingTime.Get()); //wait for 5 secs total
+		//Wait(5. - processingTime.Get()); //wait for 5 secs total
 	}
 }

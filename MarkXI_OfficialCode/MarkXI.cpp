@@ -73,27 +73,21 @@ void MarkXI::OperatorControl()
 {
 	printf("Starting OperatorControl \n");
 	ds = DriverStation::GetInstance();
-	TKOVision::inst()->StartProcessing();  //NEW VISION START
-	RegDrive(); //Choose here between kind of drive to start with
-	Timer loopTimer;
-	loopTimer.Start();
+	remove("/pics/rawImage.bmp");
+	remove("/pics/filteredImage.bmp");
+	printf("Removed files\n");
+	TKOVision::inst()->StartProcessing();
 	
 	while (IsOperatorControl() && IsEnabled())
 	{
-		loopTimer.Reset();
 		DSClear();
 		
-		MarkXI::Operator();
-		if (loopTimer.Get() > 0.1)
-		{printf("!!!CRITICAL Operator loop very long, %f%s\n", loopTimer.Get(), " seconds.");
-		}
-		DSLog(1, "Dist: %f\n", TKOVision::inst()->lastDist);
-		DSLog(2, "Hot: %i\n", TKOVision::inst()->lastTargets.Hot);
-		DSLog(4, "Proc %f\n", TKOVision::inst()->lastProcessingTime);
-		DSLog(4, "Clock %f\n", GetClock());
+		DSLog(1, "Dist: %f", TKOVision::inst()->lastDist);
+		DSLog(2, "Hot: %d", TKOVision::inst()->lastTargets.Hot);
+		DSLog(3, "Proc %f", TKOVision::inst()->lastProcessingTime);
+		DSLog(4, "Clock %f", GetClock());
 		DSLog(5, "LastT %f", TKOVision::inst()->lastTimestamp);
-		Wait(LOOPTIME - loopTimer.Get());
-		loopTimer.Reset();
+		Wait(LOOPTIME);
 	}
 	printf("Ending OperatorControl \n");
 }
