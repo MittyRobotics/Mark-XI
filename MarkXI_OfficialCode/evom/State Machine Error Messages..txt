@@ -1,0 +1,9 @@
+Awad, Murad
+
+					Statemachine Error Messages
+
+Solenoid Retract Error: “Unable to retract the solenoid.”
+Latch Open Error: “Unable to open the latch.”
+Piston Extend Error: “Unable to extend pistons.”
+Spring Stretch error: “Unable to stretch the spring.” 
+Latch Lock Error: “Unable to lock the latch.” 
