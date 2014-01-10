@@ -1,4 +1,4 @@
-//Last edited by Vadim Korolik
+ //Last edited by Vadim Korolik
 //on 07/27/2013
 #ifndef __TKOLOGGER_H
 #define __TKOLOGGER_H
