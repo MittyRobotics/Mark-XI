@@ -20,11 +20,14 @@ TKOVision::TKOVision():
 		stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
 {
 	picProcessT = new Task("TKOVisProc", (FUNCPTR) ProcessRunner);
-	picProcessT->SetPriority(255); //lowest priority, lower than driving etc.
+	picProcessT->SetPriority(200); //lowest priority, lower than driving etc.
 	lastDist = 0.;
 	lastProcessingTime = 0.;
 	lastTimestamp = 0.;
 	AxisCamera::GetInstance().WriteBrightness(30); //add setting writing
+	AxisCamera::GetInstance().WriteMaxFPS(30);
+	AxisCamera::GetInstance().WriteCompression(30);
+	
 //	rawImage = new RGBImage();
 //	thresholdImage = new BinaryImage(); // get just the green target pixels
 //	convexHullImage = new BinaryImage();
@@ -52,7 +55,7 @@ bool TKOVision::ProccessImageFromCamera()
 	///////////^^^^^////////////// remove
 	if (not picProcessT->IsReady())
 	{
-		printf("Pic task not ready...");
+		printf("Pic task not ready...\n");
 		return false;
 	}
 	rawImage = new RGBImage();
@@ -60,10 +63,11 @@ bool TKOVision::ProccessImageFromCamera()
 	convexHullImage = new BinaryImage();
 	filteredImage = new BinaryImage();
 
-	printf("Starting proccessing actually");
+	printf("Starting proccessing actually\n");
 	
 	Threshold redThreshRGB(60,140,70,140,70,140); //USED IN RGB Threshold
 	Threshold redThreshHSV(220,255,60,255,100,255);
+	Threshold redThreshHSV2(220,255,20,255,140,255);
 	//Threshold redThreshHSV(84,255,64,255,93,255);
 	///this is a red threshold ^
 	///this is a green threshold
@@ -75,32 +79,40 @@ bool TKOVision::ProccessImageFromCamera()
 
 	if (rawImage == NULL)
 	{
-		printf("Raw Image null");
+		printf("Raw Image null\n");
 		return false;
 	}
-	printf("Raw Image not null");
+	printf("Raw Image not null\n");
 	if (AxisCamera::GetInstance().GetImage(rawImage) == false) //TODO Check that camera is set to proper res in browser
 		return false;
-	printf("Get Image returned true.");
+	printf("Get Image returned true.\n");
 	if (rawImage->GetHeight() == 0 or rawImage->GetWidth() == 0 or rawImage->StatusIsFatal())
 	{
-		printf("Camera received invalid image.");
+		printf("Camera received invalid image.\n");
 		return false;
 	}
-	printf("Camera recived a valid image.");
+	printf("Camera recived a valid image.\n");
 		
-	rawImage->Write("/pics/rawImage.bmp"); //stack some num pics back?
+	
 	//validated image, up to here only raw image processing
 	
-	thresholdImage = rawImage->ThresholdHSV(redThreshHSV);
+	thresholdImage = rawImage->ThresholdHSV(redThreshHSV2);
 	//	thresholdImage->Write("/pics/processed/thresholdImage.bmp");
-	printf("Prosseced HSV Threshold");
+	printf("Prosseced HSV Threshold\n");
 	convexHullImage = thresholdImage->ConvexHull(true); //check difference between true and false
 	//	convexHullImage->Write("/pics/processed/hullImage.bmp");
-	printf("Prosseced Convex Hull");
+	printf("Prosseced Convex Hull\n");
 	filteredImage = convexHullImage->ParticleFilter(criteria, 1);	//Remove small particles	
 	//filteredImage->RemoveSmallObjects(true, 20);
-	filteredImage->Write("/pics/filteredImage.bmp");
+	printf("Convex Hull success!\n");
+	if (stick3.GetTrigger())
+	{
+		Wait(1.);
+		filteredImage->Write("/pics/filteredImage.bmp");
+		rawImage->Write("/pics/rawImage.bmp"); //stack some num pics back?
+		printf("Wrote files.\n");
+		Wait(5.);
+	}
 	
 	printf("Prosseced Particle Filter\n");
 	printf("Done Prossecing\n");
@@ -202,30 +214,31 @@ bool TKOVision::ProccessImageFromCamera()
 			}
 		}
 		lastParticleReport = reports;
-		// be sure to delete images after using them
-		delete filteredImage;
-		delete thresholdImage;
-		delete rawImage;
-		delete convexHullImage;
-		
-		//delete allocated reports and Scores objects also
-		delete scores;
-		delete reports;
 
 		printf("Targets were in image\n");
 		printf("Targets were found in image\n");
 		printf("Distance from target %f\n", lastDist);
 		lastTimestamp = GetClock();
-		lastProcessingTime = timeStart - lastTimestamp;
-		return true;
+		lastProcessingTime = lastTimestamp - timeStart;
 	}
 	else
 	{
 		printf("Processed image from camera\n");
 		printf("No targets found.\n");
-		return false;
 	}
 	
+	// be sure to delete images after using them
+	delete filteredImage;
+	delete thresholdImage;
+	delete rawImage;
+	delete convexHullImage;
+	
+	//delete allocated reports and Scores objects also
+	delete scores;
+	delete reports;
+	
+
+	return true;
 }
 void TKOVision::StartProcessing()
 {

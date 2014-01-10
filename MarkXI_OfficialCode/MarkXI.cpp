@@ -82,11 +82,11 @@ void MarkXI::OperatorControl()
 	{
 		DSClear();
 		
-		DSLog(1, "Dist: %f", TKOVision::inst()->lastDist);
+		DSLog(1, "Dist: %f", TKOVision::inst()->getLastDistance());
 		DSLog(2, "Hot: %d", TKOVision::inst()->lastTarget.Hot);
-		DSLog(3, "Proc %f", TKOVision::inst()->lastProcessingTime);
+		DSLog(3, "Proc %f", TKOVision::inst()->getLastProcessingTime());
 		DSLog(4, "Clock %f", GetClock());
-		DSLog(5, "LastT %f", TKOVision::inst()->lastTimestamp);
+		DSLog(5, "LastT %f", TKOVision::inst()->getLastTimestamp());
 		Wait(LOOPTIME);
 	}
 	printf("Ending OperatorControl \n");
