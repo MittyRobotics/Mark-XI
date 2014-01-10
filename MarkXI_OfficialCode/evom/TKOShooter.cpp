@@ -1,60 +1,37 @@
 //Last edited by Vadim Korolik
 //on 01/04/2014
-#include "TKOShooter.h"
+#include "tkoShooter.h"
 
-TKOShooter* TKOShooter::tkoShooterInstance = NULL;
-///Constructor for the TKOShooter class
+tkoShooter* tkoShooter::tkoShooterInstance = NULL;
+///Constructor for the tkoShooter class
 
-TKOShooter::TKOShooter()
+tkoShooter::tkoShooter()
 {
 }
-TKOShooter* TKOShooter::inst()
+tkoShooter* tkoShooter::newShooterInstance()
 {
-	if (!tkoShooterInstance)
-	{
-		printf("TKOVision instance is null\n");
-		tkoShooterInstance = new TKOShooter;
-	}
-	return tkoShooterInstance;
 }
 
-void TKOShooter::ShooterTaskRunner()
+void tkoShooter::runShooterTask()
 {
-	while (true)
-	{
-		tkoShooterInstance->shooterProcess();
-	}
 }
 
-void TKOShooter::shooterProcess()
-{
-	if (not needToShoot)
-		return;
-	if (shootTarget == 0)
-		return;
-	
-	needToShoot = true;
-	shootTarget = 0;
+int tkoShooter::runStateMachine() {
+	return 0;
 }
 
-void TKOShooter::Start()
+void tkoShooter::shooterProcess()
 {
-	shooterTask->Start();
 }
 
-void TKOShooter::Stop()
+void tkoShooter::startShooter()
 {
-	if (shooterTask->Verify())
-		shooterTask->Stop();
 }
 
-void TKOShooter::shootDist(double distance)
+void tkoShooter::stopShooter()
 {
-	shootTarget = distance;
-	needToShoot = true;
 }
 
-///Destructor for the TKOAutonomous class
-TKOShooter::~TKOShooter()
+tkoShooter::~tkoShooter()
 {
 }

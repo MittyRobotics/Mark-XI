@@ -5,19 +5,19 @@
 
 #include "../Definitions.h"
 
-class TKOShooter
+class tkoShooter
 {
 	public:
-		TKOShooter();
-		~TKOShooter();
+		tkoShooter();
+		~tkoShooter();
 		void shootDist(double distance);
-		static TKOShooter* inst();
+		static tkoShooter* inst();
 		void Start();
 		void Stop();
 	private:
 		Task *shooterTask;
-		static TKOShooter* tkoShooterInstance;
-		static void ShooterTaskRunner();
+		static tkoShooter* newShooterInstance;
+		static void runShooterTask();
 		void shooterProcess();
 		bool needToShoot;
 		double shootTarget;
