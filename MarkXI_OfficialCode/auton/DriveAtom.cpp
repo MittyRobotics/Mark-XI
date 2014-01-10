@@ -4,7 +4,7 @@
 // add in the motors and jags some where near here
 //This is a change
 
-Drive_Atom::Drive_Atom(float feet, float distanceAlreadyTraveled, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4)
+Drive_Atom::Drive_Atom(float feet, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4)
 {
 	const float REVS_PER_FOOT = 0.7652439024;
 	_distance = feet * REVS_PER_FOOT; 

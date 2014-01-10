@@ -37,7 +37,7 @@ Molecule::~Molecule(){}
 
 void Molecule::addAtom(Atom *a)
 {
-	list.push(a);
+		list.push(a);
 }
 
 

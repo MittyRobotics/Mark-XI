@@ -30,6 +30,7 @@ class MarkXI: public SimpleRobot
 	public:
 		Joystick stick1, stick2, stick3, stick4; // define joysticks
 		DriverStation *ds; // define driver station object
+		Molecule moveRightBox;  
 		void Disabled();
 		void Autonomous();
 		void RobotInit();
@@ -78,6 +79,13 @@ void MarkXI::Disabled()
 
 void MarkXI::Autonomous(void)
 {
+	printf("Auton Test Starting"); 
+	moveRightBox.init();
+//	moveRightBox.addAtom(); 
+	
+		
+	
+	
 	
 //	printf("Starting Autonomous \n");
 //	TKOVision::inst()->StartProcessing();
