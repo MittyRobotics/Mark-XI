@@ -6,7 +6,7 @@
 //on 01/04/2014
 #include "TKOLogger.h"
 
-TKOLogger* TKOLogger::m_Instance = NULL;
+TKOLogger* TKOLogger::_instance = NULL;
 /*!!!!!!!
  * TO USE:
  * SEE HEADER FILE COMMENTS
@@ -14,126 +14,139 @@ TKOLogger* TKOLogger::m_Instance = NULL;
 
 TKOLogger::TKOLogger()
 {
+	// This should be the first singleton to be constructed
 	printf("Constructing logger\n");
-	logTask = new Task("Logging", (FUNCPTR) LogRunner); // create a new task called Logging which runs LogRunner
-	logTask->SetPriority(254); // use the constants first/wpilib provides?
-	logFile.open("logT.txt", ios::app); // open logT.txt in append mode
+	_logTask = new Task("Logging", (FUNCPTR) LogRunner); // create a new task called Logging which runs LogRunner
+	_logTask->SetPriority(254); // use the constants first/wpilib provides?
+	_logFile.open("logT.txt", ios::app); // open logT.txt in append mode
 	printf("Done initializing logger\n");
-	if (logFile.is_open())
+	if (_logFile.is_open())
 	{
 		printf("Logfile OPEN ON BOOT!!!!\n");
-		logFile.close();
+		_logFile.close();
 	}
 	struct stat filestatus;
 	stat("logT.txt", &filestatus);
 	printf("File: %i%s", (int)filestatus.st_size, " bytes\n");
 	addMessage("-------Logger booted---------");
+	_printSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
+	_bufSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
 	AddToSingletonList();
 
 	printf("Initialized logger\n");
 }
+
 TKOLogger::~TKOLogger()
 {
-	delete logTask;
-	m_Instance = NULL;
+	// If semaphore is being used by a task when semDelete is called,
+	// the task will unblock and return ERROR
+	Stop();        // TODO: is this necessary?
+	semDelete(_printSem);
+	semDelete(_bufSem);
+	delete _logTask;
+	_instance = NULL;
 }
+
 void TKOLogger::Start()
 {
-	logFile.open("logT.txt", ios::app); // TODO open the file twice???
-	logTask->Start();
-	if (logFile.is_open())
-		printf("Logfile OPEN!!!!\n");
+	// This should be the first class to be Started after enabling
+	_logFile.open("logT.txt", ios::app); // open logT.txt in append mode
+	if (_logFile.is_open())
+		Printf("Logfile OPEN!!!!\n");
 	else
-		printf("FILE CLOSED!!!!\n");
-	printf("Logger started\n");
+		Printf("FILE CLOSED!!!!\n");
+	Printf("Logger started\n");
+	_logTask->Start();
 }
+
 void TKOLogger::Stop()
 {
-	//before actually stopping or closing file, make sure that buffer is emtied and flushed
-	while (messBuffer.size() > 0)
-	{
-		writeBuffer();
+	// This should be the last class to be Stopped after disabling
+	Synchronized sem(_bufSem);
+	if (_logTask->Verify()) {
+		_logTask->Stop();
+	}
+	if (_logFile.fail()) {
+		Printf("LOG FILE FAILED WHILE WRITING\n"); // TODO: is it okay to take 2 semaphores at the same time?
+	} else if (!_logFile.is_open()) {
+		Printf("LOG FILE CLOSED WHILE WRITING\n");
+	} else {
+		while (_messBuffer.size() > 0) {
+			_logFile << _messBuffer.front();
+			_logFile << "\n";
+			_messBuffer.pop();
+		}
+		_logFile.flush();
+		_logFile.close();
 	}
 
-	if (logTask->Verify())
-		logTask->Stop();
-	if (logFile.is_open())
-	{
-		logFile.flush();
-		logFile.close();
-	}
-	else
-		printf("Logger stopping but log file already CLOSED!!!\n");
-	printf("Logger stopped\n");
+	Printf("Logger stopped\n");
 }
+
 void TKOLogger::LogRunner()
 {
-	while(true)
-	{
-		if (!m_Instance)
-		{
+	while (true) {
+		if (!_instance) {
 			printf("Invalid Logger instance\n");
 			break;
 		}
-		m_Instance->writeBuffer(); // TODO is this thread safe???
+		{
+			Synchronized sem(_bufSem);
+			if (_instance->_logFile.fail()) {
+				_instance->Printf("LOG FILE FAILED WHILE WRITING\n");
+			} else if (!_instance->_logFile.is_open()) {
+				_instance->Printf("LOG FILE CLOSED WHILE WRITING\n");
+			} else {
+				if (_instance->_messBuffer.size() > 0) {
+					_instance->_logFile << _instance->_messBuffer.front();
+					_instance->_logFile << "\n";
+					_instance->_messBuffer.pop();
+				}
+			}
+		}
 		Wait(0.025);
 	}
 }
+
 TKOLogger* TKOLogger::inst()
 {
-	if (!m_Instance)
-		m_Instance = new TKOLogger;
-	return m_Instance;
-}
-
-void TKOLogger::writeBuffer()
-{
-	if (logFile.is_open())
-	{
-		if(messBuffer.size() > 0)
-		{
-			logFile << messBuffer.front();
-			logFile << "\n";
-			messBuffer.pop();
-		}
-	}
-	if (logFile.bad() or not logFile.is_open())
-	{
-		printf("LOG FILE BAD OR CLOSED WHILE WRITING\n");
-		Stop();
-	}
-
+	if (!_instance)
+		_instance = new TKOLogger;
+	return _instance;
 }
 
 void TKOLogger::addMessage(const char *format, ...)
 {
-	char s[256];
+	int nBytes;
+	char s[_MAX_BUF_LENGTH + 1];        // Allocate extra character for '\0'
+	nBytes = sprintf(s, "Time: %f     Message: ", GetTime());
 	va_list args;
 	va_start(args, format);
-	vsprintf(s, format, args);
+	nBytes += vsnprintf(s + nBytes, _MAX_BUF_LENGTH + 1 - nBytes, format, args);
 	va_end(args);
-	std::ostringstream newMess;
-	newMess << "Time:   " << GetTime() << "          Message: " << s;
-	string newMessStr = newMess.str();
-
-    // suggest leaving a blank line seperating the sem object from the rest of the code
-	{
-		Synchronized sem(_bufSem);     // TODO: make other uses of messBuffer thread-safe with _bufSem
-		messBuffer.push(newMessStr);   // TODO: what happens to tasks when robot is disabled?
+	if (nBytes > _MAX_BUF_LENGTH) {
+		nBytes = _MAX_BUF_LENGTH;
 	}
+	string s2(s, nBytes);
+
+	{
+		Synchronized sem(_bufSem);     // TODO: make other uses of _messBuffer thread-safe with _bufSem
+		_messBuffer.push(s2);
+	}
+
+	fputs(s2.c_str(), stdout);
 }
 
 void TKOLogger::Printf(const char *format, ...)
 {
-	char s[256];
+	char s[_MAX_BUF_LENGTH + 1];
 	va_list args;
 	va_start(args, format);
-	vsprintf(s, format, args);
+	vsnprintf(s, _MAX_BUF_LENGTH + 1, format, args);   // Ignore return value
 	va_end(args);
 
-    // same here as line 119
 	{
 		Synchronized sem(_printSem);
-		printf(s);
+		fputs(s, stdout);
 	}
 }

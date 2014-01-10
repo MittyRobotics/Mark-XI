@@ -55,12 +55,12 @@ class TKOLogger: public SensorBase
 		SEM_ID _bufSem;
 		TKOLogger();
 		~TKOLogger();
-		Task *logTask;
+		const int _MAX_BUF_LENGTH = 255;
+		Task *_logTask;
 		static void LogRunner();
-		void writeBuffer();
-		static TKOLogger* m_Instance;
-		ofstream logFile;
-		queue<string> messBuffer;
+		static TKOLogger* _instance;
+		ofstream _logFile;
+		queue<string> _messBuffer;
 };
 
 #endif
