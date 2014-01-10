@@ -32,15 +32,18 @@ VisionFunc* VisionFunc::inst()
  */
 double VisionFunc::computeDistance (BinaryImage *image, ParticleAnalysisReport *report) {
 	double rectLong, height;
-	int targetHeight;
-	
+	double targetHeight;
+	int divToInches = 1;
+	//Vertical reflector 4" wide x 32" tall, horizontal 23.5" wide x 4" tall
+	//OUR GHETTO: Vertical reflector 4" wide x 18" tall, horizontal 24" wide x 4" tall
 	imaqMeasureParticle(image->GetImaqImage(), report->particleIndex, 0, IMAQ_MT_EQUIVALENT_RECT_LONG_SIDE, &rectLong);
 	//using the smaller of the estimated rectangle long side and the bounding rectangle height results in better performance
 	//on skewed rectangles
-	height = min(report->boundingRect.height, rectLong);
-	targetHeight = 32; //SO THIS IS HEIGHT OF VERTICAL RECTANGLE???
-	
-	return Y_IMAGE_RES * targetHeight / (height * 12 * 2 * tan(VIEW_ANGLE*PI/(180*2)));
+	height = min(report->boundingRect.height, rectLong); //what is rectLong????
+	//i guess it is the length of the particle (verticle rect) in the image, as calculated by imaq and NOT by the boundingRect...
+	targetHeight = 17.75; //SO THIS IS HEIGHT OF VERTICAL RECTANGLE???
+	printf("TarHeight: %f\n", height);
+	return Y_IMAGE_RES * targetHeight / (height * divToInches * 2 * tan(VIEW_ANGLE*PI/(180*2))); 
 }
 
 /**
