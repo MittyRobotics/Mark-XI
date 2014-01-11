@@ -63,6 +63,7 @@ int TKOShooter::runStateMachine ()
 
     */
 
+    //Ball code
     if (keepGoing) {
         for (int i = 0; i < 5; i++) {
             ballState = true; //Get ball state here
@@ -79,6 +80,8 @@ int TKOShooter::runStateMachine ()
         }
     }
 
+
+    //Arm code
     if (keepGoing) {
         for (int i = 0; i < 5; i++) {
             armsState = true; //Get arms state here
@@ -99,6 +102,7 @@ int TKOShooter::runStateMachine ()
         return 1;
     }
 
+    //Solenoid code
     if (keepGoing) {
         for (int i = 0; i < 5; i++) {
             solenoidState = true; //Get solenoid state here
@@ -118,6 +122,7 @@ int TKOShooter::runStateMachine ()
         return 2;
     }
 
+    //Latch open code
     if (keepGoing) {
         for (int i = 0; i < 5; i++) {
             latchState = true; //Get latch state here
@@ -136,11 +141,71 @@ int TKOShooter::runStateMachine ()
         //Error code 3 - solenoids
         return 3;
     }
-    
+
+    //Piston code
+    if (keepGoing) {
+        for (int i = 0; i < 5; i++) {
+            pistonState = true; //Get piston state here
+            if (pistonState) {
+                //Just in case not first try
+                keepGoing = true;
+                break;
+            }
+            else {
+                //Try and extend pistons
+                keepGoing = false;
+            }
+        }
+    }
+    else {
+        //Error code 4 - latches
+        return 4;
+    }
+
+    //Catapult code
+    if (keepGoing) {
+        for (int i = 0; i < 5; i++) {
+            catState = true; //Get catapult state here
+            if (catState) {
+                //Just in case not first try
+                keepGoing = true;
+                break;
+            }
+            else {
+                //Try and push catapult back
+                keepGoing = false;
+            }
+        }
+    }
+    else {
+        //Error code 5 - pistons
+        return 5;
+    }
+
+    //Latch state
+    if (keepGoing) {
+        for (int i = 0; i < 5; i++) {
+            latchState = true; //Get latch state here
+            if (latchState) {
+                //Just in case not first try
+                keepGoing = true;
+                break;
+            }
+            else {
+                //Try and lock latch
+                keepGoing = false;
+            }
+        }
+    }
+    else {
+        //Error code 6 - catapult
+        return 6;
+    }   
 
     //Rest of state machine logic
     if (keepGoing) {
-	return 0;}
+        return 0;
+    }
     else {
         //TODO Finish error codes
         return 1;
