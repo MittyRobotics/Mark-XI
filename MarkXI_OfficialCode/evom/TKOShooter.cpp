@@ -79,9 +79,8 @@ int TKOShooter::runStateMachine ()
         Try to lock the latch
     8 - Latch not unlocked when shooting
         Try to unlock latch
-    9 - 
-    10 -
-    11 - 
+        
+        
 
     */
 
