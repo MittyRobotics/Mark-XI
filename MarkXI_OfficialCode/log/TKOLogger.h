@@ -55,7 +55,7 @@ class TKOLogger: public SensorBase
 		SEM_ID _bufSem;
 		TKOLogger();
 		~TKOLogger();
-		const int _MAX_BUF_LENGTH = 255;
+		const static int _MAX_BUF_LENGTH = 255;
 		Task *_logTask;
 		static void LogRunner();
 		static TKOLogger* _instance;
