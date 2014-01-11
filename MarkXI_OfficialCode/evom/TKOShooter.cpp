@@ -1,6 +1,5 @@
 //Edited by Ritwik Dutta
-#include "TKOShooter.h"
-
+#include "TKOShooter.h
 /*This is the TKOShooter class, which
 provides a system of readying the shooter,
 checking for important problems, and 

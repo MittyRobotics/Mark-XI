@@ -4,7 +4,7 @@
 #define __TKOSHOOTER_H
 
 //Ha ha
-#define gg ;
+#define gg ; 
 
 
 #include "../Definitions.h"
