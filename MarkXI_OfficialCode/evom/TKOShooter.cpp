@@ -13,7 +13,7 @@ shooting it.
 */
 
 //Shooter instance var
-TKOShooter*  TKOShooter::tkoShooterInstance = NULL;
+  TKOShooter::tkoShooterInstance = NULL;
 
 
 TKOShooter::TKOShooter ()
