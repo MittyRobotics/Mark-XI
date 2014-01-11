@@ -63,13 +63,20 @@ int TKOShooter::runStateMachine ()
     Error Codes
     +++++++++++
 
-    1 -
-    2 - 
-    3 - 
-    4 - 
-    5 - 
-    6 - 
+    1 - Ball not in arms
+        No code runs
+    2 - Arms not in position
+        No code run
+    3 - Solenoids not set to retract
+        Try to set solenoids to retract
+    4 - Latch not open
+        Try to open latch
+    5 - Pistons not extended
+        Try to extend pistons
+    6 - Catapult not pushed back (spring not extended)
+        Try to extend spring
     7 - 
+    +
     8 - 
     9 - 
     10 -
