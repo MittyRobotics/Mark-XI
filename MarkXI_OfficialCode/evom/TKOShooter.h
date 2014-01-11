@@ -11,15 +11,14 @@ class tkoShooter
 		tkoShooter();
 		~tkoShooter();
 		static tkoShooter* inst();
-		void Start();
-		void Stop();
+		static bool isShooterReady();
+		void startShooter();
+		void stopShooter();
 	private:
 		Task *shooterTask;
 		static tkoShooter* newShooterInstance;
 		static void runShooterTask();
 		static int runStateMachine();
-		static void startShooter();
-		static void stopShooter();
 		static void ~tkoShooter();
 		void shooterProcess();
 		
