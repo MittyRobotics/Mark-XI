@@ -10,7 +10,7 @@ class TKOShooter
 	public:
 		TKOShooter();
 		~TKOShooter();
-		static TKOShooter* newShooterInstance;
+		static TKOShooter* newShooterInstance();
 		void startShooter();
 		void launchShooter();
 		void stopShooter();

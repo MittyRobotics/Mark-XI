@@ -2,8 +2,7 @@
 //on 01/04/2014
 #include "TKOShooter.h"
 
-TKOShooter *
-  TKOShooter::tkoShooterInstance = NULL;
+TKOShooter*  TKOShooter::tkoShooterInstance = NULL;
 ///Constructor for the tkoShooter class
 
 TKOShooter::TKOShooter ()
@@ -19,27 +18,23 @@ TKOShooter* TKOShooter::newShooterInstance ()
 	return tkoShooterInstance;
 }
 
-int
-TKOShooter::runStateMachine ()
+int TKOShooter::runStateMachine ()
 {
-  return 0;
+	return 0;
 }
 
-void
-TKOShooter::startShooter ()
+void TKOShooter::startShooter ()
 {
 }
 
-void
-TKOShooter::stopShooter ()
+void TKOShooter::stopShooter ()
 {
 }
 
-void
-TKOShooter::launchShooter ()
+void TKOShooter::launchShooter ()
 {
 }
 
-TKOShooter::~TKOShooter ()
+void TKOShooter::~TKOShooter ()
 {
 }
