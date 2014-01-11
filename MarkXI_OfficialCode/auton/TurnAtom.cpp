@@ -8,7 +8,7 @@
 //
 
 
-Turn_Atom::Turn_Atom(float ang, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4, TKOGyro* gyro)
+Turn_Atom::Turn_Atom(float ang, float currentAngle, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4, TKOGyro* gyro)
 {
 	// const float REVS_PER_FOOT = 0.7652439024;
 	_angle = ang /* * REVS_PER_FOOT*/; 
@@ -30,7 +30,7 @@ void Turn_Atom::resetEncoders()
 void Turn_Atom::run()
 {
 	
-	
+	TKOGyro::inst()->reset();
 	// do really cool things with the motors here
 	// like turn in circles here
 	

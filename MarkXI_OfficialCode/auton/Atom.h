@@ -4,7 +4,8 @@
 class Atom {
 	
 	public:
-		virtual void run();
+		Atom();
+		virtual void run() = 0;
 		virtual ~Atom(){}
 };
 #endif

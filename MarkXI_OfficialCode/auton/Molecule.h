@@ -13,9 +13,10 @@ class Molecule {
 		void MoleculeInit();
 		Molecule();
 		~Molecule();
-	private:
-		std::queue<Atom*> list;
 		CANJaguar drive1, drive2, drive3, drive4;
+	private:
+		std::queue<Atom*> _list;
+		
 	
 };
 

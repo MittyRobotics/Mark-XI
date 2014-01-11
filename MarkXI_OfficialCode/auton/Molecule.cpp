@@ -32,22 +32,31 @@ void Molecule::MoleculeInit() {
 
 }
 
-Molecule::~Molecule(){}
+Molecule::~Molecule(){
+	
+	while(_list.size()>0)
+	{
+		Atom *a = _list.front();
+		_list.pop();
+		delete a;
+	}
+}
 
 
 void Molecule::addAtom(Atom *a)
 {
-		list.push(a);
+		_list.push(a);
 }
 
 
 void Molecule::start()
 {
 	unsigned int i = 0;
-	for ( ; i < list.size(); i++ )
+	for ( ; i < _list.size(); i++ )
 	{
-		Atom* a = list.front();
+		Atom* a = _list.front();
 		a->run();
-		list.pop();
+		_list.pop();
+		delete a;
 	}
 }
