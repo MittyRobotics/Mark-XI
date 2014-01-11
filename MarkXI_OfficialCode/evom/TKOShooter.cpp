@@ -25,21 +25,84 @@ void throwError( int errorCode)
 int TKOShooter::runStateMachine ()
 {
 
-    //Boolean clause declarations
-        //Conditional code goes here
-    bool ballState = false;
-    bool armsState = false;
-    bool solenoidState = false;
-    int solenoidLoop = 0;
-    bool latchState = false;
-    int latchLoop1 = 0;
-    int latchLoop2 = 0;
-    int latchLoop3 = 0;
-    bool pistonState = false;
-    int pistonLoop = 0;
-    bool catapultState = false;
-    int catapultLoop = 0;
-    //Creating logic tree
+    //Logic tree
+
+
+    if (keepGoing) {
+        for (int i = 0; i < 5; i++) {
+            ballState = true; //Get ball state here
+            if (ballState) {
+                //In case not first attempt
+                keepGoing = true;
+                break;
+            }
+            else {
+                //Don't keep going - stop
+                keepGoing = false;
+            }
+        }
+    }
+    else {
+        //Error code 1 - ball
+        return 1;
+    }
+
+    if (keepGoing) {
+        for (int i = 0; i < 5; i++) {
+            armsState = true; //Get arms state here
+            if (armsState) {
+                //In case not first attempt
+                keepGoing = true;
+                break;
+            }
+            else {
+                //Don't keep going - stop
+                keepGoing = false;
+            }
+        }
+    }
+    else { 
+        //Error code 2 - arms
+        return 2;
+    }
+
+    if (keepGoing) {
+        for (int i = 0; i < 5; i++) {
+            solenoidState = true; //Get solenoid state here
+            if (solenoidState) {
+                //Just in case not first try
+                keepGoing = true;
+                break;
+            }
+            else {
+                //Try and set solenoids to retract
+                keepGoing = false;
+            }
+        }
+    }
+    else {
+        //Error code 3 - solenoids
+        return 3;
+    }
+
+    if (keepGoing) {
+        for (int i = 0; i < 5; i++) {
+            latchState = true; //Get latch state here
+            if (latchState) {
+                //Just in case not first try
+                keepGoing = true;
+                break;
+            }
+            else {
+                //Try and open latch
+                keepGoing = false;
+            }
+        }
+    }
+    else {
+        //Error code 4 - latch
+        return 3;
+    }
     
 
     
