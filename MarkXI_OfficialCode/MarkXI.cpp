@@ -94,10 +94,10 @@ void MarkXI::Autonomous(void)
 	}
 	Wait(.1);
 	
-	TKOAutonomous::inst()->initAutonomous();
-	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
-	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
-	TKOAutonomous::inst()->startAutonomous();
+//	TKOAutonomous::inst()->initAutonomous();
+//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
+//	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
+//	TKOAutonomous::inst()->startAutonomous();
 	
 	TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");

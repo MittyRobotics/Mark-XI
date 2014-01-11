@@ -133,8 +133,6 @@ void TKOLogger::addMessage(const char *format, ...)
 		Synchronized sem(_bufSem);     // TODO: make other uses of _messBuffer thread-safe with _bufSem
 		_messBuffer.push(s2);
 	}
-
-	fputs(s2.c_str(), stdout);
 }
 
 void TKOLogger::printMessage(const char *format, ...)
