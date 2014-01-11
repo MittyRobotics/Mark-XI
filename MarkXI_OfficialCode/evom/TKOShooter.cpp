@@ -75,9 +75,10 @@ int TKOShooter::runStateMachine ()
         Try to extend pistons
     6 - Catapult not pushed back (spring not extended)
         Try to extend spring
-    7 - 
-    +
-    8 - 
+    7 - Latch not locked yet
+        Try to lock the latch
+    8 - Latch not unlocked when shooting
+        Try to unlock latch
     9 - 
     10 -
     11 - 
@@ -238,18 +239,28 @@ int TKOShooter::launchShooter ()
 {
     int readyShoot = tkoShooterInstance->runStateMachine();
     if (readyShoot == 0) {
-        //Open latch
-        bool latchOpen = false; //Check if latch opened
-        if (latchOpen) {
-            return 9;
+        //Open shooter
+        bool shootSuccess = true;
+        for (int i = 0; i < 5; i++) {
+            bool latchOpen = false; //Check if latch is open
+            if (latchOpen) {
+                shootSuccess = true;
+                break;
+            }   
+            else {
+                shootSuccess = false;
+                //Open shooter    
+            }
+        }
+        if (shootSuccess) {
+            return 9; 
         }
         else {
-            //Error code 8 - shooting latch unlock error
-            return 8;
+            return 8; 
         }
     }
     else {
-        //Return error to help driver figure out problem
+        //Return error from state machine to help driver figure out problem
         return readyShoot;
     }
 }
