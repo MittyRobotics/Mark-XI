@@ -137,7 +137,7 @@ void TKOLogger::addMessage(const char *format, ...)
 	fputs(s2.c_str(), stdout);
 }
 
-void TKOLogger::Printf(const char *format, ...)
+void TKOLogger::printf(const char *format, ...)
 {
 	char s[_MAX_BUF_LENGTH + 1];
 	va_list args;
