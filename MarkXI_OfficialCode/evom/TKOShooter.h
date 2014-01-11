@@ -11,12 +11,8 @@ class TKOShooter
 		TKOShooter();
 		~TKOShooter();
 		static TKOShooter* newShooterInstance();
-		void startShooter();
 		void launchShooter();
-		void stopShooter();
-	private:
-		static void runShooterTask();
-		static int runStateMachine();
+        static int runStateMachine();
 		
 };
 

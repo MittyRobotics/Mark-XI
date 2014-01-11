@@ -1,14 +1,26 @@
-//Last edited by Ritwik Dutta
-//on 01/04/2014
+//Edited by Ritwik Dutta
 #include "TKOShooter.h"
 
+/*This is the TKOShooter class, which
+provides a system of readying the shooter,
+checking for important problems, and 
+shooting it. 
+
+//TODO Finish implementing state machine
+//TODO Write comment explaining state machine 
+//TODO Write error handling function
+
+*/
+
+//Shooter instance var
 TKOShooter*  TKOShooter::tkoShooterInstance = NULL;
-///Constructor for the tkoShooter class
+
 
 TKOShooter::TKOShooter ()
 {	
 }
 
+//Shooter instance generator
 TKOShooter* TKOShooter::newShooterInstance ()
 {
 	if (!tkoShooterInstance) {
@@ -18,15 +30,19 @@ TKOShooter* TKOShooter::newShooterInstance ()
 	return tkoShooterInstance;
 }
 
+//Error throw function
 void throwError( int errorCode)
 {
 }
 
+//State machine function
 int TKOShooter::runStateMachine ()
 {
 
     //Logic tree
 
+    //Section structure
+    //TBA
 
     if (keepGoing) {
         for (int i = 0; i < 5; i++) {
@@ -105,23 +121,33 @@ int TKOShooter::runStateMachine ()
     }
     
 
-    
+    //Rest of state machine logic
  
 	return 0;
 }
 
-void TKOShooter::startShooter ()
+//Launch the shooter
+int TKOShooter::launchShooter ()
 {
+    int readyShoot = tkoShooterInstance->runStateMachine();
+    if (readyShoot == 0) {
+        //Open latch
+        bool latchOpen = false; //Check if latch opened
+        if (latchOpen) {
+            return 9;
+        }
+        else {
+            //Error code 10 - shooting latch unlock error
+            return 10;
+        }
+    }
+    else {
+        //Return error to help driver figure out problem
+        return readyShoot;
+    }
 }
 
-void TKOShooter::stopShooter ()
-{
-}
-
-void TKOShooter::launchShooter ()
-{
-}
-
+//TKOShooter class destructor
 void TKOShooter::~TKOShooter ()
 {
 }
