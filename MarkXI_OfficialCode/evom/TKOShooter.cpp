@@ -221,8 +221,8 @@ int TKOShooter::runStateMachine ()
         return 0;
     }
     else {
-        //TODO Finish error codes
-        return 11;
+        //Error code 7 - Lock latch
+        return 7;
     }
 }
 
@@ -237,8 +237,8 @@ int TKOShooter::launchShooter ()
             return 9;
         }
         else {
-            //Error code 10 - shooting latch unlock error
-            return 10;
+            //Error code 8 - shooting latch unlock error
+            return 8;
         }
     }
     else {
