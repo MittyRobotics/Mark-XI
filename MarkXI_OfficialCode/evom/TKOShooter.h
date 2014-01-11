@@ -1,26 +1,23 @@
-//Last edited by Vadim Korolik
+//Last edited by Ritwik Dutta
 //on 01/04/2014
 #ifndef __TKOSHOOTER_H
 #define __TKOSHOOTER_H
 
 #include "../Definitions.h"
 
-class tkoShooter
+class TKOShooter
 {
 	public:
-		tkoShooter();
-		~tkoShooter();
-		void shootDist(double distance);
-		static tkoShooter* inst();
-		void Start();
-		void Stop();
-	private:
-		Task *shooterTask;
+		TKOShooter();
+		~TKOShooter();
 		static tkoShooter* newShooterInstance;
+		void startShooter();
+		void launchShooter();
+		void stopShooter();
+	private:
 		static void runShooterTask();
-		void shooterProcess();
-		bool needToShoot;
-		double shootTarget;
+		static int runStateMachine();
+		
 };
 
 #endif

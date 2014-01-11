@@ -10,17 +10,13 @@ TKOShooter::TKOShooter ()
 {	
 }
 
-TKOShooter * TKOShooter::newShooterInstance ()
+TKOShooter* TKOShooter::newShooterInstance ()
 {
 	if (!tkoShooterInstance) {
 		printf("No tkoShooterInstance. Creating.");
 		tkoShooterInstance = new TKOShooter;
-	} 
-}
-
-void
-TKOShooter::runShooterTask ()
-{
+	}
+	return tkoShooterInstance;
 }
 
 int
