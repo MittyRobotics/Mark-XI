@@ -6,8 +6,7 @@ provides a system of readying the shooter,
 checking for important problems, and 
 shooting it. 
 
-//TODO Finish implementing state machine
-//TODO Write comment explaining state machine 
+//TODO Write shooter handler with tasks/auton
 //TODO Write error handling function
 
 */
