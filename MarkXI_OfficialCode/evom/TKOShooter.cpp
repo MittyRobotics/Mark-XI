@@ -6,7 +6,7 @@ TKOShooter *
   TKOShooter::tkoShooterInstance = NULL;
 ///Constructor for the tkoShooter class
 
-TKOShooter::tkoShooter ()
+TKOShooter::TKOShooter ()
 {
 }
 
