@@ -1,4 +1,4 @@
-//Last edited by Vadim Korolik
+//Last edited by Ritwik Dutta
 //on 01/04/2014
 #ifndef __TKOSHOOTER_H
 #define __TKOSHOOTER_H
@@ -10,7 +10,6 @@ class tkoShooter
 	public:
 		tkoShooter();
 		~tkoShooter();
-		void shootDist(double distance);
 		static tkoShooter* inst();
 		void Start();
 		void Stop();
@@ -18,9 +17,12 @@ class tkoShooter
 		Task *shooterTask;
 		static tkoShooter* newShooterInstance;
 		static void runShooterTask();
+		static int runStateMachine();
+		static void startShooter();
+		static void stopShooter();
+		static void ~tkoShooter();
 		void shooterProcess();
-		bool needToShoot;
-		double shootTarget;
+		
 };
 
 #endif
