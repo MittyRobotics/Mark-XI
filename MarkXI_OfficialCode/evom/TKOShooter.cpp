@@ -18,8 +18,32 @@ TKOShooter* TKOShooter::newShooterInstance ()
 	return tkoShooterInstance;
 }
 
+void throwError( int errorCode)
+{
+}
+
 int TKOShooter::runStateMachine ()
 {
+
+    //Boolean clause declarations
+        //Conditional code goes here
+    bool ballState = false;
+    bool armsState = false;
+    bool solenoidState = false;
+    int solenoidLoop = 0;
+    bool latchState = false;
+    int latchLoop1 = 0;
+    int latchLoop2 = 0;
+    int latchLoop3 = 0;
+    bool pistonState = false;
+    int pistonLoop = 0;
+    bool catapultState = false;
+    int catapultLoop = 0;
+    //Creating logic tree
+    
+
+    
+ 
 	return 0;
 }
 
