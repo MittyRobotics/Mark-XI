@@ -5,22 +5,20 @@
 
 #include "../Definitions.h"
 
-class tkoShooter
+class TKOShooter
 {
 	public:
-		tkoShooter();
-		~tkoShooter();
+		TKOShooter();
+		~TKOShooter();
 		static tkoShooter* inst();
-		static bool isShooterReady();
 		void startShooter();
+		void launchShooter();
 		void stopShooter();
 	private:
 		Task *shooterTask;
 		static tkoShooter* newShooterInstance;
 		static void runShooterTask();
 		static int runStateMachine();
-		static void ~tkoShooter();
-		void shooterProcess();
 		
 };
 
