@@ -42,7 +42,26 @@ int TKOShooter::runStateMachine ()
     //Logic tree
 
     //Section structure
-    //TBA
+    /* 
+    
+    if (keepGoing) {    Check if the code has failed so that an error message can be thrown
+        for (int i = 0; i < 5; i++) { We run the loop five times in case a temporary error can be fixed (e.g., arms in motion, connection flicker)
+            objState = getObjState(); Get the state of the object for the next check
+            if (objState) {
+                keepGoing = true; If it's not the first attempt, we don't want to stop if the process ends up succeeding
+                break; No need to continue the loop
+            }
+            else {
+                keepGoing = false; Assume the worst
+                setObjState(); Try to fix the problem
+            }
+        }
+    }
+    else {
+        return n; Return error code for previous state, since it set keepGoing to false. A bit confusing, but theoretically sound.
+    }
+
+    */
 
     if (keepGoing) {
         for (int i = 0; i < 5; i++) {
@@ -54,13 +73,10 @@ int TKOShooter::runStateMachine ()
             }
             else {
                 //Don't keep going - stop
+                //No ball interaction
                 keepGoing = false;
             }
         }
-    }
-    else {
-        //Error code 1 - ball
-        return 1;
     }
 
     if (keepGoing) {
@@ -73,13 +89,14 @@ int TKOShooter::runStateMachine ()
             }
             else {
                 //Don't keep going - stop
+                //No arm interaction
                 keepGoing = false;
             }
         }
     }
     else { 
-        //Error code 2 - arms
-        return 2;
+        //Error code 1 - ball
+        return 1;
     }
 
     if (keepGoing) {
@@ -97,8 +114,8 @@ int TKOShooter::runStateMachine ()
         }
     }
     else {
-        //Error code 3 - solenoids
-        return 3;
+        //Error code 2 - arms
+        return 2;
     }
 
     if (keepGoing) {
@@ -116,14 +133,18 @@ int TKOShooter::runStateMachine ()
         }
     }
     else {
-        //Error code 4 - latch
+        //Error code 3 - solenoids
         return 3;
     }
     
 
     //Rest of state machine logic
- 
-	return 0;
+    if (keepGoing) {
+	return 0;}
+    else {
+        //TODO Finish error codes
+        return 1;
+    }
 }
 
 //Launch the shooter
