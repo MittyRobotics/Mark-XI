@@ -176,7 +176,7 @@ int TKOShooter::runStateMachine ()
         }
     }
     else {
-        //Error code 4 - latches
+        //Error code 4 - latch
         return 4;
     }
 
