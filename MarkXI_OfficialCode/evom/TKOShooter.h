@@ -1,11 +1,10 @@
 //Last edited by Ritwik Dutta
-//on 01/04/2014
+//on 01/11/2014
 #ifndef __TKOSHOOTER_H
 #define __TKOSHOOTER_H
 
 //Ha ha
 #define gg ;
-
 
 
 #include "../Definitions.h"
