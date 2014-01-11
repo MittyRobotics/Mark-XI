@@ -1,4 +1,4 @@
-//Last edited by Vadim Korolik
+//Last edited by Ritwik Dutta
 //on 01/04/2014
 #include "tkoShooter.h"
 
