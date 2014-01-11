@@ -61,22 +61,37 @@ int TKOShooter::runStateMachine ()
         return n; Return error code for previous state, since it set keepGoing to false. A bit confusing, but theoretically sound.
     }
 
+    Error Codes
+    +++++++++++
+
+    1 -
+    2 - 
+    3 - 
+    4 - 
+    5 - 
+    6 - 
+    7 - 
+    8 - 
+    9 - 
+    10 -
+    11 - 
+
     */
 
+    bool keepGoing = true;
+
     //Ball code
-    if (keepGoing) {
-        for (int i = 0; i < 5; i++) {
-            ballState = true; //Get ball state here
-            if (ballState) {
-                //In case not first attempt
-                keepGoing = true;
-                break;
-            }
-            else {
-                //Don't keep going - stop
-                //No ball interaction
-                keepGoing = false;
-            }
+    for (int i = 0; i < 5; i++) {
+        ballState = true; //Get ball state here
+        if (ballState) {
+            //In case not first attempt
+            keepGoing = true;
+            break;
+        }
+        else {
+            //Don't keep going - stop
+            //No ball interaction
+            keepGoing = false;
         }
     }
 
@@ -208,7 +223,7 @@ int TKOShooter::runStateMachine ()
     }
     else {
         //TODO Finish error codes
-        return 1;
+        return 11;
     }
 }
 
