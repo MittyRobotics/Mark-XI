@@ -45,7 +45,7 @@ class TKOLogger: public SensorBase
 	public:
 		static TKOLogger* inst();
 		void addMessage(const char *format, ...);
-		void Printf(const char *format, ...);
+		void printf(const char *format, ...);
 		void Start();
 		void Stop();
 
