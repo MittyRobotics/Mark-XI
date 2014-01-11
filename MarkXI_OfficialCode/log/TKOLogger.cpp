@@ -134,7 +134,7 @@ void TKOLogger::addMessage(const char *format, ...)
 		_messBuffer.push(s2);
 	}
 
-	fputs(s2.c_str(), stdout);
+	//fputs(s2.c_str(), stdout);
 }
 
 void TKOLogger::printf(const char *format, ...)
