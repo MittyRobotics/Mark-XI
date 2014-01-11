@@ -71,9 +71,12 @@ int TKOShooter::runStateMachine ()
         Try to set solenoids to retract
     4 - Latch not open
         Try to open latch
-    5 - 
-    6 - 
+    5 - Pistons not extended
+        Try to extend pistons
+    6 - Catapult not pushed back (spring not extended)
+        Try to extend spring
     7 - 
+    +
     8 - 
     9 - 
     10 -
