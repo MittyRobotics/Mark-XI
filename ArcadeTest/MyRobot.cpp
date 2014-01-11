@@ -10,17 +10,19 @@
 class RobotDemo : public SimpleRobot
 {
 	RobotDrive myRobot; // robot drive system
-	Joystick stick; // only joystick
+	Joystick stick1, stick2; // only joystick
 	DriverStation *ds;
 
 public:
 	RobotDemo():
 		myRobot(DRIVE_L1_ID, DRIVE_L2_ID, DRIVE_R1_ID, DRIVE_R2_ID),	// these must be initialized in the same order
-		stick(STICK_1_PORT)		// as they are declared above.
+		stick1(STICK_1_PORT),		// as they are declared above.
+	    stick2(STICK_2_PORT)
 	{
 		myRobot.SetExpiration(0.1);
 	}
 
+	
 	/**
 	 * Drive left & right motors for 2 seconds then stop
 	 */
@@ -44,7 +46,7 @@ public:
 		myRobot.SetSafetyEnabled(true);
 		while (IsOperatorControl() && IsEnabled())
 		{
-			myRobot.ArcadeDrive(stick); // drive with arcade style (use right stick)
+			myRobot.ArcadeDrive(stick1, stick1.kDefaultXAxis, stick2, stick2.kDefaultYAxis); // drive with arcade style 2 stick
 			Wait(0.005);				// wait for a motor update time
 		}
 		printf("Arcade Disabled!\n");
