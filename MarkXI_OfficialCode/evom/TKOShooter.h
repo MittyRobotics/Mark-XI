@@ -18,6 +18,8 @@ class TKOShooter
 		static void runShooterTask();
 		static int runStateMachine();
 		
+		static TKOShooter* _instance;
+		
 };
 
 #endif
