@@ -17,7 +17,7 @@ TKOLogger::TKOLogger()
 	// This should be the first singleton to be constructed
 	printf("Constructing logger\n");
 	_logTask = new Task("Logging", (FUNCPTR) LogRunner); // create a new task called Logging which runs LogRunner
-	_logTask->SetPriority(254); // use the constants first/wpilib provides?
+	_logTask->SetPriority(Task::kDefaultPriority); // use the constants first/wpilib provides?
 	_logFile.open("logT.txt", ios::app); // open logT.txt in append mode
 	printf("Done initializing logger\n");
 	if (_logFile.is_open())
