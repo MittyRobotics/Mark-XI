@@ -1,5 +1,5 @@
-//Last edited by Ritwik Dutta
-//on 01/04/2014
+//Last edited by Vadim Korolik
+//on 01/11/2014
 #include "TKOShooter.h"
 
 TKOShooter *
@@ -7,7 +7,7 @@ TKOShooter *
 ///Constructor for the tkoShooter class
 
 TKOShooter::TKOShooter ()
-{	
+{
 }
 
 TKOShooter * TKOShooter::newShooterInstance ()
@@ -15,7 +15,7 @@ TKOShooter * TKOShooter::newShooterInstance ()
 	if (!tkoShooterInstance) {
 		printf("No tkoShooterInstance. Creating.");
 		tkoShooterInstance = new TKOShooter;
-	} 
+	}
 }
 
 void
