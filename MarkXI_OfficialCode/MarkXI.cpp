@@ -16,6 +16,10 @@
  * 
  * For shooter, create calibration curve, best fit equation of shoot power VS. ball flight dist
  * Use equation to calculate needed power for desired distance 
+ * 
+ */ 
+//TODO CRITICAL Figure out why Logger, Auton crash on cRio on boot (After deploy) Code compiles
+/*
  * -----------------------------LAST DONE-------------------------------*
  * 01/04 
  * 		Preparing as a core for build season

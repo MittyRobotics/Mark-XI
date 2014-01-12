@@ -115,7 +115,7 @@ TKOLogger* TKOLogger::inst()
 	return _instance;
 }
 
-void TKOLogger::addMessage(const char *format, ...)
+void TKOLogger::addMessage(const char *format, ...) //TODO Figure out why code crashes on cRio
 {
 	int nBytes;
 	char s[_MAX_BUF_LENGTH + 1];        // Allocate extra character for '\0'
