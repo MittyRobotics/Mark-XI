@@ -1,0 +1,1 @@
+http://stackoverflow.com/questions/133214/is-there-a-typical-state-machine-implementation-pattern
