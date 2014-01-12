@@ -19,6 +19,14 @@ typedef enum
 typedef struct instance_data instance_data_t;
 typedef state_t state_func_t( instance_data_t *data );
 
+state_t do_state_initial( instance_data_t *data );
+state_t do_state_foo( instance_data_t *data );
+state_t do_state_bar( instance_data_t *data );
+
+state_func_t* const state_table[ NUM_STATES ] = {
+    do_state_initial, do_state_foo, do_state_bar
+};
+
 class TKOShooter
 {
 	public:
@@ -31,8 +39,10 @@ class TKOShooter
 	private:
 		Task *shooterTask;
 		Task *stateMachineTask;
+		void initStateMachine();
 		bool startStateMachine();
 		bool stopStateMachine();
+		int runStateMachine();
 		bool startShooter();
 		bool stopShooter();
 		bool shooterDoAction(int action);
@@ -41,7 +51,22 @@ class TKOShooter
 		static void stateMachineTaskRunner();
 		
 		static TKOShooter* _instance;
+		state_t cur_state;
+		
 		
 };
 
 #endif
+
+/*
+ * int main( void ) {
+    state_t cur_state = STATE_INITIAL;
+    instance_data_t data;
+
+    while ( 1 ) {
+        cur_state = run_state( cur_state, &data );
+
+        // do other program logic, run other state machines, etc
+		}
+	}
+ */

@@ -4,14 +4,6 @@
 
 TKOShooter*  TKOShooter::_instance = NULL;
 
-state_t do_state_initial( instance_data_t *data );
-state_t do_state_foo( instance_data_t *data );
-state_t do_state_bar( instance_data_t *data );
-
-state_func_t* const state_table[ NUM_STATES ] = {
-    do_state_initial, do_state_foo, do_state_bar
-};
-
 state_t run_state( state_t cur_state, instance_data_t *data ) {
     return state_table[ cur_state ]( data );
 };
@@ -35,21 +27,45 @@ TKOShooter* TKOShooter::inst ()
 
 bool TKOShooter::Start()
 {
+	if (startStateMachine() and startShooter())
+		return true;
 	return false;
 }
 bool TKOShooter::Stop()
 {
+	if (stopStateMachine() and stopShooter())
+			return true;
 	return false;
 }
 
+void TKOShooter::initStateMachine()
+{
+	cur_state = STATE_INITIAL;
+}
 bool TKOShooter::startStateMachine()
 {
+	initStateMachine();
+	if (not stateMachineTask->Verify())
+		if (stateMachineTask->Start())
+			return true;
+	
 	return false;
 }
 bool TKOShooter::stopStateMachine()
 {
+	if (stateMachineTask->Verify())
+		if (stateMachineTask->Stop())
+			return true;
+	
 	return false;
 }
+int TKOShooter::runStateMachine()
+{
+	instance_data_t data; //TODO Figure out what the point of this data thing is; Why doesn't compile?
+	cur_state = run_state( cur_state, &data ); //TODO Do we need data? Can we remove it?
+	return -1;
+}
+
 bool TKOShooter::startShooter()
 {
 	return false;
@@ -69,7 +85,10 @@ void TKOShooter::shooterTaskRunner()
 }
 void TKOShooter::stateMachineTaskRunner()
 {
-	
+	while (true)
+	{
+		_instance->runStateMachine();
+	}
 }
 
 TKOShooter::~TKOShooter ()
