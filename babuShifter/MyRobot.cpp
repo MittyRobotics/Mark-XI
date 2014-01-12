@@ -6,12 +6,13 @@
 
 class ShifterDemo : public SimpleRobot
 {
+
+public:
 	CANJaguar drive1, drive2, drive3, drive4;
 	Joystick stick1, stick2;
 	Solenoid s1, s2;
 	TKORelay comp;
-
-public:
+	bool a_shift;
 	ShifterDemo():
 		drive1(DRIVE_L1_ID, CANJaguar::kPercentVbus),
 		drive2(DRIVE_L2_ID, CANJaguar::kPercentVbus),
@@ -26,6 +27,7 @@ public:
 		drive3.SetSafetyEnabled(false);
 		drive4.SetSafetyEnabled(false);
 		SetReference();
+		a_shift = true;
 	}
 
 	void Autonomous()
@@ -52,6 +54,8 @@ public:
 				Stop();
 				break;
 			}
+			if (stick2.GetRawButton(4))
+				a_shift = !a_shift;
 			TankDrive();
 		}
 	}
@@ -85,6 +89,18 @@ public:
 		}
 	}
 	
+	void ManualShift() {
+		if (stick2.GetRawButton(3)) {
+			s1.Set(!s1.Get());
+			s2.Set(!s2.Get());
+		}
+	}
+	
+	void ShiftStopPos() {
+		s1.Set(false);
+		s2.Set(false);
+	}
+	
 	void FullDrive() {
 		drive1.Set(-1.0);
 		drive2.Set(-1.0);
@@ -102,11 +118,23 @@ public:
 	}
 	
 	void Stop() {
+		ShiftStopPos();
+		Wait(0.5);
 		drive1.Set(0);
 		drive2.Set(0);
 		drive3.Set(0);
 		drive4.Set(0);
-		AutoShift();
+	}
+	
+	void ShiftControl() {
+		switch (a_shift) {
+			case true:
+				AutoShift();
+				break;
+			case false:
+				ManualShift();
+				break;
+		}
 	}
 	
 	void TankDrive() {
@@ -116,7 +144,7 @@ public:
 				drive2.Set(-stick1.GetY() * 0.4);
 				drive3.Set(stick2.GetY() * 0.4);
 				drive4.Set(stick2.GetY() * 0.4);
-				AutoShift();
+				ShiftControl();
 			}
 			else if (stick1.GetRawButton(2))
 			{
@@ -124,7 +152,7 @@ public:
 				drive2.Set(-stick1.GetY() * 0.2);
 				drive3.Set(stick2.GetY() * 0.2);
 				drive4.Set(stick2.GetY() * 0.2);
-				AutoShift();
+				ShiftControl();
 			}
 			else if (stick1.GetRawButton(4))
 			{
@@ -132,7 +160,7 @@ public:
 				drive2.Set(-stick1.GetY());
 				drive3.Set(stick2.GetY());
 				drive4.Set(stick2.GetY());
-				AutoShift();
+				ShiftControl();
 			}
 			else if (stick2.GetRawButton(2))
 			{
@@ -140,7 +168,7 @@ public:
 				drive2.Set(-stick1.GetY());
 				drive3.Set(stick1.GetY());
 				drive4.Set(stick1.GetY());
-				AutoShift();
+				ShiftControl();
 			}
 			else
 			{
@@ -148,7 +176,7 @@ public:
 				drive2.Set(-stick1.GetY() * 0.8);
 				drive3.Set(stick2.GetY() * 0.8);
 				drive4.Set(stick2.GetY() * 0.8);
-				AutoShift();
+				ShiftControl();
 			}
 	}
 };
