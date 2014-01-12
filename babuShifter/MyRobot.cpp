@@ -2,6 +2,8 @@
 #include "Definitions.h"
 #include "TKORelay.h"
 
+//Shifter code was made by Babu
+
 class ShifterDemo : public SimpleRobot
 {
 	CANJaguar drive1, drive2, drive3, drive4;
@@ -26,34 +28,34 @@ public:
 		SetReference();
 	}
 
-	/**
-	 * Drive left & right motors for 2 seconds then stop
-	 */
 	void Autonomous()
 	{
 		SetPID();
 		while (IsAutonomous()&&IsEnabled()) {
-			if (stick1.GetRawButton(3))
+			if (stick2.GetTrigger()) {
+				Stop();
 				break;
+			}
 			comp.SetOn(1);
-			
+			FullDrive();
+			Wait(25);
+			SlowestDrive();
+			Wait(25);
+			Stop();
 		}
 	}
 
-	/**
-	 * Runs the motors with arcade steering. 
-	 */
 	void OperatorControl()
 	{
-		while (IsOperatorControl()&&IsEnabled())
-		{
-			
+		while (IsOperatorControl()&&IsEnabled()) {
+			if (stick2.GetTrigger()) {
+				Stop();
+				break;
+			}
+			TankDrive();
 		}
 	}
 	
-	/**
-	 * Runs during test mode
-	 */
 	void Test() {
 
 	}
@@ -81,6 +83,73 @@ public:
 			s1.Set(false);
 			s2.Set(false);
 		}
+	}
+	
+	void FullDrive() {
+		drive1.Set(-1.0);
+		drive2.Set(-1.0);
+		drive3.Set(1.0);
+		drive4.Set(1.0);
+		AutoShift();
+	}
+	
+	void SlowestDrive() {
+		drive1.Set(-0.35);
+		drive2.Set(-0.35);
+		drive3.Set(0.35);
+		drive4.Set(0.35);
+		AutoShift();
+	}
+	
+	void Stop() {
+		drive1.Set(0);
+		drive2.Set(0);
+		drive3.Set(0);
+		drive4.Set(0);
+		AutoShift();
+	}
+	
+	void TankDrive() {
+		if (stick1.GetTrigger())
+			{
+				drive1.Set(-stick1.GetY() * 0.4);
+				drive2.Set(-stick1.GetY() * 0.4);
+				drive3.Set(stick2.GetY() * 0.4);
+				drive4.Set(stick2.GetY() * 0.4);
+				AutoShift();
+			}
+			else if (stick1.GetRawButton(2))
+			{
+				drive1.Set(-stick1.GetY() * 0.2);
+				drive2.Set(-stick1.GetY() * 0.2);
+				drive3.Set(stick2.GetY() * 0.2);
+				drive4.Set(stick2.GetY() * 0.2);
+				AutoShift();
+			}
+			else if (stick1.GetRawButton(4))
+			{
+				drive1.Set(-stick1.GetY());
+				drive2.Set(-stick1.GetY());
+				drive3.Set(stick2.GetY());
+				drive4.Set(stick2.GetY());
+				AutoShift();
+			}
+			else if (stick2.GetRawButton(2))
+			{
+				drive1.Set(-stick1.GetY());
+				drive2.Set(-stick1.GetY());
+				drive3.Set(stick1.GetY());
+				drive4.Set(stick1.GetY());
+				AutoShift();
+			}
+			else
+			{
+				drive1.Set(-stick1.GetY() * 0.8);
+				drive2.Set(-stick1.GetY() * 0.8);
+				drive3.Set(stick2.GetY() * 0.8);
+				drive4.Set(stick2.GetY() * 0.8);
+				AutoShift();
+			}
 	}
 };
 
