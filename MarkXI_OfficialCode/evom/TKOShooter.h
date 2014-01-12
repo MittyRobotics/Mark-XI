@@ -16,6 +16,10 @@ typedef enum
 } 
 	state_t;
 	
+typedef struct instance_data 
+{
+	
+};
 typedef struct instance_data instance_data_t;
 typedef state_t state_func_t( instance_data_t *data );
 

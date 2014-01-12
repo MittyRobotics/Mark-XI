@@ -61,8 +61,8 @@ bool TKOShooter::stopStateMachine()
 }
 int TKOShooter::runStateMachine()
 {
-	instance_data_t data; //TODO Figure out what the point of this data thing is; Why doesn't compile?
-	cur_state = run_state( cur_state, &data ); //TODO Do we need data? Can we remove it?
+	instance_data_t data;
+	cur_state = run_state( cur_state, &data );
 	return -1;
 }
 
