@@ -79,11 +79,11 @@ public:
 	}
 	
 	void AutoShift() {
-		if (min(drive1.GetSpeed(),drive2.GetSpeed())>15 && min(drive3.GetSpeed(),drive4.GetSpeed())>15) {
+		if (min(drive1.GetSpeed(),drive2.GetSpeed()) > MAX_RPM_1 && min(drive3.GetSpeed(),drive4.GetSpeed()) > MAX_RPM_1) {
 			s1.Set(true);
 			s2.Set(true);
 		}
-		if(max(drive1.GetSpeed(),drive2.GetSpeed())<15 || max(drive3.GetSpeed(),drive4.GetSpeed())<15) {
+		if(max(drive1.GetSpeed(),drive2.GetSpeed()) < MAX_RPM_1 || max(drive3.GetSpeed(),drive4.GetSpeed()) < MAX_RPM_1) {
 			s1.Set(false);
 			s2.Set(false);
 		}

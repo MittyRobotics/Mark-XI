@@ -47,6 +47,8 @@ const int DRIVE_L2_ID = 3;
 const int DRIVE_R1_ID = 4;
 const int DRIVE_R2_ID = 5;
 
+const int MAX_RPM_1 = 15; //RPM for first gear
+
 // Spinner constants
 const float RADIUS_WHEELS = 4;
 const float TAN_SPINNER_THETA = tan(57.5);
