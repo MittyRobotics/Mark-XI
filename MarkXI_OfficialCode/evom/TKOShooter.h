@@ -16,11 +16,12 @@ typedef enum
 } 
 	state_t;
 	
-typedef struct instance_data 
+typedef struct instance_data  //TODO figure out what data we need
 {
-	
-};
-typedef struct instance_data instance_data_t;
+	bool init;
+	bool dummy;	
+}instance_data_t;
+
 typedef state_t state_func_t( instance_data_t *data );
 
 state_t do_state_initial( instance_data_t *data );
@@ -56,8 +57,7 @@ class TKOShooter
 		
 		static TKOShooter* _instance;
 		state_t cur_state;
-		
-		
+		instance_data_t stateData;
 };
 
 #endif
