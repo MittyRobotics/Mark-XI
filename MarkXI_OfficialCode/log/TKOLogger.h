@@ -21,17 +21,13 @@ using namespace std;
  * TO USE!!!
  * Create a regular object for the class in MarkMain.cpp;
 	*  TKOLogger* log;
-	*  log = log->inst();
-	*	log->addMessage("Blah blah, test message");
- *	OR SOMETHING LIKE
-	*	std::ostringstream mess;
-	*	mess << "MOTOR SPEED: " << 105214124.232;
-	*	log->addMessage(mess.str());
- *	TAKES A STRING AS A PARAMETER, NO RETURN!
+	*  log = TKOLogger::inst();
+	*	log->printMessage("Blah blah, test message");
+	*	log->addMessage("MOTOR SPEED: %f", 105214124.232);
  *
  * Implements tasks and filestream.
  * Creates an fstream object to write to the log file of choice.
- * The logger implements a vector buffer system in case the
+ * The logger implements a queue buffer system in case the
  * writing thread does not keep up with messages, also prevents
  * excessive CPU load by spacing out the buffer writing with the task.
  * Initializes a task to manage the buffer writing to the log file
@@ -43,10 +39,25 @@ using namespace std;
 class TKOLogger: public SensorBase
 {
 	public:
+		/*
+		 * Returns a pointer to the singleton TKOLogger instance.
+		 */
 		static TKOLogger* inst();
+		/*
+		 * Adds a message to the buffer, which is written to disk.
+		 */
 		void addMessage(const char *format, ...);
-		void printf(const char *format, ...);
+		/*
+		 * Prints a message to the screen (not buffered).
+		 */
+		void printMessage(const char *format, ...);
+		/*
+		 * Starts the task that pops from the buffer into disk.
+		 */
 		void Start();
+		/*
+		 * Stops the task that pops from the buffer into disk.
+		 */
 		void Stop();
 
 	private:

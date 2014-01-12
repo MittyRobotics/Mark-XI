@@ -1,4 +1,4 @@
-//Last edited by Vadim Korolik
+/*//Last edited by Vadim Korolik
 //on 01/04/2014
 #include "TKOShooter.h"
 
@@ -58,3 +58,4 @@ void TKOShooter::shootDist(double distance)
 TKOShooter::~TKOShooter()
 {
 }
+*/

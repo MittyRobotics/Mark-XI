@@ -45,6 +45,7 @@ class MarkXI: public SimpleRobot
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
 		{
+			TKOLogger::inst();
 		}
 };
 void MarkXI::Test()
@@ -64,11 +65,11 @@ void MarkXI::Disabled()
 {
 	printf("Robot Dying!\n");
 	TKOLogger::inst()->addMessage("Robot disabled.");
-	TKOLogger::inst()->Stop();
 	//TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOGDrive::inst()->Stop();
 	TKOVision::inst()->StopProcessing();
+	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
 	{
@@ -93,10 +94,10 @@ void MarkXI::Autonomous(void)
 	}
 	Wait(.1);
 	
-	TKOAutonomous::inst()->initAutonomous();
-	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
-	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
-	TKOAutonomous::inst()->startAutonomous();
+//	TKOAutonomous::inst()->initAutonomous();
+//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
+//	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
+//	TKOAutonomous::inst()->startAutonomous();
 	
 	TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
@@ -106,8 +107,8 @@ void MarkXI::OperatorControl()
 {
 	printf("Starting OperatorControl \n");
 	ds = DriverStation::GetInstance();
-	TKOGyro::inst()->reset();
 	TKOLogger::inst()->Start();
+	TKOGyro::inst()->reset();
 	//TKOShooter::inst()->Start();
 	TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
