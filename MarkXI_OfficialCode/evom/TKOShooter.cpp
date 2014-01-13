@@ -1,37 +1,40 @@
-//Last edited by Vadim Korolik
+//Last edited by Ritwik Dutta
 //on 01/04/2014
-#include "tkoShooter.h"
+#include "TKOShooter.h"
 
-tkoShooter* tkoShooter::tkoShooterInstance = NULL;
+TKOShooter*  TKOShooter::_instance = NULL;
 ///Constructor for the tkoShooter class
 
-tkoShooter::tkoShooter()
-{
-}
-tkoShooter* tkoShooter::newShooterInstance()
-{
+TKOShooter::TKOShooter ()
+{	
 }
 
-void tkoShooter::runShooterTask()
+TKOShooter* TKOShooter::newShooterInstance ()
 {
+	if (!_instance) {
+		printf("No tkoShooterInstance. Creating.");
+		_instance = new TKOShooter;
+	}
+	return _instance;
 }
 
-int tkoShooter::runStateMachine() {
+int TKOShooter::runStateMachine ()
+{
 	return 0;
 }
 
-void tkoShooter::shooterProcess()
+void TKOShooter::startShooter ()
 {
 }
 
-void tkoShooter::startShooter()
+void TKOShooter::stopShooter ()
 {
 }
 
-void tkoShooter::stopShooter()
+void TKOShooter::launchShooter ()
 {
 }
 
-tkoShooter::~tkoShooter()
+TKOShooter::~TKOShooter ()
 {
 }

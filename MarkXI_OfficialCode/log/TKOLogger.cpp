@@ -52,10 +52,10 @@ void TKOLogger::Start()
 	// This should be the first class to be Started after enabling
 	_logFile.open("logT.txt", ios::app); // open logT.txt in append mode
 	if (_logFile.is_open())
-		Printf("Logfile OPEN!!!!\n");
+		this->printMessage("Logfile OPEN!!!!\n");
 	else
-		Printf("FILE CLOSED!!!!\n");
-	Printf("Logger started\n");
+		this->printMessage("FILE CLOSED!!!!\n");
+	this->printMessage("Logger started\n");
 	_logTask->Start();
 }
 
@@ -67,9 +67,9 @@ void TKOLogger::Stop()
 		_logTask->Stop();
 	}
 	if (_logFile.fail()) {
-		Printf("LOG FILE FAILED WHILE WRITING\n"); // TODO: is it okay to take 2 semaphores at the same time?
+		this->printMessage("LOG FILE FAILED WHILE WRITING\n"); // TODO: is it okay to take 2 semaphores at the same time?
 	} else if (!_logFile.is_open()) {
-		Printf("LOG FILE CLOSED WHILE WRITING\n");
+		this->printMessage("LOG FILE CLOSED WHILE WRITING\n");
 	} else {
 		while (_messBuffer.size() > 0) {
 			_logFile << _messBuffer.front();
@@ -80,7 +80,7 @@ void TKOLogger::Stop()
 		_logFile.close();
 	}
 
-	Printf("Logger stopped\n");
+	this->printMessage("Logger stopped\n");
 }
 
 void TKOLogger::LogRunner()
@@ -91,11 +91,11 @@ void TKOLogger::LogRunner()
 			break;
 		}
 		{
-			Synchronized sem(_bufSem);
+			Synchronized sem(_instance->_bufSem);
 			if (_instance->_logFile.fail()) {
-				_instance->Printf("LOG FILE FAILED WHILE WRITING\n");
+				_instance->printMessage("LOG FILE FAILED WHILE WRITING\n");
 			} else if (!_instance->_logFile.is_open()) {
-				_instance->Printf("LOG FILE CLOSED WHILE WRITING\n");
+				_instance->printMessage("LOG FILE CLOSED WHILE WRITING\n");
 			} else {
 				if (_instance->_messBuffer.size() > 0) {
 					_instance->_logFile << _instance->_messBuffer.front();
@@ -115,7 +115,7 @@ TKOLogger* TKOLogger::inst()
 	return _instance;
 }
 
-void TKOLogger::addMessage(const char *format, ...)
+void TKOLogger::addMessage(const char *format, ...) //TODO Figure out why code crashes on cRio
 {
 	int nBytes;
 	char s[_MAX_BUF_LENGTH + 1];        // Allocate extra character for '\0'
@@ -133,11 +133,9 @@ void TKOLogger::addMessage(const char *format, ...)
 		Synchronized sem(_bufSem);     // TODO: make other uses of _messBuffer thread-safe with _bufSem
 		_messBuffer.push(s2);
 	}
-
-	//fputs(s2.c_str(), stdout);
 }
 
-void TKOLogger::printf(const char *format, ...)
+void TKOLogger::printMessage(const char *format, ...)
 {
 	char s[_MAX_BUF_LENGTH + 1];
 	va_list args;
