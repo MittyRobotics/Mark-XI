@@ -14,7 +14,6 @@ public:
 private:
 	TKODrive();
 	~TKODrive();
-	Task *driveTask;
 	static TKODrive* m_Instance;
 	static void DriveRunner();
 };
