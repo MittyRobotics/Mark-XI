@@ -30,7 +30,6 @@ typedef struct instance_data  //TODO figure out what data we need
     // for instance we should have a state variable so we know that state we
     // were in previously
     int state_of_sensors;
-
 	bool init;
 	bool dummy;
 } instance_data_t;
@@ -72,6 +71,9 @@ class TKOShooter
 		static TKOShooter* inst();
 		bool Start();
 		bool Stop();
+		state_t run_state( state_t cur_state, instance_data_t *data ) {
+		    return state_table[ cur_state ]( data );
+		};
 
 	private:
 		Task *shooterTask;

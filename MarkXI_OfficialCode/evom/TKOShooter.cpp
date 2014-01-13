@@ -4,10 +4,6 @@
 
 TKOShooter*  TKOShooter::_instance = NULL;
 
-state_t run_state( state_t cur_state, instance_data_t *data ) {
-    return state_table[ cur_state ]( data );
-};
-
 TKOShooter::TKOShooter ()
 {	
 	shooterTask = new Task("Shooter", (FUNCPTR) shooterTaskRunner);
