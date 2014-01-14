@@ -1,4 +1,4 @@
-//Last edited by Vadim Korolik
+//Last edited by The King of Darkness
 //on 01/04/2014
 #ifndef __DEFINITIONS_H
 #define __DEFINITIONS_H
