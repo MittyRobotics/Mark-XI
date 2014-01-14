@@ -3,7 +3,7 @@
 /*
  * Initializes the 2 roller jaguars in percent Vbus mode
  *  \parm int port 1 - roller 1 Jaguar ID
- *  \parm int poert 2- roller 2 Jaguar ID
+ *  \parm int port 2- roller 2 Jaguar ID
  */
 
 TKOIntake::TKOIntake(int port_1,int port_2):
