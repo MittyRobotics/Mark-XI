@@ -23,12 +23,13 @@ TKOLogger::TKOLogger()
 	if (_logFile.is_open())
 	{
 		printf("Logfile OPEN ON BOOT!!!!\n");
-		_logFile.close();
 	}
 	struct stat filestatus;
 	stat("logT.txt", &filestatus);
 	printf("File: %i%s", (int)filestatus.st_size, " bytes\n");
+	printf("Testu\n");
 	addMessage("-------Logger booted---------");
+	printf("Yes\n");
 	_printSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
 	_bufSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
 	AddToSingletonList();
@@ -50,7 +51,8 @@ TKOLogger::~TKOLogger()
 void TKOLogger::Start()
 {
 	// This should be the first class to be Started after enabling
-	_logFile.open("logT.txt", ios::app); // open logT.txt in append mode
+	if (not _logFile.is_open())
+		_logFile.open("logT.txt", ios::app); // open logT.txt in append mode
 	if (_logFile.is_open())
 		this->printMessage("Logfile OPEN!!!!\n");
 	else
@@ -91,7 +93,7 @@ void TKOLogger::LogRunner()
 			break;
 		}
 		{
-			Synchronized sem(_instance->_bufSem);
+			//Synchronized sem(_instance->_bufSem);
 			if (_instance->_logFile.fail()) {
 				_instance->printMessage("LOG FILE FAILED WHILE WRITING\n");
 			} else if (!_instance->_logFile.is_open()) {
@@ -117,6 +119,7 @@ TKOLogger* TKOLogger::inst()
 
 void TKOLogger::addMessage(const char *format, ...) //TODO Figure out why code crashes on cRio
 {
+	printf("Testu unose\n");
 	int nBytes;
 	char s[_MAX_BUF_LENGTH + 1];        // Allocate extra character for '\0'
 	nBytes = sprintf(s, "Time: %f     Message: ", GetTime());
@@ -128,11 +131,13 @@ void TKOLogger::addMessage(const char *format, ...) //TODO Figure out why code c
 		nBytes = _MAX_BUF_LENGTH;
 	}
 	string s2(s, nBytes);
-
+	printf("Testu dose\n");
 	{
-		Synchronized sem(_bufSem);     // TODO: make other uses of _messBuffer thread-safe with _bufSem
+		//Synchronized sem(_bufSem);     // TODO: make other uses of _messBuffer thread-safe with _bufSem
+		printf("Testu dose con medio\n");
 		_messBuffer.push(s2);
 	}
+	printf("Testu tresss\n");
 }
 
 void TKOLogger::printMessage(const char *format, ...)
@@ -144,7 +149,7 @@ void TKOLogger::printMessage(const char *format, ...)
 	va_end(args);
 
 	{
-		Synchronized sem(_printSem);
+		//Synchronized sem(_printSem);
 		fputs(s, stdout);
 	}
 }
