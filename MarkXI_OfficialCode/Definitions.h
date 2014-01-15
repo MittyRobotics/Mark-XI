@@ -93,7 +93,7 @@ const int PRESSURE_SWITCH_PORT = 1;
 	//#define VIEW_ANGLE 49		//Axis M1013
 	//#define VIEW_ANGLE 41.7		//Axis 206 camera
 	//#define VIEW_ANGLE 37.4  //Axis M1011 camera
-	#define VIEW_ANGLE 33.24
+	#define VIEW_ANGLE 39.60	//if no work, try 33.24
 	#define PI 3.141592653
 	
 	//Score limits used for target identification
