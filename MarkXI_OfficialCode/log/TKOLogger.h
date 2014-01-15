@@ -75,4 +75,3 @@ class TKOLogger: public SensorBase
 };
 
 #endif
-

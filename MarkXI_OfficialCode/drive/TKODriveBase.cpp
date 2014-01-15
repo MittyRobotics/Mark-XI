@@ -12,7 +12,7 @@ TKODriveBase::TKODriveBase() :
 	stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 	stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
 {	
-	printf("Initializing drive\n");
+	printf("Initializing drive base\n");
 	drive1.SetSafetyEnabled(true);
 	drive2.SetSafetyEnabled(true);
 	drive3.SetSafetyEnabled(true);
@@ -25,7 +25,7 @@ TKODriveBase::TKODriveBase() :
 	drive2.SetVoltageRampRate(0.0);
 	drive3.SetVoltageRampRate(0.0);
 	drive4.SetVoltageRampRate(0.0);
-	printf("Finished initializing drive\n");
+	printf("Finished initializing drive base\n");
 }
 void TKODriveBase::Start()
 {
