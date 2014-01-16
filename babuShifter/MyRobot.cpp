@@ -26,7 +26,7 @@ public:
 		drive2.SetSafetyEnabled(false);
 		drive3.SetSafetyEnabled(false);
 		drive4.SetSafetyEnabled(false);
-		SetReference();
+		SetSpeedReference();
 		a_shift = true;
 	}
 
@@ -71,7 +71,7 @@ public:
 		drive4.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
 	}
 	
-	void SetReference() {
+	void SetSpeedReference() {
 		drive1.SetSpeedReference(JAG_SPEEDREF);
 		drive2.SetSpeedReference(JAG_SPEEDREF);
 		drive3.SetSpeedReference(JAG_SPEEDREF);
@@ -79,14 +79,24 @@ public:
 	}
 	
 	void AutoShift() {
-		if (min(drive1.GetSpeed(),drive2.GetSpeed()) > MAX_RPM_1 && min(drive3.GetSpeed(),drive4.GetSpeed()) > MAX_RPM_1) {
-			s1.Set(true);
-			s2.Set(true);
+		if (min(fabs(drive1.GetSpeed()),fabs(drive2.GetSpeed())) > MAX_RPM_1
+			&& min(fabs(drive3.GetSpeed()),fabs(drive4.GetSpeed())) > MAX_RPM_1) {
+			shiftToHighGear();
 		}
-		if(max(drive1.GetSpeed(),drive2.GetSpeed()) < MAX_RPM_1 || max(drive3.GetSpeed(),drive4.GetSpeed()) < MAX_RPM_1) {
-			s1.Set(false);
-			s2.Set(false);
+		else if(max(fabs(drive1.GetSpeed()),fabs(drive2.GetSpeed())) < MIN_RPM_1
+		   || max(fabs(drive3.GetSpeed()),fabs(drive4.GetSpeed())) < MIN_RPM_1) {
+			shiftToLowGear();
 		}
+	}
+	
+	void shiftToHighGear() {
+		s1.Set(true);
+		s2.Set(true);
+	}
+	
+	void shiftToLowGear() {
+		s1.Set(false);
+		s2.Set(false);
 	}
 	
 	void ManualShift() {

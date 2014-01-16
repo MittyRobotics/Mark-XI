@@ -47,7 +47,8 @@ const int DRIVE_L2_ID = 3;
 const int DRIVE_R1_ID = 4;
 const int DRIVE_R2_ID = 5;
 
-const int MAX_RPM_1 = 15; //RPM for first gear
+const float MAX_RPM_1 = 169.85; //RPM for first gear -10 / Add 10 to get original shift number. 
+const float MIN_RPM_1 = 139.85;
 
 // Spinner constants
 const float RADIUS_WHEELS = 4;
