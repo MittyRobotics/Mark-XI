@@ -27,11 +27,12 @@ TKOLogger::TKOLogger()
 	struct stat filestatus;
 	stat("logT.txt", &filestatus);
 	printf("File: %i%s", (int)filestatus.st_size, " bytes\n");
-	printf("Testu\n");
-	addMessage("-------Logger booted---------");
-	printf("Yes\n");
+	printf("Test1\n");
 	_printSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
 	_bufSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
+	printf("Test2\n");
+//	addMessage("-------Logger booted---------");
+	printf("Test3\n");
 	AddToSingletonList();
 
 	printf("Initialized logger\n");
@@ -119,7 +120,7 @@ TKOLogger* TKOLogger::inst()
 
 void TKOLogger::addMessage(const char *format, ...) //TODO Figure out why code crashes on cRio
 {
-	printf("Testu unose\n");
+	printf("Test2.1\n");
 	int nBytes;
 	char s[_MAX_BUF_LENGTH + 1];        // Allocate extra character for '\0'
 	nBytes = sprintf(s, "Time: %f     Message: ", GetTime());
@@ -131,13 +132,11 @@ void TKOLogger::addMessage(const char *format, ...) //TODO Figure out why code c
 		nBytes = _MAX_BUF_LENGTH;
 	}
 	string s2(s, nBytes);
-	printf("Testu dose\n");
+	printf("Test2.2\n");
 	{
-		//Synchronized sem(_bufSem);     // TODO: make other uses of _messBuffer thread-safe with _bufSem
-		printf("Testu dose con medio\n");
+//		Synchronized sem(_bufSem);     // TODO: make other uses of _messBuffer thread-safe with _bufSem
 		_messBuffer.push(s2);
 	}
-	printf("Testu tresss\n");
 }
 
 void TKOLogger::printMessage(const char *format, ...)
@@ -149,7 +148,7 @@ void TKOLogger::printMessage(const char *format, ...)
 	va_end(args);
 
 	{
-		//Synchronized sem(_printSem);
+//		Synchronized sem(_printSem);
 		fputs(s, stdout);
 	}
 }

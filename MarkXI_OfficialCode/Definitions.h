@@ -1,5 +1,5 @@
-//Last edited by Vadim Korolik
-//on 01/04/2014
+//Last edited by Ben Kim
+//on 01/14/2014
 #ifndef __DEFINITIONS_H
 #define __DEFINITIONS_H
 
@@ -29,9 +29,9 @@
 #define space printf("\n");
 #define GO_AWAY NULL;
 
-/*! \mainpage Welcome to TKO 1351's MarkIX's Code Documentation!
+/*! \mainpage Welcome to TKO 1351's MarkXI's Code Documentation!
  *
- * 	This is the Robot Code for the 2013 Season of Ultimate Ascent
+ * 	This is the Robot Code for the 2014 Season of Aerial Assist
  *
  *  If you haven't already, please visit our <a href="http://www.amhsrobotics.com">website</a>.
  */
