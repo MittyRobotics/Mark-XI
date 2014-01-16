@@ -48,9 +48,7 @@ class MarkXI: public SimpleRobot
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
-		{
-			TKOLogger::inst();
-		}
+		{}
 };
 void MarkXI::Test()
 {
@@ -60,7 +58,7 @@ void MarkXI::Test()
 void MarkXI::RobotInit()
 {
 	printf("Initializing MarkXI class \n");
-	TKOGyro::inst()->reset();
+	//TKOGyro::inst()->reset();
 //	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
@@ -68,7 +66,6 @@ void MarkXI::RobotInit()
 void MarkXI::Disabled()
 {
 	printf("Robot Dying!\n");
-	TKOLogger::inst()->addMessage("Robot disabled.");
 	//TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOGDrive::inst()->Stop();

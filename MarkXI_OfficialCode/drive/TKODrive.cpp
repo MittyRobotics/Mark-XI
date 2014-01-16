@@ -6,29 +6,29 @@ TKODrive* TKODrive::m_Instance = NULL;
 
 TKODrive::TKODrive() :
 		drive1(DRIVE_L1_ID, CANJaguar::kPercentVbus), // initialize motor 1 < first left drive motor
-			drive2(DRIVE_L2_ID, CANJaguar::kPercentVbus), // initialize motor 2 < second left drive motor
-			drive3(DRIVE_R1_ID, CANJaguar::kPercentVbus), // initialize motor 3 < first right drive motor
-			drive4(DRIVE_R2_ID, CANJaguar::kPercentVbus), // initialize motor 4 < second right drive motor
-			stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
-			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
-			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
-			stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,	
+		drive2(DRIVE_L2_ID, CANJaguar::kPercentVbus), // initialize motor 2 < second left drive motor
+		drive3(DRIVE_R1_ID, CANJaguar::kPercentVbus), // initialize motor 3 < first right drive motor
+		drive4(DRIVE_R2_ID, CANJaguar::kPercentVbus), // initialize motor 4 < second right drive motor
+		stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
+		stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
+		stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
+		stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,	
 {	
 	printf("Initializing drive\n");
 	driveTask = new Task("Driving", (FUNCPTR) DriveRunner);
 	driveTask->SetPriority(5);
 	drive1.SetSafetyEnabled(true);
-		drive2.SetSafetyEnabled(true);
-		drive3.SetSafetyEnabled(true);
-		drive4.SetSafetyEnabled(true);
-		drive1.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
-		drive2.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);   
-		drive3.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
-		drive4.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
-		drive1.SetVoltageRampRate(0.0);
-		drive2.SetVoltageRampRate(0.0);
-		drive3.SetVoltageRampRate(0.0);
-		drive4.SetVoltageRampRate(0.0);
+	drive2.SetSafetyEnabled(true);
+	drive3.SetSafetyEnabled(true);
+	drive4.SetSafetyEnabled(true);
+	drive1.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
+	drive2.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);   
+	drive3.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
+	drive4.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
+	drive1.SetVoltageRampRate(0.0);
+	drive2.SetVoltageRampRate(0.0);
+	drive3.SetVoltageRampRate(0.0);
+	drive4.SetVoltageRampRate(0.0);
 	printf("Finished initializing drive\n");
 }
 TKODrive* TKODrive::inst()
