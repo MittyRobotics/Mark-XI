@@ -53,7 +53,7 @@ state_t statemachine::do_state_pr( instance_data_t *data )
 //        printf("pistions in process of moving rechecking %d\n",rand);
         std::cout << "pistons in process of moving rechecking " << random << std::endl;
         count ++;
-        Sleep(1000);
+        sleep(1);
     }
     return STATE_ERR;
 }
@@ -74,7 +74,7 @@ state_t statemachine::do_state_pe( instance_data_t *data )
         }
         std::cout << "latch engaging rechecking " << random << std::endl;
         count ++;
-        Sleep(1000);
+        sleep(1);
     }
 
     return STATE_ERR;
@@ -96,7 +96,7 @@ state_t statemachine::do_state_ll( instance_data_t *data )
         }
         std::cout << "latch unlocking rechecking " << random << std::endl;
         count ++;
-        Sleep(1000);
+        sleep(1);
     }
     return STATE_ERR;
 }
@@ -116,7 +116,7 @@ state_t statemachine::do_state_lu( instance_data_t *data )
         }
         std::cout << "fire for effect! rechecking " << random << std::endl;
         count ++;
-        Sleep(1000);
+        sleep(1);
     }
     return STATE_ERR;
 }

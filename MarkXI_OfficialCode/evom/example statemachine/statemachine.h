@@ -12,8 +12,11 @@
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
-#include "Windows.h"
-#include "WinBase.h"
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    #include "Windows.h"
+    #include "WinBase.h"
+#define sleep(x) Sleep((x) * 1000)
+#endif
 
 
 typedef enum {
