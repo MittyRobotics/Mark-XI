@@ -16,9 +16,7 @@ TKOLogger::TKOLogger()
 {
 	// This should be the first singleton to be constructed
 	printf("Constructing logger\n");
-	_logTask = new Task("Logging", (FUNCPTR) LogRunner); // create a new task called Logging which runs LogRunner
-	printf("Created logger task\n");
-	//_logTask->SetPriority(254); // use the constants first/wpilib provides?
+	_logTask = NULL;
 	_logFile.open("logT.txt", ios::app); // open logT.txt in append mode
 	printf("Ran file open\n");
 	if (_logFile.is_open())
@@ -45,13 +43,20 @@ TKOLogger::~TKOLogger()
 	Stop();        // TODO: is this necessary?
 	semDelete(_printSem);
 	semDelete(_bufSem);
-	delete _logTask;
+	if (_logTask) {
+		delete _logTask;
+	}
 	_instance = NULL;
 }
 
 void TKOLogger::Start()
 {
 	// This should be the first class to be Started after enabling
+	if (!_logTask) {
+		_logTask = new Task("Logging", (FUNCPTR) LogRunner); // create a new task called Logging which runs LogRunner
+		printf("Created logger task\n");
+		//_logTask->SetPriority(254); // use the constants first/wpilib provides?
+	}
 	if (not _logFile.is_open())
 		_logFile.open("logT.txt", ios::app); // open logT.txt in append mode
 	if (_logFile.is_open())
@@ -65,8 +70,10 @@ void TKOLogger::Start()
 void TKOLogger::Stop()
 {
 	// This should be the last class to be Stopped after disabling
+	#ifndef IGNORE_LOGGING_SEMAPHORES
 	Synchronized sem(_bufSem);
-	if (_logTask->Verify()) {
+	#endif
+	if (_logTask && _logTask->Verify()) {
 		_logTask->Stop();
 	}
 	if (_logFile.fail()) {
@@ -94,7 +101,9 @@ void TKOLogger::LogRunner()
 			break;
 		}
 		{
-			//Synchronized sem(_instance->_bufSem);
+			#ifndef IGNORE_LOGGING_SEMAPHORES
+			Synchronized sem(_instance->_bufSem);
+			#endif
 			if (_instance->_logFile.fail()) {
 				_instance->printMessage("LOG FILE FAILED WHILE WRITING\n");
 			} else if (!_instance->_logFile.is_open()) {
@@ -134,7 +143,9 @@ void TKOLogger::addMessage(const char *format, ...) //TODO Figure out why code c
 	string s2(s, nBytes);
 	printf("Test2.2\n");
 	{
-//		Synchronized sem(_bufSem);     // TODO: make other uses of _messBuffer thread-safe with _bufSem
+		#ifndef IGNORE_LOGGING_SEMAPHORES
+		Synchronized sem(_bufSem);     // TODO: make other uses of _messBuffer thread-safe with _bufSem
+		#endif
 		_messBuffer.push(s2);
 	}
 }
@@ -148,7 +159,9 @@ void TKOLogger::printMessage(const char *format, ...)
 	va_end(args);
 
 	{
-//		Synchronized sem(_printSem);
+		#ifndef IGNORE_LOGGING_SEMAPHORES
+		Synchronized sem(_printSem);
+		#endif
 		fputs(s, stdout);
 	}
 }
