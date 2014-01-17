@@ -2,8 +2,8 @@
 #define _TURN_ATOM_H
 
 #include "Atom.h"
-#include "../component/TKOGyro.h"
-#include "../Definitions.h"
+#include "TKOGyro.h"
+#include "Definitions.h"
 
 class Turn_Atom : public Atom{
 	
