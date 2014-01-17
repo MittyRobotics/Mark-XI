@@ -25,6 +25,8 @@ class TKOShooter
 		//State machine
         static int runStateMachine();
 		
+		static TKOShooter* _instance;
+		
 };
 
 #endif
