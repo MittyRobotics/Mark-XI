@@ -19,20 +19,22 @@ Drive_Atom::~Drive_Atom(){}
 
 void Drive_Atom::run()
 {
+	ds = DriverStation::GetInstance();
 	//don't forget to divide number of rotations by REVS_PER_FOOT in order to get feet traveled
+printf("drive 1\n");
 	_drive1->EnableControl(0);
 	_drive3->EnableControl(0);
-
+printf("drive 2\n");
 	// do really cool things with the motors here
 	// like drive in a straight line
 	
-	while(_drive1->GetPosition() != _distance  and _drive3->GetPosition() != _distance){
+	while(_drive1->GetPosition() != _distance  and _drive3->GetPosition() != _distance && ds->IsEnabled()){ //need a +/- difference for distance
+printf("drive %f %f %f\n", _drive1->GetPosition(), _drive3->GetPosition(), _distance);		
 		_drive1->Set(_distance); //same, but for jag 3 since only 1 and 3 have encoders
-		_drive2->Set(-_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second and fourth jags in slave mode
-			
-		_drive3->Set(_distance); //same, but for jag 3 since only 1 and 3 have encoders
+		_drive2->Set(-_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second and fourth jags in slave mode			
+		_drive3->Set(-(_distance)); //same, but for jag 3 since only 1 and 3 have encoders
 		_drive4->Set(-_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets second and fourth jags in slave mode
-			
+printf("drive 4\n");			
 	}
 	
 	

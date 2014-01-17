@@ -1,10 +1,13 @@
-#ifndef _ATOM_h
+#ifndef _ATOM_H
 #define _ATOM_H
 
 class Atom {
 	
-	public:
-		virtual void run();
+protected:
+	Atom();
+	
+public:
+		virtual void run() = 0;
 		virtual ~Atom(){}
 };
 #endif
