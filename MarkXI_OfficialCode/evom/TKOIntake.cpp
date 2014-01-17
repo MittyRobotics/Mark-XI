@@ -6,22 +6,32 @@
  *  \parm int port 2- roller 2 Jaguar ID
  */
 
-TKOIntake::TKOIntake(int port_1,int port_2):
+TKOIntake::TKOIntake(int port1,int port2, int port3):
 _roller1(port1, CANJaguar::kPercentVbus),
-_roller2(port2, CANJaguar::kPercentVbus)
+_roller2(port2, CANJaguar::kPercentVbus),
+_arm1(port3, CANJaguar::kPercentVbus)
 {}
 
 TKOIntake::~TKOIntake() {}
 
-void TKOIntake::RollerMove(bool trigger){
-	if (trigger) {
-		_roller1.Set(ROLLER_ON);
-		_roller2.Set(ROLLER_ON);
+void TKOIntake::RollerMove(bool trigger, bool trigger2){
+	if (stick3. GetRawButton(1)) {
+		_roller1.Set(-1);
+		_roller2.Set(-1);
 	}
-	else {
-		_roller1.Set(ROLLER_OFF);
-		_roller2.Set(ROLLER_OFF);
+	
+	if (stick3. GetRawButton(2)){
+		_roller1.Set(1);
+		_roller2.Set(1);
+	}
+	else { 
+		_roller1.Set(0);
+		_roller2.Set(0);
 	}
 }
 
+void TKOIntake::ArmMove(float y){
+	_arm.Set(y);
+}
+	
 	
