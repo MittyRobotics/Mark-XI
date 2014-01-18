@@ -34,9 +34,12 @@ StateMachine::StateMachine(Joystick *triggerJoystick) :
 
 StateMachine::~StateMachine()
 {
-    // lol wut?
-    delete _timer;
 }
+
+state_t statemachine::run_state( state_t cur_state, instance_data_t *data ) {
+    return state_table[ cur_state ]( data );
+};
+
 
 int StateMachine::GetSensorData(instance_data_t *data)
 {
@@ -49,30 +52,10 @@ int StateMachine::GetSensorData(instance_data_t *data)
 
 
     // TODO fix the values and flip the logic only return true in one case
-
-    int i = 0;
-    for (; i < NUM_STATES; i++) {
-        switch (i) {
-            case 0:
-                data->state[i] = _piston_retract.Get() == 0 ? FALSE : TRUE;
-                break;
-            case 1:
-                data->state[i] = _piston_extend.Get() == 0 ? FALSE : TRUE;
-                break;
-
-            case 2:
-                data->state[i] = _latch_lock.Get() == 0 ? FALSE : TRUE;
-                break;
-
-            case 3:
-                data->state[i] = _is_cocked.Get() == 0 ? FALSE : TRUE;
-                break;
-
-            default:
-                break;
-        }
-    }
-
+    data->state[0] = (_piston_retract.Get() != 0);
+    data->state[1] = (_piston_extend.Get() != 0);
+    data->state[2] = (_latch_lock.Get() != 0);
+    data->state[3] = (_is_cocked.Get() != 0);
 
     return createIntFromBoolArray(data);
 }
@@ -82,14 +65,16 @@ int StateMachine::createIntFromBoolArray(instance_data_t *data)
     int i = 0;
     int num = 0;
     for (; i<NUM_STATES; i++) {
-        num = data->state[i] << (NUM_STATES - (i + 1))
+        if (data->state[i]) {
+            num |= 1 << i;
+        }
     }
 }
 
 state_t StateMachine::do_state_piston_retract(instance_data_t *data)
 {
-    // reason is that 0b0100 = 4 is piston extended
-    if (createIntFromBoolArray(data) != 4) {
+    // reason is that 0b0010 = 2 is piston extended
+    if (createIntFromBoolArray(data) != DONE_FIRING) {
         return STATE_ERR;
     }
     _timer.Start();
@@ -97,8 +82,9 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
     //TODO add in code to make pistons reteact
     // _piston_retract_extend.Set(DoubleSolenoid::kReverse?)
 
+    int sensors = 0;
     // reason for 8 is that piston is retracted then
-    while (GetSensorData(data) != 8) {
+    while (sensors = GetSensorData(data); sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING) ) {
         if (_timer.Get() > 25.) {
             _timer.Stop();
             _timer.Reset();
@@ -108,6 +94,11 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
 
     _timer.Stop();
     _timer.Reset();
+
+    if (sensors != PISTON_RETRACTED)
+    {
+        return STATE_ERR;
+    }
 
     // move to next state
     return STATE_LATCH_LOCK;
@@ -116,7 +107,7 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
 state_t StateMachine::do_state_latch_lock(instance_data_t * data)
 {
     // reason is that 0b0100 = 4 is piston extended
-    if (createIntFromBoolArray(data) != 8) {
+    if (createIntFromBoolArray(data) != PISTON_RETRACTED) {
         return STATE_ERR;
     }
     _timer.Start();
@@ -124,8 +115,10 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
     // TODO add in code to make piston lock
     // _latch_lock_unlock.Set(DoubleSolenoid::kForward?)
 
+    int sensors = 0;
+
     // reason for 8 is that piston is retracted then
-    while (GetSensorData(data) != 9) {
+    while (sensors = GetSensorData(data); sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED)) {
         if (_timer.Get() > 5.) {
             _timer.Stop();
             _timer.Reset();
@@ -134,6 +127,12 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
     }
     _timer.Stop();
     _timer.Reset();
+
+    if (sensors != LATCH_LOCKED_PISTON_RETRACTED)
+    {
+        return STATE_ERR;
+    }
+
     // go to next state
     return STATE_PISTON_EXTEND;
 }
@@ -141,7 +140,7 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
 state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 {
     // reason is that 0b0100 = 4 is piston extended
-    if (createIntFromBoolArray(data) != 9) {
+    if (createIntFromBoolArray(data) != LATCH_LOCKED_PISTON_RETRACTED) {
         return STATE_ERR;
     }
     _timer.Start();
@@ -149,8 +148,10 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
     // TODO add in code to make piston extend
     // _piston_retract_extend.Set(DoubleSolenoid::kForward?)
 
+    int sensors = 0;
+
     // reason for 8 is that piston is retracted then
-    while (GetSensorData(data) != 7) {
+    while (sensors = GetSensorData(data); sensors != READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED)) {
         if (_timer.Get() > 25.) {
             _timer.Stop();
             _timer.Reset();
@@ -159,6 +160,12 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
     }
     _timer.Stop();
     _timer.Reset();
+
+    if (sensors != READY_TO_FIRE)
+    {
+        return STATE_ERR;
+    }
+
     // go to next state
     return STATE_READY_TO_FIRE;
 }
@@ -166,7 +173,7 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 {
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
-    if (createIntFromBoolArray(data) != 7) {
+    if (createIntFromBoolArray(data) != READY_TO_FIRE) {
         return STATE_ERR;
     }
 
@@ -179,7 +186,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
 {
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
-    if (createIntFromBoolArray(data) != 7) {
+    if (createIntFromBoolArray(data) != READY_TO_FIRE) {
         return STATE_ERR;
     }
     _timer.Start();
@@ -187,8 +194,10 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     // TODO add in code to make piston unlock
     // _latch_lock_unlock.Set(DoubleSolenoid::kReverse?)
 
+    int sensors = 0;
+
     // reason for 4 is that piston is extended after this step
-    while (GetSensorData(data) != 4)
+    while (sensors = GetSensorData(data); sensors != DONE_FIRING && (sensors == READY_TO_FIRE || sensors == 10))
     {
         if (_timer.Get() > 5.) {
             _timer.Stop();
@@ -198,6 +207,58 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     }
     _timer.Stop();
     _timer.Reset();
+
+    if (sensors != READY_TO_FIRE)
+    {
+        return STATE_ERR;
+    }
+
     // go to next state
     return STATE_LATCH_UNLOCK;
+}
+
+string state_to_string(instance_data_t *data)
+{
+    switch (data->curState) {
+        case STATE_PISTON_RETRACT:
+            return "Piston Retract";
+            break;
+
+        case STATE_LATCH_LOCK:
+            return "Latch Lock";
+            break;
+
+        case STATE_PISTON_EXTEND:
+            return "Piston Extend";
+            break;
+
+        case STATE_READY_TO_FIRE:
+            return "Ready to Fire";
+            break;
+
+        case STATE_LATCH_UNLOCK:
+            return "Latch Unlock";
+            break;
+
+        default:
+            return "POTATO!"
+            break;
+    }
+}
+
+string sensors_to_string(instance_data_t *data)
+{
+    printf("0b (ic) (ll) (Pe) (Pr)\n0b");
+    int sensors = createIntFromBoolArray(data);
+    int i = NUM_STATES;
+    for (; i > -1; i--) {
+        printf("  %2d ",sensors & (1 << i));
+    }
+}
+
+state_t StateMachine::do_err_state(instance_data_t *data)
+{
+    printf("%s\n",state_to_string(data).c_str());
+    sensors_to_string(data);
+    return STATE_ERR;
 }

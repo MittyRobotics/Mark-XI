@@ -13,20 +13,28 @@
 #include <DoubleSolenoid.h>
 #endif
 
+
+#define DONE_FIRING 2
+#define PISTON_RETRACTED 1
+#define LATCH_LOCKED_PISTON_RETRACTED 5
+#define READY_TO_FIRE 14
+
+
 // Define the states
 typedef enum {
     STATE_PISTON_RETRACT,
     STATE_LATCH_LOCK,
     STATE_PISTON_EXTEND,
-    STAET_READY_TO_FIRE,
+    STATE_READY_TO_FIRE,
     STATE_LATCH_UNLOCK,
-    STATE_ERR,
-    NUM_STATES
+    NUM_STATES,
+    STATE_ERR
 } state_t;
 
 // create the instance data type
 typedef struct instance_data
 {
+    state_t curState;
     bool state[NUM_STATES];
 }instance_data_t;
 
@@ -38,7 +46,6 @@ public:
     StateMachine(Joystick* triggerJoystick);
     ~StateMachine();
     state_t run_state(state_t, instance_data_t*);
-    void setRandSeed(int);
 private:
     static state_t do_state_piston_retract(instance_data_t *data);
     static state_t do_state_piston_extend(instance_data_t *data);
@@ -46,8 +53,11 @@ private:
     static state_t do_state_latch_unlock(instance_data_t *data);
     static state_t do_state_ready_to_fire(instance_data_t *data);
     static state_t do_err_state(instance_data_t *data);
+    static int GetSensorData(instance_data_t *data);
     static int createIntFromBoolArray(instance_data_t *data);
-    state_func_t*  _state_table[NUM_STATES];
+    static string state_to_string(instance_data_t *data);
+    static string sensors_to_string(instance_data_t *data);
+    state_func_t*  _state_table[NUM_STATES + 1];
     static Timer _timer;
     static Joystick* _triggerJoystick;
     // TODO Fix the solenoids to something more useful
