@@ -4,26 +4,23 @@ class TKOShifter
 {
 
 public:
-	TKOShifter():
-		drive1(DRIVE_L1_ID, CANJaguar::kPercentVbus),
-		drive2(DRIVE_L2_ID, CANJaguar::kPercentVbus),
-		drive3(DRIVE_R1_ID, CANJaguar::kPercentVbus),
-		drive4(DRIVE_R2_ID, CANJaguar::kPercentVbus),
-		stick1(STICK_1_PORT), stick2(STICK_2_PORT),
-		s1(1), s2(2),
-		comp(2)
+	TKOShifter::TKOShifter():
+		s1(1), s2(2)
 	{
-		drive1.SetSafetyEnabled(false);
-		drive2.SetSafetyEnabled(false);
-		drive3.SetSafetyEnabled(false);
-		drive4.SetSafetyEnabled(false);
-		SetSpeedReference();
 		a_shift = true;
+		MAX_RPM_1 = 169.85;
+		MIN_RPM_1 = 139.85;
 	}
 
+	TKOShifter::~TKOShifter() {
+		DELETE(s1);
+		DELETE(s2);
+		DELETE(a_shift);
+		DELETE(MAX_RPM_1);
+		DELETE(MIN_RPM_1);
+	}
 	
-	
-	void AutoShift() { 
+	void TKOShifter::AutoShift() { 
 		// if all drives are faster than max_rpm_1 then shifts to high gear
 		if (min(fabs(drive1.GetSpeed()),fabs(drive2.GetSpeed())) > MAX_RPM_1
 			&& min(fabs(drive3.GetSpeed()),fabs(drive4.GetSpeed())) > MAX_RPM_1) {
@@ -48,10 +45,8 @@ public:
 	}
 	
 	void ManualShift() {
-		if (stick2.GetRawButton(3)) {
 			s1.Set(!s1.Get());
 			s2.Set(!s2.Get());
-		}
 	}
 	
 	void ShiftStopPos() {
@@ -68,8 +63,6 @@ public:
 				ManualShift();
 				break;
 		}
-	}
+	} 
 	
-	private:
-		bool a_shift; 
 };
