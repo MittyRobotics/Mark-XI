@@ -17,7 +17,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 using namespace std;
-#define IGNORE_LOGGING_SEMAPHORES "Comment out this line during competition"
+//#define IGNORE_LOGGING_SEMAPHORES "Comment out this line during competition"
 /*
  * TO USE!!!
  * Create a regular object for the class in MarkMain.cpp;
