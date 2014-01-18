@@ -1,0 +1,37 @@
+In File MarkXI_OfficialCode/MarkXI.cpp : 
+
+line #: 13 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
+
+
+In File MarkXI_OfficialCode/evom/TKOShooter.h : 
+
+line #: 28 typedef struct instance_data  //TODO figure out what data we need
+
+
+In File MarkXI_OfficialCode/evom/state_machine_impl/StateMachine.cpp : 
+
+line #: 51     // TODO fix the values and flip the logic only return true in one case
+line #: 97     //TODO add in code to make pistons reteact
+line #: 124     // TODO add in code to make piston lock
+line #: 149     // TODO add in code to make piston extend
+line #: 187     // TODO add in code to make piston unlock
+
+
+In File MarkXI_OfficialCode/evom/state_machine_impl/StateMachine.h : 
+
+line #: 53     // TODO Fix the solenoids to something more useful
+
+
+In File MarkXI_OfficialCode/log/TKOLogger.cpp : 
+
+line #: 43 	Stop();        // TODO: is this necessary?
+line #: 70 		this->printMessage("LOG FILE FAILED WHILE WRITING\n"); // TODO: is it okay to take 2 semaphores at the same time?
+line #: 133 		Synchronized sem(_bufSem);     // TODO: make other uses of _messBuffer thread-safe with _bufSem
+
+
+In File MarkXI_OfficialCode/vision/TKOVision.cpp : 
+
+line #: 5 //TODO
+line #: 86 	if (AxisCamera::GetInstance().GetImage(rawImage) == false) //TODO Check that camera is set to proper res in browser
+
+
