@@ -71,6 +71,25 @@ int StateMachine::createIntFromBoolArray(instance_data_t *data)
     }
 }
 
+state_t StateMachine::init(state_t* cur_state, instance_data_t *data)
+{
+    int sensors = GetSensorData(data);
+    switch (sensors) {
+      case DONE_FIRING:
+        *cur_state = STATE_PISTON_RETRACT;
+        break;
+      case PISTON_RETRACTED:
+        *cur_state = STATE_LATCH_LOCK;
+        break;
+      case LATCH_LOCKED_PISTON_RETRACTED:
+        *cur_state = STATE_PISTON_EXTEND;
+        break;
+      default:
+        *cur_state = STATE_ERR;
+        break;
+    }
+}
+
 state_t StateMachine::do_state_piston_retract(instance_data_t *data)
 {
     // reason is that 0b0010 = 2 is piston extended
@@ -214,7 +233,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     }
 
     // go to next state
-    return STATE_LATCH_UNLOCK;
+    return STATE_PISTON_RETRACT;
 }
 
 string state_to_string(instance_data_t *data)

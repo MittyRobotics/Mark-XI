@@ -1,6 +1,6 @@
 //
 //  StateMachine.h
-//  
+//
 
 
 #ifndef ____StateMachine__
@@ -46,6 +46,7 @@ public:
     StateMachine(Joystick* triggerJoystick);
     ~StateMachine();
     state_t run_state(state_t, instance_data_t*);
+    state_t init(state_t* cur_state, instance_data_t * data);
 private:
     static state_t do_state_piston_retract(instance_data_t *data);
     static state_t do_state_piston_extend(instance_data_t *data);
