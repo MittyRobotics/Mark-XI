@@ -8,7 +8,7 @@
 #include "component/TKOGyro.h"
 #include "auton/TKOAutonomous.h"
 #include "vision/TKOVision.h"
-#include "evom/TKOShooter.h"
+//#include "evom/TKOShooter.h"
 
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
  * Auton, vision tests
@@ -65,7 +65,7 @@ void MarkXI::Disabled()
 	printf("Robot Dying!\n");
 	TKOLogger::inst()->addMessage("Robot disabled.");
 	TKOLogger::inst()->Stop();
-	TKOShooter::inst()->Stop();
+	//TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOGDrive::inst()->Stop();
 	TKOVision::inst()->StopProcessing();
@@ -108,7 +108,7 @@ void MarkXI::OperatorControl()
 	ds = DriverStation::GetInstance();
 	TKOGyro::inst()->reset();
 	TKOLogger::inst()->Start();
-	TKOShooter::inst()->Start();
+	//TKOShooter::inst()->Start();
 	TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;
@@ -128,7 +128,7 @@ void MarkXI::OperatorControl()
 			printf("!!!CRITICAL Operator loop very long, %f%s\n", loopTimer.Get(), " seconds.");
 		}
 		DSLog(1, "Dist: %f\n", TKOVision::inst()->lastDist);
-		DSLog(2, "Hot: %i\n", TKOVision::inst()->lastTargets.Hot);
+//		DSLog(2, "Hot: %i\n", TKOVision::inst()->lastTargets.Hot);
 		DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		DSLog(4, "Clock %f\n", GetClock());
 		DSLog(5, "")
@@ -153,7 +153,31 @@ void MarkXI::Operator()
 	{
 		if ((GetFPGATime() - TKOVision::inst()->lastTimestamp) <= 1000)
 		{
-			TKOShooter::inst()->shootDist(TKOVision::inst()->lastDist);
+#ifndef _MOLECULE_H
+#define _MOLECULE_H
+
+#include "auton/Atom.h"
+#include "Definitions.h"
+#include <queue>
+
+class Molecule {
+	
+	public:
+		void addAtom(Atom*);
+		void start();
+		void MoleculeInit();
+		void Test();
+		CANJaguar drive1, drive2, drive3, drive4;
+		Molecule();
+		~Molecule();
+	private:
+		std::queue<Atom*> _list;
+		
+	
+};
+
+#endif
+//			TKOShooter::inst()->shootDist(TKOVision::inst()->lastDist);
 		}
 	}
 }

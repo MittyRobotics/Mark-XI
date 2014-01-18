@@ -57,6 +57,8 @@ void Molecule::Test()
 {
 		drive1.Set(100);
 		drive2.Set(drive1.GetOutputVoltage());
+		drive3.Set(100);
+		drive4.Set(drive3.GetOutputVoltage());
 		printf("drive %f %f %f\n", drive1.GetPosition(), drive3.GetPosition(), drive1.GetOutputVoltage());
 }
 
@@ -75,9 +77,7 @@ void Molecule::start()
 	{
 		Atom* a = _list.front();
 		a->run();
-		printf("its working");
 		_list.pop();
 		delete a;
 	}
-	printf("start works lol\n");
 }

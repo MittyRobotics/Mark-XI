@@ -2,7 +2,7 @@
 #define _DRIVE_ATOM_H
 
 #include "Atom.h"
-#include "Definitions.h"
+#include "../Definitions.h"
 
 class Drive_Atom : public Atom{
 	
