@@ -3,10 +3,6 @@
 #ifndef __TKOSHOOTER_H
 #define __TKOSHOOTER_H
 
-//Ha ha
-#define gg ; 
-
-
 #include "../Definitions.h"
 
 class TKOShooter
@@ -22,6 +18,9 @@ class TKOShooter
 		static TKOShooter* tkoShooterInstance;
 		//Shooter launcher
 		void launchShooter();
+		void startShooter();
+		void stopShooter();
+		
 		//State machine
         static int runStateMachine();
 		

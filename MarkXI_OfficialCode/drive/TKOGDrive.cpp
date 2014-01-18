@@ -36,6 +36,7 @@ TKOGDrive::TKOGDrive() :
 	driveTask = new Task("Driving", (FUNCPTR) DriveRunner);
 	TURN_kP = 1/360.;
 	printf("Finished initializing gyro drive\n");
+	AddToSingletonList();
 }
 TKOGDrive* TKOGDrive::inst()
 {
@@ -105,5 +106,6 @@ bool TKOGDrive::VerifyJags() //if returns false, jag problems
 TKOGDrive::~TKOGDrive()
 {
 	driveTask->Stop();
+	m_Instance = NULL;
 }
 

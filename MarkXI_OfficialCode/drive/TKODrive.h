@@ -6,7 +6,7 @@
 #include "../Definitions.h"
 #include "../log/TKOLogger.h"
 
-class TKODrive
+class TKODrive : public SensorBase
 {
 public:
 	static TKODrive* inst();
@@ -23,5 +23,6 @@ private:
 	~TKODrive();
 	static TKODrive* m_Instance;
 	static void DriveRunner();
+	DISALLOW_COPY_AND_ASSIGN(TKODrive);
 };
 #endif

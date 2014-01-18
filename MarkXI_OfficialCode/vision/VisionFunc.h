@@ -31,7 +31,7 @@
  * chain (open it with the Vision Assistant)
  */
 
-class VisionFunc
+class VisionFunc : public SensorBase
 {	
 	public:
 		static VisionFunc* inst();
@@ -46,6 +46,7 @@ class VisionFunc
 		VisionFunc();
 		~VisionFunc();
 		static VisionFunc* m_Instance;
+		DISALLOW_COPY_AND_ASSIGN(VisionFunc);
 };
 
 

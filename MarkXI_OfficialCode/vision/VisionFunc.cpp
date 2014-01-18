@@ -6,11 +6,11 @@ VisionFunc* VisionFunc::m_Instance = NULL;
 
 VisionFunc::VisionFunc()
 {
-	
+	AddToSingletonList();
 }
 VisionFunc::~VisionFunc()
 {
-	
+	m_Instance = NULL;
 }
 VisionFunc* VisionFunc::inst()
 {

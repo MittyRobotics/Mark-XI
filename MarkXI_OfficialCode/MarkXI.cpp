@@ -6,7 +6,6 @@
 #include "drive/TKODrive.h"
 #include "drive/TKOGDrive.h"
 #include "component/TKOGyro.h"
-//#include "auton/TKOAutonomous.h"
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
 
@@ -66,11 +65,11 @@ void MarkXI::RobotInit()
 void MarkXI::Disabled()
 {
 	printf("Robot Dying!\n");
+	TKOLogger::inst()->Stop();
 	//TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOGDrive::inst()->Stop();
 	TKOVision::inst()->StopProcessing();
-	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
 	{

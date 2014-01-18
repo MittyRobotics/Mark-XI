@@ -16,7 +16,7 @@ TKODrive::TKODrive() :
 {	
 	printf("Initializing drive\n");
 	driveTask = new Task("Driving", (FUNCPTR) DriveRunner);
-	driveTask->SetPriority(5);
+//	driveTask->SetPriority(Task::kDefaultPriority);
 	drive1.SetSafetyEnabled(true);
 	drive2.SetSafetyEnabled(true);
 	drive3.SetSafetyEnabled(true);
@@ -30,6 +30,7 @@ TKODrive::TKODrive() :
 	drive3.SetVoltageRampRate(0.0);
 	drive4.SetVoltageRampRate(0.0);
 	printf("Finished initializing drive\n");
+	AddToSingletonList();
 }
 TKODrive* TKODrive::inst()
 {
@@ -162,5 +163,6 @@ void TKODrive::switchToSpeed()
 TKODrive::~TKODrive()
 {
 	driveTask->Stop();
+	m_Instance = NULL;
 }
 

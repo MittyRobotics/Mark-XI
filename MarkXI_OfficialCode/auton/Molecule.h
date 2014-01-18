@@ -2,7 +2,7 @@
 #define _MOLECULE_H
 
 #include "Atom.h"
-#include "Definitions.h"
+#include "../Definitions.h"
 #include <queue>
 
 class Molecule {
