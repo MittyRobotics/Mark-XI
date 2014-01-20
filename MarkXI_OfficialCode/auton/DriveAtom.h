@@ -2,7 +2,7 @@
 #define _DRIVE_ATOM_H
 
 #include "Atom.h"
-#include "../Definitions.h"
+#include "Definitions.h"
 
 class Drive_Atom : public Atom{
 	
@@ -13,6 +13,7 @@ class Drive_Atom : public Atom{
 	Drive_Atom(float feet, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4);
 	~Drive_Atom();
 	void run();
+	DriverStation *ds;
 	private:
 	CANJaguar* _drive1;
 	CANJaguar* _drive2;

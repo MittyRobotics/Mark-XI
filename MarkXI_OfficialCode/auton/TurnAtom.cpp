@@ -1,3 +1,4 @@
+//Last edited by Zach Light on 1/10/2014
 #include "TurnAtom.h"
 #include <cstring>
 
@@ -29,7 +30,7 @@ void Turn_Atom::resetEncoders()
 void Turn_Atom::run()
 {
 	
-	
+	TKOGyro::inst()->reset();
 	// do really cool things with the motors here
 	// like turn in circles here
 	

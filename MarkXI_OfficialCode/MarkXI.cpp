@@ -6,7 +6,7 @@
 #include "drive/TKODrive.h"
 #include "drive/TKOGDrive.h"
 #include "component/TKOGyro.h"
-#include "auton/TKOAutonomous.h"
+//#include "auton/TKOAutonomous.h"
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
 
@@ -16,6 +16,10 @@
  * 
  * For shooter, create calibration curve, best fit equation of shoot power VS. ball flight dist
  * Use equation to calculate needed power for desired distance 
+ * 
+ */ 
+//TODO CRITICAL Figure out why Logger, Auton crash on cRio on boot (After deploy) Code compiles
+/*
  * -----------------------------LAST DONE-------------------------------*
  * 01/04 
  * 		Preparing as a core for build season
@@ -44,8 +48,7 @@ class MarkXI: public SimpleRobot
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
-		{
-		}
+		{}
 };
 void MarkXI::Test()
 {
@@ -55,7 +58,7 @@ void MarkXI::Test()
 void MarkXI::RobotInit()
 {
 	printf("Initializing MarkXI class \n");
-	TKOGyro::inst()->reset();
+	//TKOGyro::inst()->reset();
 //	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
@@ -63,12 +66,11 @@ void MarkXI::RobotInit()
 void MarkXI::Disabled()
 {
 	printf("Robot Dying!\n");
-	TKOLogger::inst()->addMessage("Robot disabled.");
-	TKOLogger::inst()->Stop();
 	//TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOGDrive::inst()->Stop();
 	TKOVision::inst()->StopProcessing();
+	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
 	{
@@ -93,10 +95,10 @@ void MarkXI::Autonomous(void)
 	}
 	Wait(.1);
 	
-	TKOAutonomous::inst()->initAutonomous();
-	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
-	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
-	TKOAutonomous::inst()->startAutonomous();
+//	TKOAutonomous::inst()->initAutonomous();
+//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
+//	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
+//	TKOAutonomous::inst()->startAutonomous();
 	
 	TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
@@ -106,8 +108,8 @@ void MarkXI::OperatorControl()
 {
 	printf("Starting OperatorControl \n");
 	ds = DriverStation::GetInstance();
-	TKOGyro::inst()->reset();
 	TKOLogger::inst()->Start();
+	TKOGyro::inst()->reset();
 	//TKOShooter::inst()->Start();
 	TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with

@@ -1,5 +1,5 @@
-//Last edited by Ben Kim
-//on 01/14/2014
+//Last edited by The King of Darkness
+//on 01/04/2014
 #ifndef __DEFINITIONS_H
 #define __DEFINITIONS_H
 
@@ -29,9 +29,9 @@
 #define space printf("\n");
 #define GO_AWAY NULL;
 
-/*! \mainpage Welcome to TKO 1351's MarkXI's Code Documentation!
+/*! \mainpage Welcome to TKO 1351's MarkIX's Code Documentation!
  *
- * 	This is the Robot Code for the 2014 Season of Aerial Assist
+ * 	This is the Robot Code for the 2013 Season of Ultimate Ascent
  *
  *  If you haven't already, please visit our <a href="http://www.amhsrobotics.com">website</a>.
  */
@@ -46,6 +46,9 @@ const int DRIVE_L1_ID = 2;
 const int DRIVE_L2_ID = 3;
 const int DRIVE_R1_ID = 4;
 const int DRIVE_R2_ID = 5;
+
+const float MAX_RPM_1 = 169.85; //RPM for first gear -10 / Add 10 to get original shift number. 
+const float MIN_RPM_1 = 139.85;
 
 // Spinner constants
 const float RADIUS_WHEELS = 4;
@@ -92,8 +95,7 @@ const int PRESSURE_SWITCH_PORT = 1;
 	#define Y_IMAGE_RES 480		//X Image resolution in pixels, should be 120, 240 or 480
 	//#define VIEW_ANGLE 49		//Axis M1013
 	//#define VIEW_ANGLE 41.7		//Axis 206 camera
-	//#define VIEW_ANGLE 37.4  //Axis M1011 camera
-	#define VIEW_ANGLE 39.60	//if no work, try 33.24
+	#define VIEW_ANGLE 37.4  //Axis M1011 camera
 	#define PI 3.141592653
 	
 	//Score limits used for target identification
