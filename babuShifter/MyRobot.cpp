@@ -106,11 +106,6 @@ public:
 		}
 	}
 	
-	void ShiftStopPos() {
-		s1.Set(false);
-		s2.Set(false);
-	}
-	
 	void FullDrive() {
 		drive1.Set(-1.0);
 		drive2.Set(-1.0);
@@ -128,7 +123,7 @@ public:
 	}
 	
 	void Stop() {
-		ShiftStopPos();
+		shiftToLowGear();
 		Wait(0.5);
 		drive1.Set(0);
 		drive2.Set(0);
