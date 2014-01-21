@@ -36,8 +36,8 @@ StateMachine::~StateMachine()
 {
 }
 
-state_t statemachine::run_state( state_t cur_state, instance_data_t *data ) {
-    return state_table[ cur_state ]( data );
+state_t StateMachine::run_state( state_t cur_state, instance_data_t *data ) {
+    return _state_table[ cur_state ]( data );
 };
 
 
@@ -103,7 +103,7 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
 
     int sensors = 0;
     // reason for 8 is that piston is retracted then
-    while (sensors = GetSensorData(data); sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING) ) {
+    while (sensors = GetSensorData(data), sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING) ) {
         if (_timer.Get() > 25.) {
             _timer.Stop();
             _timer.Reset();
@@ -137,7 +137,7 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
     int sensors = 0;
 
     // reason for 8 is that piston is retracted then
-    while (sensors = GetSensorData(data); sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED)) {
+    while (sensors = GetSensorData(data), sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED)) {
         if (_timer.Get() > 5.) {
             _timer.Stop();
             _timer.Reset();
@@ -170,7 +170,7 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
     int sensors = 0;
 
     // reason for 8 is that piston is retracted then
-    while (sensors = GetSensorData(data); sensors != READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED)) {
+    while (sensors = GetSensorData(data), sensors != READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED)) {
         if (_timer.Get() > 25.) {
             _timer.Stop();
             _timer.Reset();
@@ -197,7 +197,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
     }
 
     // wait for the trigger then fire!
-    while (!_triggerJoystick.GetTrigger()) {}
+    while (!_triggerJoystick->GetTrigger()) {}
     // go to next state
     return STATE_LATCH_UNLOCK;
 }
@@ -216,7 +216,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     int sensors = 0;
 
     // reason for 4 is that piston is extended after this step
-    while (sensors = GetSensorData(data); sensors != DONE_FIRING && (sensors == READY_TO_FIRE || sensors == 10))
+    while (sensors = GetSensorData(data), sensors != DONE_FIRING && (sensors == READY_TO_FIRE || sensors == 10))
     {
         if (_timer.Get() > 5.) {
             _timer.Stop();
@@ -260,7 +260,7 @@ string state_to_string(instance_data_t *data)
             break;
 
         default:
-            return "POTATO!"
+            return "POTATO!";
             break;
     }
 }

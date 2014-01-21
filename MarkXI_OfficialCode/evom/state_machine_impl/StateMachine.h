@@ -6,7 +6,7 @@
 #ifndef ____StateMachine__
 #define ____StateMachine__
 
-#include "../Definitions.h"
+#include "../../Definitions.h"
 // might not be needed if included in wpilib
 #ifndef WPILIB_H_
 #include <Timer.h>
