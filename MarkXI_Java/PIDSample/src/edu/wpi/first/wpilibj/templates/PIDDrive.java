@@ -8,12 +8,14 @@ package edu.wpi.first.wpilibj.templates;
 
 
 
+import edu.wpi.first.wpilibj.CANJaguar;
 import edu.wpi.first.wpilibj.SimpleRobot;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Jaguar; //If you use Victors, import them instead
 import edu.wpi.first.wpilibj.Timer; //Make sure to use this version, not the java.util version of timer.
+import edu.wpi.first.wpilibj.can.CANTimeoutException;
 
 /**
  * This program initializes a PID Controller for the wheels and drives
@@ -30,10 +32,10 @@ public class PIDDrive extends SimpleRobot {
 //    This class is required to invert the direction of the motor.
 //    It negates the speed, so that the robot will drive forward.
      
-    class MotorDrive extends Jaguar {
+    class MotorDrive extends CANJaguar {
 
-        public MotorDrive(int port) {
-            super(port);
+        public MotorDrive(int port) throws CANTimeoutException {
+            super(port,ControlMode.kSpeed);
         }
 
         //Calls the super set method and gives it the negated speed.
@@ -42,8 +44,9 @@ public class PIDDrive extends SimpleRobot {
         }
     }
     //Initializes the motors.
-    private final SpeedController left = new MotorDrive(2);
-    private final SpeedController right = new Jaguar(1);
+    private SpeedController left;
+    private SpeedController right;
+    private CANJaguar test = null;
     
     //Initializes the Encoders.
     private final Encoder leftEncoder = new Encoder(1, 2);
@@ -61,6 +64,14 @@ public class PIDDrive extends SimpleRobot {
     private final PIDController rightPID;
 
     public PIDDrive() {
+        
+        try {
+            this.left = new MotorDrive(2);
+            this.right = new CANJaguar(1, CANJaguar.ControlMode.kSpeed);
+            this.test = new CANJaguar(3, CANJaguar.ControlMode.kVoltage);
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
         //Sets the distance per pulse in inches.
         leftEncoder.setDistancePerPulse(.000623);
         rightEncoder.setDistancePerPulse(.000623);
