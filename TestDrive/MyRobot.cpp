@@ -39,10 +39,24 @@ public:
 	}
 	
 	void TankDrive() {
-		l_f.Set(-stick1.GetY() * 0.8);
-		r_f.Set(stick2.GetY() * 0.8);
-		l_b.Set(-stick1.GetY() * 0.8);
-		r_b.Set(stick2.GetY() * 0.8);
+		if(stick1.GetY()>0.0||stick2.GetY()>0.0) {
+			l_f.Set(-stick1.GetY() * 0.9);
+			r_f.Set(stick2.GetY() * 0.9);
+			l_b.Set(-stick1.GetY() * 0.9);
+			r_b.Set(stick2.GetY() * 0.9);
+		}
+		else if (stick1.GetY()<0.0||stick2.GetY()<0.0) {
+			l_b.Set(-stick1.GetY() * 0.9);
+			r_b.Set(stick2.GetY() * 0.9);
+			l_f.Set(-stick1.GetY() * 0.9);
+			r_f.Set(stick2.GetY() * 0.9);
+		}
+		else {
+			l_f.Set(0.0);
+			l_b.Set(0.0);
+			r_f.Set(0.0);
+			r_b.Set(0.0);
+		}
 	}
 	
 	void Test() {

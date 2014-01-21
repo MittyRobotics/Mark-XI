@@ -10,8 +10,8 @@ class ShifterDemo : public SimpleRobot
 public:
 	CANJaguar drive1, drive2, drive3, drive4;
 	Joystick stick1, stick2;
-	Solenoid s1, s2;
-	TKORelay comp;
+	DoubleSolenoid s1, s2;
+	Compressor comp;
 	bool a_shift;
 	ShifterDemo():
 		drive1(DRIVE_L1_ID, CANJaguar::kPercentVbus),
@@ -19,8 +19,8 @@ public:
 		drive3(DRIVE_R1_ID, CANJaguar::kPercentVbus),
 		drive4(DRIVE_R2_ID, CANJaguar::kPercentVbus),
 		stick1(STICK_1_PORT), stick2(STICK_2_PORT),
-		s1(1), s2(2),
-		comp(2)
+		s1(2,1,2), s2(2,3,4),
+		comp(PRESSURE_SWITCH_PORT, COMPRESSOR_ID)
 	{
 		drive1.SetSafetyEnabled(false);
 		drive2.SetSafetyEnabled(false);
@@ -38,13 +38,17 @@ public:
 				Stop();
 				break;
 			}
-			comp.SetOn(1);
 			FullDrive();
 			Wait(25);
 			SlowestDrive();
 			Wait(25);
 			Stop();
 		}
+	}
+	
+	void RobotInit()
+	{
+		//comp.Start();
 	}
 
 	void OperatorControl()
@@ -90,19 +94,25 @@ public:
 	}
 	
 	void shiftToHighGear() {
-		s1.Set(true);
-		s2.Set(true);
+		s1.Set(s1.kForward);
+		s2.Set(s2.kForward);
 	}
 	
 	void shiftToLowGear() {
-		s1.Set(false);
-		s2.Set(false);
+		s1.Set(s1.kReverse);
+		s2.Set(s2.kReverse);
 	}
 	
 	void ManualShift() {
 		if (stick2.GetRawButton(3)) {
-			s1.Set(!s1.Get());
-			s2.Set(!s2.Get());
+			if (s1.Get() == s1.kForward)
+				s1.Set(s1.kReverse);
+			else
+				s1.Set(s1.kForward);
+			if (s2.Get() == s2.kForward)
+				s2.Set(s2.kReverse);
+			else
+				s2.Set(s2.kForward);
 		}
 	}
 	

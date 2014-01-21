@@ -33,14 +33,7 @@ public:
 		myRobot.SetSafetyEnabled(true);
 		while (IsOperatorControl()&&IsEnabled())
 		{	
-			if (stick1.GetTrigger())
-				myRobot.TankDrive(-stick1.GetY(), stick2.GetY());
-			else if(stick1.GetRawButton(2))
-				myRobot.TankDrive(-stick1.GetY()*0.6, stick2.GetY()*0.6);
-			else if(stick2.GetRawButton(2))
-				myRobot.TankDrive(-stick1.GetY(), stick1.GetY());
-			else
-				myRobot.TankDrive(-stick1.GetY()*0.8, stick2.GetY()*0.8);
+				myRobot.TankDrive(stick1, stick2);
 			Wait(0.005);				// wait for a motor update time
 		}
 	}
