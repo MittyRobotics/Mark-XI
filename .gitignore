@@ -33,3 +33,5 @@ PPC603gnu/
 #.project
 #.wrmakefile
 #.wrproject
+/MarkXI_Java/Sample/nbproject/private
+/MarkXI_Java/2014VisionSampleProject/nbproject/private/
