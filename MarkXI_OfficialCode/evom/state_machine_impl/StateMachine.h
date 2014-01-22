@@ -59,16 +59,16 @@ private:
     static string state_to_string(instance_data_t *data);
     static string sensors_to_string(instance_data_t *data);
     state_func_t*  _state_table[NUM_STATES + 1];
-    static Timer _timer;
+    static Timer* _timer;
     static Joystick* _triggerJoystick;
     // TODO Fix the solenoids to something more useful
-    static DoubleSolenoid _piston_retract_extend;
-    static DoubleSolenoid _latch_lock_unlock;
+    static DoubleSolenoid* _piston_retract_extend;
+    static DoubleSolenoid* _latch_lock_unlock;
 
-    static DigitalInput _piston_retract;
-    static DigitalInput _piston_extend;
-    static DigitalInput _latch_lock;
-    static DigitalInput _is_cocked;
+    static DigitalInput* _piston_retract;
+    static DigitalInput* _piston_extend;
+    static DigitalInput* _latch_lock;
+    static DigitalInput* _is_cocked;
 };
 
 
