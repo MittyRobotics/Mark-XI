@@ -6,9 +6,9 @@
 
 /*
  * TODO 6
- * add in the arm switch and a function to check the state for arm
- * what do if err? state err do nothing aka freeze
- * arm must be in fire pos or shouldn't fire (btn for that)
+ * function to check the state for arm DONE
+ * what do if err? state err do nothing aka freeze DONE
+ * arm must be in fire pos or shouldn't fire (btn for that)???
  * also arm doesnt move unless this is in ready to fire state
  * change the timings for that while loops
  * check state in ready to fire
@@ -16,14 +16,6 @@
 
 #include "StateMachine.h"
 
-/*
- static DoubleSolenoid* _piston_retract_extend;
- static DoubleSolenoid* _latch_lock_unlock;
- static DigitalInput* _piston_retract;
- static DigitalInput* _piston_extend;
- static DigitalInput* _latch_unlock;
- static DigitalInput* _latch_lock;
- */
 
 Timer* StateMachine::_timer = new Timer();
 
@@ -37,12 +29,7 @@ DigitalInput* StateMachine::_is_cocked = new DigitalInput(IS_COCKED_SWITCH_CHANN
 DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2,1,1);
 DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(2,1,1);
 
-StateMachine::StateMachine(Joystick *triggerJoystick)// :
-//    _timer(),
-//    _piston_retract(PISTON_SWITCH_RETRACT_CHANNEL),
-//    _piston_extend(PISTON_SWITCH_EXTEND_CHANNEL),
-//    _latch_lock(LATCH_PISTON_LOCK_CHANNEL),
-//    _is_cocked(IS_COCKED_SWITCH_CHANNEL)
+StateMachine::StateMachine(Joystick *triggerJoystick)
 {
     _state_table[STATE_PISTON_RETRACT] = do_state_piston_retract;
     _state_table[STATE_LATCH_LOCK] = do_state_latch_lock;
@@ -64,15 +51,7 @@ state_t StateMachine::run_state( state_t cur_state, instance_data_t *data ) {
 
 int StateMachine::GetSensorData(instance_data_t *data)
 {
-    // gets data and puts it in to data so we have it
-    // needs to be in this format:
-    // piston retact
-    // piston extend
-    // is cocked
-    // latch locked
-
-
-    // TODO fix the values and flip the logic only return true in one case
+    // TODO what is off or on in terms of numbers?
     data->state[0] = (_piston_retract->Get() != 0);
     data->state[1] = (_piston_extend->Get() != 0);
     data->state[2] = (_latch_lock->Get() != 0);
@@ -104,6 +83,9 @@ state_t StateMachine::init(state_t* cur_state, instance_data_t *data)
         break;
       case LATCH_LOCKED_PISTON_RETRACTED:
         *cur_state = STATE_PISTON_EXTEND;
+        break;
+      case READY_TO_FIRE:
+        *cur_state = READY_TO_FIRE;
         break;
       default:
         *cur_state = STATE_ERR;
@@ -218,7 +200,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
     }
 
     // wait for the trigger then fire!
-    while (!_triggerJoystick->GetTrigger()) {}
+    while (!_triggerJoystick->GetTrigger() && GetSensorData(data) == READY_TO_FIRE) {}
     // go to next state
     return STATE_LATCH_UNLOCK;
 }
@@ -302,3 +284,32 @@ state_t StateMachine::do_err_state(instance_data_t *data)
     sensors_to_string(data);
     return STATE_ERR;
 }
+
+
+/*
+    instance_data_t data;
+    state_t cur_state;
+    StateMachine s;
+    cur_state = s.init(data);
+    bool errState = false;
+    while(1)
+    {
+        cur_state = s.run(cur_state,&data);
+        if (cur_state == STATE_ERR && ! errState)
+        {
+            s.timerStart();
+            errState = true;
+        }
+
+        if(errState && s.GetTimer() > 30.)
+        {
+            printf("Baked potato. ");
+        }
+        else if (errState && s.GetTimer() <= 30.)
+        {
+            printf("Potato. ");
+        }
+
+    }
+*/
+

@@ -45,6 +45,7 @@ class StateMachine {
 public:
     StateMachine(Joystick* triggerJoystick);
     ~StateMachine();
+
     state_t run_state(state_t, instance_data_t*);
     state_t init(state_t* cur_state, instance_data_t * data);
 private:
@@ -54,14 +55,19 @@ private:
     static state_t do_state_latch_unlock(instance_data_t *data);
     static state_t do_state_ready_to_fire(instance_data_t *data);
     static state_t do_err_state(instance_data_t *data);
+
     static int GetSensorData(instance_data_t *data);
     static int createIntFromBoolArray(instance_data_t *data);
+
     static string state_to_string(instance_data_t *data);
     static string sensors_to_string(instance_data_t *data);
+
     state_func_t*  _state_table[NUM_STATES + 1];
+
     static Timer* _timer;
+
     static Joystick* _triggerJoystick;
-    // TODO Fix the solenoids to something more useful
+
     static DoubleSolenoid* _piston_retract_extend;
     static DoubleSolenoid* _latch_lock_unlock;
 
