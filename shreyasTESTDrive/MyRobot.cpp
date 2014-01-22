@@ -14,8 +14,8 @@ class RobotDemo : public SimpleRobot
 
 public:
 	RobotDemo():
-		l_f(DRIVE_L1_ID), l_b(DRIVE_L2_ID), r_f(DRIVE_R1_ID), r_b(DRIVE_R2_ID),
-		l_d_stick(STICK_1_PORT), r_d_stick(STICK_2_PORT)
+		l_f(DRIVE_L1_ID)/*left forward*/, l_b(DRIVE_L2_ID)/*left backward*/, r_f(DRIVE_R1_ID)/*right forward*/, r_b(DRIVE_R2_ID)/*right backward*/,
+		l_d_stick(STICK_1_PORT)/*left drive stick*/, r_d_stick(STICK_2_PORT)//right drive stick
 	{
 		l_f.SetPID(DRIVE_kP, DRIVE_kI,DRIVE_kD);
 		l_b.SetPID(DRIVE_kP, DRIVE_kI,DRIVE_kD);
