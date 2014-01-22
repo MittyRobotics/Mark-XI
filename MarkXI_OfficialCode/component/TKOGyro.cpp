@@ -26,6 +26,7 @@ TKOGyro::TKOGyro():
 	if (gyro.StatusIsFatal())
 		printf("Gyro status FATUL.......\n");
 	printf("Initialized gyro\n");
+	AddToSingletonList();
 }
 
 TKOGyro* TKOGyro::inst()
@@ -49,6 +50,6 @@ float TKOGyro::GetAngle()
 	return angle;
 }
 TKOGyro::~TKOGyro(){
-	
+	m_Instance = NULL;
 }
 

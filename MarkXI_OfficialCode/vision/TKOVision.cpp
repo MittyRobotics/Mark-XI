@@ -1,5 +1,6 @@
 //Last edited by Vadim Korolik
 //on 01/08/2014
+//test
 #include "TKOVision.h"
 
 //TODO
@@ -20,13 +21,15 @@ TKOVision::TKOVision():
 		stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
 {
 	picProcessT = new Task("TKOVisProc", (FUNCPTR) ProcessRunner);
-	picProcessT->SetPriority(200); //lowest priority, lower than driving etc.
+	//picProcessT->SetPriority(200); //lowest priority, lower than driving etc.
 	lastDist = 0.;
 	lastProcessingTime = 0.;
 	lastTimestamp = 0.;
 	AxisCamera::GetInstance().WriteBrightness(30); //add setting writing
 	AxisCamera::GetInstance().WriteMaxFPS(30);
 	AxisCamera::GetInstance().WriteCompression(30);
+	
+	AddToSingletonList();
 	
 //	rawImage = new RGBImage();
 //	thresholdImage = new BinaryImage(); // get just the green target pixels
@@ -35,7 +38,7 @@ TKOVision::TKOVision():
 }
 TKOVision::~TKOVision()
 {
-	
+	m_Instance = NULL;
 }
 TKOVision* TKOVision::inst()
 {

@@ -6,7 +6,6 @@
 #include "drive/TKODrive.h"
 #include "drive/TKOGDrive.h"
 #include "component/TKOGyro.h"
-#include "auton/TKOAutonomous.h"
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
 
@@ -16,6 +15,10 @@
  * 
  * For shooter, create calibration curve, best fit equation of shoot power VS. ball flight dist
  * Use equation to calculate needed power for desired distance 
+ * 
+ */ 
+//TODO CRITICAL Figure out why Logger, Auton crash on cRio on boot (After deploy) Code compiles
+/*
  * -----------------------------LAST DONE-------------------------------*
  * 01/04 
  * 		Preparing as a core for build season
@@ -44,8 +47,7 @@ class MarkXI: public SimpleRobot
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
-		{
-		}
+		{}
 };
 void MarkXI::Test()
 {
@@ -55,7 +57,7 @@ void MarkXI::Test()
 void MarkXI::RobotInit()
 {
 	printf("Initializing MarkXI class \n");
-	TKOGyro::inst()->reset();
+	//TKOGyro::inst()->reset();
 //	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
@@ -63,9 +65,8 @@ void MarkXI::RobotInit()
 void MarkXI::Disabled()
 {
 	printf("Robot Dying!\n");
-	TKOLogger::inst()->addMessage("Robot disabled.");
 	TKOLogger::inst()->Stop();
-	TKOShooter::inst()->Stop();
+	//TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOGDrive::inst()->Stop();
 	TKOVision::inst()->StopProcessing();
@@ -93,10 +94,10 @@ void MarkXI::Autonomous(void)
 	}
 	Wait(.1);
 	
-	TKOAutonomous::inst()->initAutonomous();
-	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
-	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
-	TKOAutonomous::inst()->startAutonomous();
+//	TKOAutonomous::inst()->initAutonomous();
+//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
+//	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
+//	TKOAutonomous::inst()->startAutonomous();
 	
 	TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
@@ -106,9 +107,9 @@ void MarkXI::OperatorControl()
 {
 	printf("Starting OperatorControl \n");
 	ds = DriverStation::GetInstance();
-	TKOGyro::inst()->reset();
 	TKOLogger::inst()->Start();
-	TKOShooter::inst()->Start();
+	TKOGyro::inst()->reset();
+	//TKOShooter::inst()->Start();
 	TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;
@@ -127,8 +128,8 @@ void MarkXI::OperatorControl()
 			TKOLogger::inst()->addMessage("!!!CRITICAL Operator loop very long, length", loopTimer.Get());
 			printf("!!!CRITICAL Operator loop very long, %f%s\n", loopTimer.Get(), " seconds.");
 		}
-		DSLog(1, "Dist: %f\n", TKOVision::inst()->lastDist);
-		DSLog(2, "Hot: %i\n", TKOVision::inst()->lastTargets.Hot);
+		DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
+		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
 		DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		DSLog(4, "Clock %f\n", GetClock());
 		DSLog(5, "")
@@ -143,8 +144,6 @@ void MarkXI::Operator()
 {
 	if (stick1. GetRawButton(11))
 		TKOGyro::inst()->reset();
-	if (stick1.GetTrigger())    //for testing!!!
-		printf("%f\n", GetFPGATime());
 	if (stick1.GetRawButton(8))
 		RegDrive();
 	if (stick1.GetRawButton(9))
@@ -153,7 +152,7 @@ void MarkXI::Operator()
 	{
 		if ((GetFPGATime() - TKOVision::inst()->lastTimestamp) <= 1000)
 		{
-			TKOShooter::inst()->shootDist(TKOVision::inst()->lastDist);
+			//TKOShooter::inst()->shootDist(TKOVision::inst()->lastDist);
 		}
 	}
 }

@@ -1,5 +1,5 @@
-//Last edited by Vadim Korolik
-//on 01/04/2014
+//Last edited by Ben Kim
+//on 01/14/2014
 #ifndef __DEFINITIONS_H
 #define __DEFINITIONS_H
 
@@ -29,9 +29,9 @@
 #define space printf("\n");
 #define GO_AWAY NULL;
 
-/*! \mainpage Welcome to TKO 1351's MarkIX's Code Documentation!
+/*! \mainpage Welcome to TKO 1351's MarkXI's Code Documentation!
  *
- * 	This is the Robot Code for the 2013 Season of Ultimate Ascent
+ * 	This is the Robot Code for the 2014 Season of Aerial Assist
  *
  *  If you haven't already, please visit our <a href="http://www.amhsrobotics.com">website</a>.
  */
@@ -92,7 +92,8 @@ const int PRESSURE_SWITCH_PORT = 1;
 	#define Y_IMAGE_RES 480		//X Image resolution in pixels, should be 120, 240 or 480
 	//#define VIEW_ANGLE 49		//Axis M1013
 	//#define VIEW_ANGLE 41.7		//Axis 206 camera
-	#define VIEW_ANGLE 37.4  //Axis M1011 camera
+	//#define VIEW_ANGLE 37.4  //Axis M1011 camera
+	#define VIEW_ANGLE 35.15	// if thia angle doesn't work, try 55. or 39.60 or 33.24
 	#define PI 3.141592653
 	
 	//Score limits used for target identification

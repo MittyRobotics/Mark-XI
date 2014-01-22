@@ -5,7 +5,7 @@
 #include "../log/TKOLogger.h"
 #include "../component/TKOGyro.h"
 
-class TKOGDrive
+class TKOGDrive : public SensorBase
 {
 public:
 	static TKOGDrive* inst();
@@ -24,5 +24,6 @@ private:
 	float TURN_kP;
 	static void DriveRunner();
 	void gyroDrive();
+	DISALLOW_COPY_AND_ASSIGN(TKOGDrive);
 };
 #endif

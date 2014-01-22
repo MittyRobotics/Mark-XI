@@ -10,7 +10,7 @@
 #include "../Definitions.h"
 #include "VisionFunc.h"
 
-class TKOVision
+class TKOVision : public SensorBase
 {	
 	public:
 		static TKOVision* inst();
@@ -45,6 +45,7 @@ class TKOVision
 		static TKOVision* m_Instance;
 		
 		static void ProcessRunner();
+		DISALLOW_COPY_AND_ASSIGN(TKOVision);
 };
 
 
