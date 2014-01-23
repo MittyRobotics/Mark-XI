@@ -24,6 +24,8 @@ class TKOShooter
 		void launchShooter();
 		//State machine
         static int runStateMachine();
+        void startShooter(); 
+        void stopShooter(); 
 		
 		static TKOShooter* _instance;
 		
