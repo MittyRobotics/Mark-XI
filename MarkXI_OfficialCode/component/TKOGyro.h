@@ -13,7 +13,7 @@ public:
 	static TKOGyro* inst();
 private:
 	static TKOGyro* m_Instance;
-	Gyro gyro;
+	//Gyro gyro;
 	TKOGyro();
 	~TKOGyro();
 };

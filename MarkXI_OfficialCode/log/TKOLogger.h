@@ -59,6 +59,8 @@ class TKOLogger: public SensorBase
 		 * Stops the task that pops from the buffer into disk.
 		 */
 		void Stop();
+		
+		int getBufferLength();
 
 	private:
 		DISALLOW_COPY_AND_ASSIGN(TKOLogger);
