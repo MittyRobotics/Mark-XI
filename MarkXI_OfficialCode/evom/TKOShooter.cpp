@@ -15,7 +15,7 @@ TKOShooter::TKOShooter ()
 TKOShooter* TKOShooter::inst ()
 {
 	if (!_instance) {
-		printf("No tkoShooterInstance. Creating.");
+		printf("No TKOShooter instance. Creating.");
 		_instance = new TKOShooter;
 	}
 	return _instance;
@@ -36,6 +36,7 @@ bool TKOShooter::Stop()
 
 void TKOShooter::initStateMachine()
 {
+	cur_state = s.init(&data);
 }
 bool TKOShooter::startStateMachine()
 {
@@ -56,6 +57,7 @@ bool TKOShooter::stopStateMachine()
 }
 int TKOShooter::runStateMachine()
 {
+	cur_state = s.run_state(cur_state,&data);
 	return -1;
 }
 
@@ -74,7 +76,10 @@ bool TKOShooter::shooterDoAction(int action)
 
 void TKOShooter::shooterTaskRunner()
 {
-	
+	while (true)
+	{
+		
+	}
 }
 void TKOShooter::stateMachineTaskRunner()
 {

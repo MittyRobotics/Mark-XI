@@ -50,6 +50,16 @@ class MarkXI: public SimpleRobot
 void MarkXI::Test()
 {
 	printf("Calling test function \n");
+	printf("Starting shooter \n");
+	TKOShooter::inst()->Start();
+	printf("Stopped shooter \n");
+	while (IsEnabled())
+	{
+		
+	}
+	printf("Stopping shooter \n");
+	TKOShooter::inst()->Stop();
+	printf("Stopped Shooter \n");
 }
 
 void MarkXI::RobotInit()
@@ -103,32 +113,7 @@ void MarkXI::Autonomous(void)
 }
 
 void MarkXI::OperatorControl()
-{
-	instance_data_t data;
-	state_t cur_state;
-	StateMachine s;
-	cur_state = s.init(&data);
-	bool errState = false;
-	while(1)
-	{
-		cur_state = s.run_state(cur_state,&data);
-		/*if (cur_state == STATE_ERR && ! errState)
-		{
-			s.timerStart();
-			errState = true;
-		}
-
-		if(errState && s.GetTimer() > 30.)
-		{
-			printf("Baked potato. ");
-		}
-		else if (errState && s.GetTimer() <= 30.)
-		{
-			printf("Potato. ");
-		}*/
-
-	}
-	
+{	
 	printf("Starting OperatorControl \n");
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->Start();

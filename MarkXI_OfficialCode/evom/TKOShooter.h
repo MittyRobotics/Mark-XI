@@ -6,6 +6,7 @@
 #define __TKOSHOOTER_H
 
 #include "../Definitions.h"
+#include "state_machine_impl/StateMachine.h"
 
 
 class TKOShooter
@@ -32,6 +33,10 @@ class TKOShooter
 		static void stateMachineTaskRunner();
 
 		static TKOShooter* _instance;
+		
+		instance_data_t data;
+		state_t cur_state;
+		StateMachine s;
 };
 
 #endif
