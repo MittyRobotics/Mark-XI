@@ -5,7 +5,7 @@
 
 #include "../Definitions.h"
 
-class tkoShooter
+class TKOShooter
 {
 	public:
 		tkoShooter();
@@ -14,6 +14,7 @@ class tkoShooter
 		static tkoShooter* inst();
 		void Start();
 		void Stop();
+		void runStateMachine()
 	private:
 		Task *shooterTask;
 		static tkoShooter* newShooterInstance;

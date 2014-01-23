@@ -1,4 +1,4 @@
-//Last edited by Zach Light on 1/10/2014
+//Last edited by Ishan Shah and Alex Parks
 #include "TurnAtom.h"
 #include <cstring>
 

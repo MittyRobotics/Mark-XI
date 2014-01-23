@@ -153,30 +153,7 @@ void MarkXI::Operator()
 	{
 		if ((GetFPGATime() - TKOVision::inst()->lastTimestamp) <= 1000)
 		{
-#ifndef _MOLECULE_H
-#define _MOLECULE_H
 
-#include "auton/Atom.h"
-#include "Definitions.h"
-#include <queue>
-
-class Molecule {
-	
-	public:
-		void addAtom(Atom*);
-		void start();
-		void MoleculeInit();
-		void Test();
-		CANJaguar drive1, drive2, drive3, drive4;
-		Molecule();
-		~Molecule();
-	private:
-		std::queue<Atom*> _list;
-		
-	
-};
-
-#endif
 //			TKOShooter::inst()->shootDist(TKOVision::inst()->lastDist);
 		}
 	}
