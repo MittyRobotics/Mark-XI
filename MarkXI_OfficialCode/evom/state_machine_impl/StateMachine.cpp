@@ -16,7 +16,6 @@
 
 #include "StateMachine.h"
 
-
 Timer* StateMachine::_timer = new Timer();
 
 //TODO define teh stuff
@@ -24,12 +23,13 @@ DigitalInput* StateMachine::_piston_retract = new DigitalInput(PISTON_SWITCH_RET
 DigitalInput* StateMachine::_piston_extend = new DigitalInput(PISTON_SWITCH_EXTEND_CHANNEL);
 DigitalInput* StateMachine::_latch_lock = new DigitalInput(LATCH_PISTON_LOCK_CHANNEL);
 DigitalInput* StateMachine::_is_cocked = new DigitalInput(IS_COCKED_SWITCH_CHANNEL);
+Joystick* StateMachine::_triggerJoystick = new Joystick(1);
 
 // TODO nums are bs
 DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2,1,1);
 DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(2,1,1);
 
-StateMachine::StateMachine(Joystick *triggerJoystick)
+StateMachine::StateMachine()
 {
     _state_table[STATE_PISTON_RETRACT] = do_state_piston_retract;
     _state_table[STATE_LATCH_LOCK] = do_state_latch_lock;
@@ -37,7 +37,6 @@ StateMachine::StateMachine(Joystick *triggerJoystick)
     _state_table[STATE_READY_TO_FIRE] = do_state_ready_to_fire;
     _state_table[STATE_LATCH_UNLOCK] = do_state_latch_unlock;
     _state_table[STATE_ERR] = do_err_state;
-    _triggerJoystick = triggerJoystick;
 }
 
 StateMachine::~StateMachine()
@@ -69,26 +68,27 @@ int StateMachine::createIntFromBoolArray(instance_data_t *data)
             num |= 1 << i;
         }
     }
+    return num;
 }
 
-state_t StateMachine::init(state_t* cur_state, instance_data_t *data)
+state_t StateMachine::init(instance_data_t *data)
 {
     int sensors = GetSensorData(data);
     switch (sensors) {
       case DONE_FIRING:
-        *cur_state = STATE_PISTON_RETRACT;
+        return STATE_PISTON_RETRACT;
         break;
       case PISTON_RETRACTED:
-        *cur_state = STATE_LATCH_LOCK;
+    	return STATE_LATCH_LOCK;
         break;
       case LATCH_LOCKED_PISTON_RETRACTED:
-        *cur_state = STATE_PISTON_EXTEND;
+    	return STATE_PISTON_EXTEND;
         break;
       case READY_TO_FIRE:
-        *cur_state = READY_TO_FIRE;
+    	return STATE_READY_TO_FIRE;
         break;
       default:
-        *cur_state = STATE_ERR;
+    	return STATE_ERR;
         break;
     }
 }
@@ -268,7 +268,7 @@ string StateMachine::state_to_string(instance_data_t *data)
     }
 }
 
-string StateMachine::sensors_to_string(instance_data_t *data)
+void StateMachine::sensors_to_string(instance_data_t *data)
 {
     printf("0b (ic) (ll) (Pe) (Pr)\n0b");
     int sensors = createIntFromBoolArray(data);

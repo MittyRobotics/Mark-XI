@@ -36,8 +36,6 @@ bool TKOShooter::Stop()
 
 void TKOShooter::initStateMachine()
 {
-	cur_state = STATE_INITIAL;
-	stateData.init = true;
 }
 bool TKOShooter::startStateMachine()
 {
@@ -58,8 +56,6 @@ bool TKOShooter::stopStateMachine()
 }
 int TKOShooter::runStateMachine()
 {
-	stateData.dummy = true;
-	cur_state = run_state(cur_state, &stateData);
 	return -1;
 }
 

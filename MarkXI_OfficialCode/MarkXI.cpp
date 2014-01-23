@@ -6,9 +6,9 @@
 #include "drive/TKODrive.h"
 #include "drive/TKOGDrive.h"
 #include "component/TKOGyro.h"
-#include "auton/TKOAutonomous.h"
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
+#include "evom/state_machine_impl/StateMachine.h"
 
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
  * Auton, vision tests
@@ -45,7 +45,6 @@ class MarkXI: public SimpleRobot
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
 		{
-			TKOLogger::inst();
 		}
 };
 void MarkXI::Test()
@@ -56,7 +55,7 @@ void MarkXI::Test()
 void MarkXI::RobotInit()
 {
 	printf("Initializing MarkXI class \n");
-	TKOGyro::inst()->reset();
+	//TKOGyro::inst()->reset();
 //	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
@@ -66,10 +65,10 @@ void MarkXI::Disabled()
 	printf("Robot Dying!\n");
 	TKOLogger::inst()->addMessage("Robot disabled.");
 	//TKOShooter::inst()->Stop();
-	TKODrive::inst()->Stop();
-	TKOGDrive::inst()->Stop();
-	TKOVision::inst()->StopProcessing();
-	TKOLogger::inst()->Stop();
+//	TKODrive::inst()->Stop();
+//	TKOGDrive::inst()->Stop();
+//	TKOVision::inst()->StopProcessing();
+//	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
 	{
@@ -105,6 +104,31 @@ void MarkXI::Autonomous(void)
 
 void MarkXI::OperatorControl()
 {
+	instance_data_t data;
+	state_t cur_state;
+	StateMachine s;
+	cur_state = s.init(&data);
+	bool errState = false;
+	while(1)
+	{
+		cur_state = s.run_state(cur_state,&data);
+		/*if (cur_state == STATE_ERR && ! errState)
+		{
+			s.timerStart();
+			errState = true;
+		}
+
+		if(errState && s.GetTimer() > 30.)
+		{
+			printf("Baked potato. ");
+		}
+		else if (errState && s.GetTimer() <= 30.)
+		{
+			printf("Potato. ");
+		}*/
+
+	}
+	
 	printf("Starting OperatorControl \n");
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->Start();
