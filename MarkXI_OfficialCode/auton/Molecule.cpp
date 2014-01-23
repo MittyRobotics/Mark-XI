@@ -3,11 +3,11 @@
 
 
 Molecule::Molecule():
-drive1(DRIVE_L1_ID, CANJaguar::kPosition),
-drive2(DRIVE_L2_ID, CANJaguar::kVoltage),
-drive3(DRIVE_R1_ID, CANJaguar::kPosition),
-drive4(DRIVE_R2_ID, CANJaguar::kVoltage),
-_list()
+	drive1(DRIVE_L1_ID, CANJaguar::kPosition),
+	drive2(DRIVE_L2_ID, CANJaguar::kVoltage),
+	drive3(DRIVE_R1_ID, CANJaguar::kPosition),
+	drive4(DRIVE_R2_ID, CANJaguar::kVoltage),
+	_list()
 
 {}
 
@@ -55,15 +55,15 @@ Molecule::~Molecule(){
 
 void Molecule::Test()
 {
-		drive1.Set(100);
-		drive2.Set(drive1.GetOutputVoltage());
-		printf("drive %f %f %f\n", drive1.GetPosition(), drive3.GetPosition(), drive1.GetOutputVoltage());
+	drive1.Set(100);
+	drive2.Set(drive1.GetOutputVoltage());
+	printf("drive %f %f %f\n", drive1.GetPosition(), drive3.GetPosition(), drive1.GetOutputVoltage());
 }
 
 
 void Molecule::addAtom(Atom *a)
 {
-		_list.push(a);
+	_list.push(a);
 }
 
 

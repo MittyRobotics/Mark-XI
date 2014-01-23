@@ -11,14 +11,14 @@ class TKODrive : public SensorBase
 public:
 	static TKODrive* inst();
 	void switchToSpeed();
-		void Start();
-		void Stop();
-		bool VerifyJags();
+	void Start();
+	void Stop();
+	bool VerifyJags();
 private:
-		CANJaguar drive1, drive2, drive3, drive4; // define motors
-			Joystick stick1, stick2, stick3, stick4; // define joysticks
-			Task *driveTask;
-			void TankDrive();
+	CANJaguar drive1, drive2, drive3, drive4; // define motors
+	Joystick stick1, stick2, stick3, stick4; // define joysticks
+	Task *driveTask;
+	void TankDrive();
 	TKODrive();
 	~TKODrive();
 	static TKODrive* m_Instance;

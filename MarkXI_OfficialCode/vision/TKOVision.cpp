@@ -20,8 +20,12 @@ TKOVision::TKOVision():
 		stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 		stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
 {
+	printf("Initializing vision\n");
 	picProcessT = new Task("TKOVisProc", (FUNCPTR) ProcessRunner);
-	//picProcessT->SetPriority(200); //lowest priority, lower than driving etc.
+//	if (picProcessT->SetPriority(200)) //lowest priority, lower than driving etc.
+//		printf("vision priority set to 200\n");
+//	else
+		printf("vision priority not set\n");
 	lastDist = 0.;
 	lastProcessingTime = 0.;
 	lastTimestamp = 0.;
@@ -44,7 +48,7 @@ TKOVision* TKOVision::inst()
 {
 	if (!m_Instance)
 	{
-		printf("TKOVision instance is null");
+		printf("TKOVision instance is null\n");
 		m_Instance = new TKOVision;
 	}
 	return m_Instance;
@@ -69,12 +73,12 @@ bool TKOVision::ProccessImageFromCamera()
 	printf("Starting proccessing actually\n");
 	
 	Threshold redThreshRGB(60,140,70,140,70,140); //USED IN RGB Threshold
-	Threshold redThreshHSV(220,255,60,255,100,255);
-	Threshold redThreshHSV2(220,255,20,255,140,255);
+	Threshold redThreshHSV(220,255,76,255,100,255);
+	//Threshold redThreshHSV2(220,255,20,255,140,255);
 	//Threshold redThreshHSV(84,255,64,255,93,255);
-	///this is a red threshold ^
-	///this is a green threshold
-	Threshold greenThresh(105, 137, 230, 255, 133, 183);	//HSV threshold criteria, ranges are in that order ie. Hue is 60-100
+	
+	Threshold greenThreshHSV(60,255,58,255,130,255);	//HSV threshold criteria, ranges are in that order ie. Hue is 60-100
+	
 	ParticleFilterCriteria2 criteria[] = 
 	{
 			{IMAQ_MT_AREA, AREA_MINIMUM, 65535, false, false}
@@ -99,13 +103,14 @@ bool TKOVision::ProccessImageFromCamera()
 	
 	//validated image, up to here only raw image processing
 	
-	thresholdImage = rawImage->ThresholdHSV(redThreshHSV2);
+	thresholdImage = rawImage->ThresholdHSV(greenThreshHSV);	//TODO: test distance with new green light
 	//	thresholdImage->Write("/pics/processed/thresholdImage.bmp");
 	printf("Prosseced HSV Threshold\n");
 	convexHullImage = thresholdImage->ConvexHull(true); //check difference between true and false
 	//	convexHullImage->Write("/pics/processed/hullImage.bmp");
 	printf("Prosseced Convex Hull\n");
-	filteredImage = convexHullImage->ParticleFilter(criteria, 1);	//Remove small particles	
+	filteredImage = convexHullImage->ParticleFilter(criteria, 1);	//Remove small particles
+	
 	//filteredImage->RemoveSmallObjects(true, 20);
 	printf("Convex Hull success!\n");
 	if (stick3.GetTrigger())
@@ -235,10 +240,16 @@ bool TKOVision::ProccessImageFromCamera()
 	delete thresholdImage;
 	delete rawImage;
 	delete convexHullImage;
+	filteredImage = NULL;
+	thresholdImage = NULL;
+	rawImage = NULL;
+	convexHullImage = NULL;
 	
 	//delete allocated reports and Scores objects also
 	delete scores;
 	delete reports;
+	scores = NULL;
+	reports = NULL;
 	
 
 	return true;

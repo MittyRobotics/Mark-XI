@@ -9,7 +9,7 @@ TKOGyro* TKOGyro::m_Instance = NULL;
  * YAY ACTUALLY NO LONGER CAUSES KERNAL EXCEPTIONS
  */
 
-TKOGyro::TKOGyro():
+TKOGyro::TKOGyro() :
 	gyro(GYRO_PORT) 
 //CRITICAL GYRO PORT IS EITHER 1 OR 2 ON ANALOG SIDE CAR
 //WILL NOT WORK IF IN PORT 3-8
@@ -45,6 +45,7 @@ void TKOGyro::reset(){
 }
 float TKOGyro::GetAngle()
 {
+	return 0.;
 	//CHANGE TO RETURN NO MORE THAN abs(360) 
 	float angle = gyro.GetAngle();
 	return angle;

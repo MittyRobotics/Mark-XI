@@ -43,7 +43,7 @@ double VisionFunc::computeDistance (BinaryImage *image, ParticleAnalysisReport *
 	//i guess it is the length of the particle (verticle rect) in the image, as calculated by imaq and NOT by the boundingRect...
 	targetHeight = 17.75; //SO THIS IS HEIGHT OF VERTICAL RECTANGLE???
 	printf("TarHeight: %f\n", height);
-	return Y_IMAGE_RES * targetHeight / (height * divToInches * 2 * tan(VIEW_ANGLE*PI/(180*2))); 
+	return Y_IMAGE_RES * targetHeight / (height * divToInches * 2 * tan(VIEW_ANGLE*PI/(180*2))); // change divToInches to 12 to return distance in feet
 }
 
 /**
