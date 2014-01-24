@@ -33,8 +33,8 @@ void TKOIntake::RollerMove() {
 
 		}
 		else {
-			_roller1.Set (0);
-			_roller2.Set (0);
+			_roller1.Set(0);
+			_roller2.Set(0);
 		}
 	}
 }
@@ -51,18 +51,17 @@ void TKOIntake::RollerMoveOut()
 
 void TKOIntake::ArmMove() { // Arm move code to move it to the lowest position
 	{
-		while (true) {
-			if (stick4.GetRawButton(1))
-				;
+	 
+		if (stick4.GetRawButton(1))
 			_arm.Set(1); // The arm starts going in a downwards fashion. This can be changed if needed.
-			if (limit1.Get() == 1) {
-				_arm.Set(0);
-				printf("The arm is at the lowest position.");
-			}
-			break;
+		if (limit1.Get() == 1) {
+			_arm.Set(0);
+			printf("The arm is at the lowest position.");
 		}
+		
 	}
-	while (true) {
+	
+	
 		if (stick4.GetRawButton(2))
 			; // Arm move to middle position
 		_arm.Set(1); //Arm first moves in downward fashion in case it is above the second limit switch
@@ -73,10 +72,10 @@ void TKOIntake::ArmMove() { // Arm move code to move it to the lowest position
 			; //If it reaches the second limit switch
 		_arm.Set(0);
 		printf("The arm has reached the middle position.");
-		break;
-	}
+		
+	
 
-	while (true) {
+	
 		if (stick4.GetRawButton(3))
 			;//Arm move to highest position
 		_arm.Set(-1);
@@ -84,6 +83,6 @@ void TKOIntake::ArmMove() { // Arm move code to move it to the lowest position
 			; //The highest limit switch is triggered, and the arm is off.
 		_arm.Set(0);
 		printf("The arm has reached the highest position");
-		break;
+	
 	}
-				}
+				
