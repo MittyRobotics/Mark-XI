@@ -37,7 +37,8 @@ void TKOIntake::RollerMove() {
 			_roller2.Set (0);
 		}
 	}
-void TKOIntake::RollerMoveOut();
+}
+void TKOIntake::RollerMoveOut()
 {
 	if (stick3.GetRawButton(2)) { //passing a ball.
 		_roller1.Set(-1);
