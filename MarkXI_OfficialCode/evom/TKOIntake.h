@@ -13,6 +13,7 @@ TKOIntake();
 void RollerMove();
 void ArmMove();
 void LimitSwitchTest();
+void RollerMoveOut ();
 //DigitalInput limit1 (int module2, int channel1);
 private:
 CANJaguar _roller1, _roller2;
