@@ -51,13 +51,12 @@ class MarkXI: public SimpleRobot
 void MarkXI::Test()
 {
 	TKOLogger::inst()->addMessage("STARTING TEST MODE");
+	
 	if (DriverStation::GetInstance()->GetDigitalIn(1))
-		printf("Digital input 1 true");
-	DriverStation::GetInstance()->SetDigitalOut(1, true);
-	if (false)
 	{
 		printf("Deleting log...\n");
 		remove("logT.txt");
+		printf("Digital input 1 true\n\n\n\n\n");
 	}
 	printf("Calling test function \n");
 	printf("Starting tasks \n");
