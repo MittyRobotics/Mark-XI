@@ -51,10 +51,15 @@ state_t StateMachine::run_state( state_t cur_state, instance_data_t *data ) {
 int StateMachine::GetSensorData(instance_data_t *data)
 {
     // TODO what is off or on in terms of numbers?
-    data->state[0] = (_piston_retract->Get() != 0);
-    data->state[1] = (_piston_extend->Get() != 0);
-    data->state[2] = (_latch_lock->Get() != 0);
-    data->state[3] = (_is_cocked->Get() != 0);
+    data->state[0] = (_piston_retract->Get() == 0);
+    data->state[1] = (_piston_extend->Get() == 0);
+    data->state[2] = (_latch_lock->Get() == 0);
+    data->state[3] = (_is_cocked->Get() == 0);
+    
+    DriverStation::GetInstance()->SetDigitalOut(4, !_is_cocked->Get());
+    DriverStation::GetInstance()->SetDigitalOut(5, !_latch_lock->Get());
+    DriverStation::GetInstance()->SetDigitalOut(6, !_piston_extend->Get());
+    DriverStation::GetInstance()->SetDigitalOut(7, !_piston_retract->Get());
 
     return createIntFromBoolArray(data);
 }
@@ -63,7 +68,7 @@ int StateMachine::createIntFromBoolArray(instance_data_t *data)
 {
     int i = 0;
     int num = 0;
-    for (; i<NUM_STATES; i++) {
+    for (; i<NUM_STATES-2; i++) {
         if (data->state[i]) {
             num |= 1 << i;
         }
@@ -74,6 +79,10 @@ int StateMachine::createIntFromBoolArray(instance_data_t *data)
 state_t StateMachine::init(instance_data_t *data)
 {
     int sensors = GetSensorData(data);
+    printf("Initializing state machine \n");
+    sensors_to_string(data);
+    printf("\n %d \n", sensors);
+    
     switch (sensors) {
       case DONE_FIRING:
         return STATE_PISTON_RETRACT;
@@ -84,7 +93,7 @@ state_t StateMachine::init(instance_data_t *data)
       case LATCH_LOCKED_PISTON_RETRACTED:
     	return STATE_PISTON_EXTEND;
         break;
-      case READY_TO_FIRE:
+      case CONST_READY_TO_FIRE:
     	return STATE_READY_TO_FIRE;
         break;
       default:
@@ -99,6 +108,7 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
     if (createIntFromBoolArray(data) != DONE_FIRING) {
         return STATE_ERR;
     }
+    data->curState = STATE_PISTON_RETRACT;
     _timer->Start();
 
     //TODO add in code to make pistons reteact
@@ -107,6 +117,7 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
     int sensors = 0;
     // reason for 8 is that piston is retracted then
     while (sensors = GetSensorData(data), sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING) ) {
+    	printf("Piston Retract running: %d\n", sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING));
         if (_timer->Get() > 25.) {
             _timer->Stop();
             _timer->Reset();
@@ -121,7 +132,7 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
     {
         return STATE_ERR;
     }
-
+    
     // move to next state
     return STATE_LATCH_LOCK;
 }
@@ -132,6 +143,7 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
     if (createIntFromBoolArray(data) != PISTON_RETRACTED) {
         return STATE_ERR;
     }
+    data->curState = STATE_LATCH_LOCK;
     _timer->Start();
 
     // TODO add in code to make piston lock
@@ -141,7 +153,9 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
 
     // reason for 8 is that piston is retracted then
     while (sensors = GetSensorData(data), sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED)) {
-        if (_timer->Get() > 5.) {
+    	printf("latch_lock running: %d\n", sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED));
+    	      
+    	if (_timer->Get() > 25.) {
             _timer->Stop();
             _timer->Reset();
             return STATE_ERR;
@@ -161,10 +175,13 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
 
 state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 {
+	//TODO DOES NOT LEAVE EXTEND WHEN 1110
+	
     // reason is that 0b0100 = 4 is piston extended
     if (createIntFromBoolArray(data) != LATCH_LOCKED_PISTON_RETRACTED) {
         return STATE_ERR;
     }
+    data->curState = STATE_PISTON_EXTEND;
     _timer->Start();
 
     // TODO add in code to make piston extend
@@ -173,8 +190,10 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
     int sensors = 0;
 
     // reason for 8 is that piston is retracted then
-    while (sensors = GetSensorData(data), sensors != READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED)) {
-        if (_timer->Get() > 25.) {
+    while (sensors = GetSensorData(data), sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6)) {
+    	printf("piston_extend running: %d\n", sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6));
+    	    	 
+    	if (_timer->Get() > 25.) {
             _timer->Stop();
             _timer->Reset();
             return STATE_ERR;
@@ -183,7 +202,7 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
     _timer->Stop();
     _timer->Reset();
 
-    if (sensors != READY_TO_FIRE)
+    if (sensors != CONST_READY_TO_FIRE)
     {
         return STATE_ERR;
     }
@@ -195,12 +214,13 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 {
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
-    if (createIntFromBoolArray(data) != READY_TO_FIRE) {
+    if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE) {
         return STATE_ERR;
     }
+    data->curState = STATE_READY_TO_FIRE;
 
     // wait for the trigger then fire!
-    while (!_triggerJoystick->GetTrigger() && GetSensorData(data) == READY_TO_FIRE) {}
+    while (!_triggerJoystick->GetTrigger() && GetSensorData(data) == CONST_READY_TO_FIRE) {}
     // go to next state
     return STATE_LATCH_UNLOCK;
 }
@@ -208,9 +228,12 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
 {
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
-    if (createIntFromBoolArray(data) != READY_TO_FIRE) {
+    if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE) {
         return STATE_ERR;
     }
+    
+    data->curState = STATE_LATCH_UNLOCK;
+    
     _timer->Start();
 
     // TODO add in code to make piston unlock
@@ -219,7 +242,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     int sensors = 0;
 
     // reason for 4 is that piston is extended after this step
-    while (sensors = GetSensorData(data), sensors != DONE_FIRING && (sensors == READY_TO_FIRE || sensors == 10))
+    while (sensors = GetSensorData(data), sensors != DONE_FIRING && (sensors == CONST_READY_TO_FIRE || sensors == 10))
     {
         if (_timer->Get() > 5.) {
             _timer->Stop();
@@ -230,7 +253,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     _timer->Stop();
     _timer->Reset();
 
-    if (sensors != READY_TO_FIRE)
+    if (sensors != CONST_READY_TO_FIRE)
     {
         return STATE_ERR;
     }
@@ -262,6 +285,10 @@ string StateMachine::state_to_string(instance_data_t *data)
             return "Latch Unlock";
             break;
 
+        case STATE_ERR:
+		    return "ERROR STATE!!!";
+		    break;
+		    
         default:
             return "POTATO!";
             break;
@@ -272,14 +299,15 @@ void StateMachine::sensors_to_string(instance_data_t *data)
 {
     printf("0b (ic) (ll) (Pe) (Pr)\n0b");
     int sensors = createIntFromBoolArray(data);
-    int i = NUM_STATES;
+    int i = NUM_STATES-2;
     for (; i > -1; i--) {
-        printf("  %2d ",sensors & (1 << i));
+        printf("  %2d ",(sensors & (1 << i)));
     }
 }
 
 state_t StateMachine::do_err_state(instance_data_t *data)
 {
+	//GetSensorData(data);
     printf("%s\n",state_to_string(data).c_str());
     sensors_to_string(data);
     return STATE_ERR;

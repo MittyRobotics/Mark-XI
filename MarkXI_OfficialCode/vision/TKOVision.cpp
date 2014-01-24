@@ -32,7 +32,7 @@ TKOVision::TKOVision():
 	lastTarget.Hot = false;
 	lastDist = 0.;
 	
-	AddToSingletonList();
+	//AddToSingletonList();
 	
 //	rawImage = new RGBImage();
 //	thresholdImage = new BinaryImage(); // get just the green target pixels

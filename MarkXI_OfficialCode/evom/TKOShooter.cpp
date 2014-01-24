@@ -8,8 +8,8 @@ TKOShooter::TKOShooter ()
 {	
 	shooterTask = new Task("Shooter", (FUNCPTR) shooterTaskRunner);
 	stateMachineTask = new Task("StateMachine", (FUNCPTR) stateMachineTaskRunner);
-	shooterTask->SetPriority(Task::kDefaultPriority);
-	stateMachineTask->SetPriority(Task::kDefaultPriority);
+	//shooterTask->SetPriority(Task::kDefaultPriority);
+	//stateMachineTask->SetPriority(Task::kDefaultPriority);
 }
 
 TKOShooter* TKOShooter::inst ()
@@ -57,6 +57,14 @@ bool TKOShooter::stopStateMachine()
 }
 int TKOShooter::runStateMachine()
 {
+	DSClear();
+	//logging here
+	TKOLogger::inst()->addMessage("%s\n",s.state_to_string(&data).c_str());
+	DSLog(6, "%s", s.state_to_string(&data).c_str());
+	if(cur_state == STATE_ERR)
+	{
+		TKOLogger::inst()->addMessage("Potato. ");
+	}
 	cur_state = s.run_state(cur_state,&data);
 	return -1;
 }

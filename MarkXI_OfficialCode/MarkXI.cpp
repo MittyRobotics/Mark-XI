@@ -45,21 +45,35 @@ class MarkXI: public SimpleRobot
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
 		{
+			TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------");
 		}
 };
 void MarkXI::Test()
 {
+	TKOLogger::inst()->addMessage("STARTING TEST MODE");
+	if (DriverStation::GetInstance()->GetDigitalIn(1))
+		printf("Digital input 1 true");
+	DriverStation::GetInstance()->SetDigitalOut(1, true);
+	if (false)
+	{
+		printf("Deleting log...\n");
+		remove("logT.txt");
+	}
 	printf("Calling test function \n");
-	printf("Starting shooter \n");
+	printf("Starting tasks \n");
+	TKOLogger::inst()->Start();
 	TKOShooter::inst()->Start();
-	printf("Stopped shooter \n");
+	printf("Started shooter, logger \n");
+	TKOLogger::inst()->addMessage("STARTED SHOOTER, LOGGER IN TEST");
 	while (IsEnabled())
 	{
 		
 	}
-	printf("Stopping shooter \n");
+	printf("Stopping shooter, logger \n");
 	TKOShooter::inst()->Stop();
-	printf("Stopped Shooter \n");
+	TKOLogger::inst()->Stop();
+	printf("Stopped testing \n");
+	TKOLogger::inst()->addMessage("ENDED TEST MODE");
 }
 
 void MarkXI::RobotInit()

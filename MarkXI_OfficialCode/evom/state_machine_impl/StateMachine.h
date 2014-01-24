@@ -12,12 +12,12 @@
 #define DONE_FIRING 2
 #define PISTON_RETRACTED 1
 #define LATCH_LOCKED_PISTON_RETRACTED 5
-#define READY_TO_FIRE 14
+#define CONST_READY_TO_FIRE 14
 
 #define PISTON_SWITCH_RETRACT_CHANNEL 4
-#define PISTON_SWITCH_EXTEND_CHANNEL 5
+#define PISTON_SWITCH_EXTEND_CHANNEL 7
 #define LATCH_PISTON_LOCK_CHANNEL 6
-#define IS_COCKED_SWITCH_CHANNEL 7
+#define IS_COCKED_SWITCH_CHANNEL 5
 
 
 // Define the states
@@ -35,7 +35,7 @@ typedef enum {
 typedef struct instance_data
 {
     state_t curState;
-    bool state[NUM_STATES];
+    bool state[NUM_STATES-1];
 }instance_data_t;
 
 // function pointer stuff
@@ -48,6 +48,8 @@ public:
 
     state_t run_state(state_t, instance_data_t*);
     state_t init(instance_data_t *data);
+    static string state_to_string(instance_data_t *data);
+    static void sensors_to_string(instance_data_t *data);
 private:
     static state_t do_state_piston_retract(instance_data_t *data);
     static state_t do_state_piston_extend(instance_data_t *data);
@@ -59,8 +61,8 @@ private:
     static int GetSensorData(instance_data_t *data);
     static int createIntFromBoolArray(instance_data_t *data);
 
-    static string state_to_string(instance_data_t *data);
-    static void sensors_to_string(instance_data_t *data);
+    
+    
 
     state_func_t*  _state_table[NUM_STATES + 1];
 
