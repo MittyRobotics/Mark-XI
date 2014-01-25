@@ -14,7 +14,7 @@ public:
 private:
 	DISALLOW_COPY_AND_ASSIGN(TKOGyro);
 	static TKOGyro* m_Instance;
-	Gyro gyro;
+	//Gyro gyro;
 	TKOGyro();
 	~TKOGyro();
 };

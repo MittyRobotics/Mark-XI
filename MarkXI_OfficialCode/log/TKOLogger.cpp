@@ -76,6 +76,7 @@ void TKOLogger::Stop()
 	#ifndef IGNORE_LOGGING_SEMAPHORES
 	Synchronized sem(_bufSem);
 	#endif
+	printf("Stopping logger");
 	if (_logTask && _logTask->Verify()) {
 		_logTask->Stop();
 	}
@@ -88,6 +89,7 @@ void TKOLogger::Stop()
 			_logFile << _messBuffer.front();
 			_logFile << "\n";
 			_messBuffer.pop();
+			printf("Writing in stop %i\n", _messBuffer.size());
 		}
 		_logFile.flush();
 		_logFile.close();
@@ -130,12 +132,16 @@ TKOLogger* TKOLogger::inst()
 	return _instance;
 }
 
+int TKOLogger::getBufferLength()
+{
+	return _messBuffer.size();
+}
+
 void TKOLogger::addMessage(const char *format, ...) //TODO Figure out why code crashes on cRio
 {
-	printf("Test2.1\n");
 	int nBytes;
 	char s[_MAX_BUF_LENGTH + 1];        // Allocate extra character for '\0'
-	nBytes = sprintf(s, "Time: %f     Message: ", GetTime());
+	nBytes = sprintf(s, "Time: %f     Message: ", GetClock());
 	va_list args;
 	va_start(args, format);
 	nBytes += vsnprintf(s + nBytes, _MAX_BUF_LENGTH + 1 - nBytes, format, args);
@@ -144,7 +150,6 @@ void TKOLogger::addMessage(const char *format, ...) //TODO Figure out why code c
 		nBytes = _MAX_BUF_LENGTH;
 	}
 	string s2(s, nBytes);
-	printf("Test2.2\n");
 	{
 		#ifndef IGNORE_LOGGING_SEMAPHORES
 		Synchronized sem(_bufSem);     // TODO: make other uses of _messBuffer thread-safe with _bufSem

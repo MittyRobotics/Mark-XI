@@ -33,6 +33,9 @@ TKOVision::TKOVision():
 	AxisCamera::GetInstance().WriteMaxFPS(30);
 	AxisCamera::GetInstance().WriteCompression(30);
 	
+	lastTarget.Hot = false;
+	lastDist = 0.;
+	
 	AddToSingletonList();
 	
 //	rawImage = new RGBImage();

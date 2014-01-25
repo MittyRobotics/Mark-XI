@@ -67,9 +67,9 @@ void MarkXI::Disabled()
 	printf("Robot Dying!\n");
 	TKOLogger::inst()->Stop();
 	//TKOShooter::inst()->Stop();
-	TKODrive::inst()->Stop();
-	TKOGDrive::inst()->Stop();
-	TKOVision::inst()->StopProcessing();
+//	TKODrive::inst()->Stop();
+//	TKOGDrive::inst()->Stop();
+	//TKOVision::inst()->StopProcessing();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
 	{
@@ -108,31 +108,36 @@ void MarkXI::OperatorControl()
 	printf("Starting OperatorControl \n");
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->Start();
-	TKOGyro::inst()->reset();
+	//TKOGyro::inst()->reset();
 	//TKOShooter::inst()->Start();
-	TKOVision::inst()->StartProcessing();  //NEW VISION START
+	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;
 	loopTimer.Start();
 	
 	TKOLogger::inst()->addMessage("--------------Teleoperated started-------------");
-	
+	long counter = 0;
 	while (IsOperatorControl() && IsEnabled())
 	{
-		loopTimer.Reset();
 		DSClear();
-		
+		loopTimer.Reset();
+		counter ++;
+		//if (counter % 10 == 0)
+		{
+			TKOLogger::inst()->addMessage("Test: %d : test", counter);
+			//printf("Added%i\n", counter);
+		}
 		MarkXI::Operator();
 		if (loopTimer.Get() > 0.1)
 		{
 			TKOLogger::inst()->addMessage("!!!CRITICAL Operator loop very long, length", loopTimer.Get());
 			printf("!!!CRITICAL Operator loop very long, %f%s\n", loopTimer.Get(), " seconds.");
 		}
-		DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
-		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
-		DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
-		DSLog(4, "Clock %f\n", GetClock());
-		DSLog(5, "")
+		DSLog(1, "Dist: %f", TKOVision::inst()->getLastDistance());
+		DSLog(2, "Hot: %s", TKOVision::inst()->getLastTargetReport().Hot);
+		DSLog(3, "G_ang: %f", TKOGyro::inst()->GetAngle());
+		DSLog(4, "Clock %f", GetClock());
+		DSLog(5, "Buf Len %i", TKOLogger::inst()->getBufferLength());
 		Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}
@@ -159,13 +164,13 @@ void MarkXI::Operator()
 
 void MarkXI::RegDrive()
 {
-	TKOGDrive::inst()->Stop();
-	TKODrive::inst()->Start();
+//	TKOGDrive::inst()->Stop();
+//	TKODrive::inst()->Start();
 }
 void MarkXI::GyroDrive()
 {
-	TKODrive::inst()->Stop();
-	TKOGDrive::inst()->Start();
+//	TKODrive::inst()->Stop();
+//	TKOGDrive::inst()->Start();
 }
 
 START_ROBOT_CLASS(MarkXI);
