@@ -6,19 +6,26 @@
 
 //Code for intake roller and arm movement
 
-class TKOIntake {
+class TKOIntake: public SensorBase {
 public:
-TKOIntake();
-~TKOIntake();
-void RollerMove();
-void ArmMove();
-void LimitSwitchTest();
-void RollerMoveOut();
-//DigitalInput limit1 (int module2, int channel1);
+	TKOIntake();
+	~TKOIntake();
+	static TKOIntake* inst();
+	void RollerMove();
+	void ArmMoveLow();
+	void ArmMoveMiddle();
+	void ArmMoveHigh();
+	void LimitSwitchTest();
+	void RollerMoveOut();
+
 private:
-CANJaguar _roller1, _roller2;
-CANJaguar _arm;
-DigitalInput limit1, limit2, limit3;
-Joystick stick1, stick2, stick3, stick4;
+	DISALLOW_COPY_AND_ASSIGN(TKOIntake);
+	static TKOIntake* m_Instance;
+	static void IntakeRunner();
+	Task *intakeTask;
+
+	CANJaguar _roller1, _roller2, _arm1, _arm2;
+	DigitalInput limitLow, limitMiddle, limitHigh, limitIn;
+	Joystick stick1, stick2, stick3, stick4;
 };
 #endif

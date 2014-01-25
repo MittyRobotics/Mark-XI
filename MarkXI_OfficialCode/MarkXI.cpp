@@ -9,6 +9,7 @@
 //#include "auton/TKOAutonomous.h"
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
+#include "evom/TKOIntake.h"
 
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
  * Auton, vision tests
@@ -17,7 +18,7 @@
  * For shooter, create calibration curve, best fit equation of shoot power VS. ball flight dist
  * Use equation to calculate needed power for desired distance 
  * 
- */ 
+ */
 //TODO CRITICAL Figure out why Logger, Auton crash on cRio on boot (After deploy) Code compiles
 /*
  * -----------------------------LAST DONE-------------------------------*
@@ -29,42 +30,40 @@
  * 		
  */
 
-class MarkXI: public SimpleRobot
-{
-	public:
-		Joystick stick1, stick2, stick3, stick4; // define joysticks
-		DriverStation *ds; // define driver station object
-		void Disabled();
-		void Autonomous();
-		void RobotInit();
-		void OperatorControl();
-		void Operator();
-		void Test();
-		void RegDrive();
-		void GyroDrive();
-		
-		MarkXI::MarkXI() :
-			stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
-			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
-			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
-			stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
-		{}
+class MarkXI: public SimpleRobot {
+public:
+	Joystick stick1, stick2, stick3, stick4; // define joysticks
+	DriverStation *ds; // define driver station object
+	TKOIntake intake;
+	void Disabled();
+	void Autonomous();
+	void RobotInit();
+	void OperatorControl();
+	void Operator();
+	void Test();
+	void RegDrive();
+	void GyroDrive();
+
+	MarkXI::MarkXI() :
+		stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
+				stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
+				stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
+				stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
+	{
+	}
 };
-void MarkXI::Test()
-{
+void MarkXI::Test() {
 	printf("Calling test function \n");
 }
 
-void MarkXI::RobotInit()
-{
+void MarkXI::RobotInit() {
 	printf("Initializing MarkXI class \n");
 	//TKOGyro::inst()->reset();
-//	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
+	//	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
 
-void MarkXI::Disabled()
-{
+void MarkXI::Disabled() {
 	printf("Robot Dying!\n");
 	//TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
@@ -72,62 +71,63 @@ void MarkXI::Disabled()
 	TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
-	while (IsDisabled())
-	{
-		
+	while (IsDisabled()) {
+
 	}
 }
 
-void MarkXI::Autonomous(void)
-{
+void MarkXI::Autonomous(void) {
 	printf("Starting Autonomous \n");
 	TKOVision::inst()->StartProcessing();
 	ds = DriverStation::GetInstance();
-	TKOLogger::inst()->addMessage("--------------Autonomous started-------------");
-	if (ds->IsFMSAttached())
-	{
+	TKOLogger::inst()->addMessage(
+			"--------------Autonomous started-------------");
+	if (ds->IsFMSAttached()) {
 		TKOLogger::inst()->addMessage("-----------FMS DETECTED------------");
 		TKOLogger::inst()->addMessage("PROBABLY A SERIOUS MATCH");
-		if (ds->GetAlliance() == ds->kBlue);
-			TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
-		if (ds->GetAlliance() == ds->kRed);
-			TKOLogger::inst()->addMessage("RED ALLIANCE!");
+		if (ds->GetAlliance() == ds->kBlue)
+			;
+		TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
+		if (ds->GetAlliance() == ds->kRed)
+			;
+		TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
 	Wait(.1);
-	
-//	TKOAutonomous::inst()->initAutonomous();
-//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
-//	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
-//	TKOAutonomous::inst()->startAutonomous();
-	
+
+	//	TKOAutonomous::inst()->initAutonomous();
+	//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
+	//	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
+	//	TKOAutonomous::inst()->startAutonomous();
+
 	TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
 }
 
-void MarkXI::OperatorControl()
-{
+void MarkXI::OperatorControl() {
 	printf("Starting OperatorControl \n");
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->Start();
 	TKOGyro::inst()->reset();
 	//TKOShooter::inst()->Start();
-	TKOVision::inst()->StartProcessing();  //NEW VISION START
+	TKOVision::inst()->StartProcessing(); //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;
 	loopTimer.Start();
-	
-	TKOLogger::inst()->addMessage("--------------Teleoperated started-------------");
-	
-	while (IsOperatorControl() && IsEnabled())
-	{
+
+	TKOLogger::inst()->addMessage(
+			"--------------Teleoperated started-------------");
+
+	while (IsOperatorControl() && IsEnabled()) {
 		loopTimer.Reset();
 		DSClear();
-		
+
 		MarkXI::Operator();
-		if (loopTimer.Get() > 0.1)
-		{
-			TKOLogger::inst()->addMessage("!!!CRITICAL Operator loop very long, length", loopTimer.Get());
-			printf("!!!CRITICAL Operator loop very long, %f%s\n", loopTimer.Get(), " seconds.");
+		if (loopTimer.Get() > 0.1) {
+			TKOLogger::inst()->addMessage(
+					"!!!CRITICAL Operator loop very long, length",
+					loopTimer.Get());
+			printf("!!!CRITICAL Operator loop very long, %f%s\n",
+					loopTimer.Get(), " seconds.");
 		}
 		DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
 		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
@@ -141,32 +141,37 @@ void MarkXI::OperatorControl()
 	TKOLogger::inst()->addMessage("Ending OperatorControl");
 }
 
-void MarkXI::Operator()
-{
+void MarkXI::Operator() {
 	if (stick1. GetRawButton(11))
 		TKOGyro::inst()->reset();
 	if (stick1.GetRawButton(8))
 		RegDrive();
 	if (stick1.GetRawButton(9))
 		GyroDrive();
-	if (stick3.GetTrigger())
-	{
-		if ((GetFPGATime() - TKOVision::inst()->lastTimestamp) <= 1000)
-		{
+	if (stick3.GetTrigger()) {
+		if ((GetFPGATime() - TKOVision::inst()->lastTimestamp) <= 1000) {
 			//TKOShooter::inst()->shootDist(TKOVision::inst()->lastDist);
 		}
 	}
+	if (stick4.GetRawButton(1)) {
+		intake.ArmMoveLow();
+	}
+	if (stick4.GetRawButton(2)) {
+		intake.ArmMoveMiddle();
+	}
+	if (stick4.GetRawButton(3)) {
+		intake.ArmMoveHigh();
+	}
 }
 
-void MarkXI::RegDrive()
-{
+void MarkXI::RegDrive() {
 	TKOGDrive::inst()->Stop();
 	TKODrive::inst()->Start();
 }
-void MarkXI::GyroDrive()
-{
+void MarkXI::GyroDrive() {
 	TKODrive::inst()->Stop();
 	TKOGDrive::inst()->Start();
 }
 
-START_ROBOT_CLASS(MarkXI);
+START_ROBOT_CLASS(MarkXI)
+;
