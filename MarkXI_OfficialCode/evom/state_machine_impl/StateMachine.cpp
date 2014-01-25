@@ -68,7 +68,7 @@ int StateMachine::createIntFromBoolArray(instance_data_t *data)
 {
     int i = 0;
     int num = 0;
-    for (; i<NUM_STATES-2; i++) {
+    for (; i<NUM_STATES-1; i++) {
         if (data->state[i]) {
             num |= 1 << i;
         }

@@ -59,7 +59,7 @@ int TKOShooter::runStateMachine()
 {
 	DSClear();
 	//logging here
-	TKOLogger::inst()->addMessage("%s\n",s.state_to_string(&data).c_str());
+	TKOLogger::inst()->addMessage("%s",s.state_to_string(&data).c_str());
 	DSLog(6, "%s", s.state_to_string(&data).c_str());
 	if(cur_state == STATE_ERR)
 	{
