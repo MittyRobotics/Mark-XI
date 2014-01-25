@@ -120,7 +120,7 @@ public:
 			s1.Set(s1.kOff);
 			s2.Set(s2.kOff);
 		}
-		Wait(1); ///TODO TEMP fix, need so holding down button wont toggle back and forth
+		//Wait(1); ///TODO TEMP fix, need so holding down button wont toggle back and forth
 		
 	}
 	
@@ -168,18 +168,11 @@ public:
 					r_b.Set(stick2.GetY() * 0.9);
 					ShiftControl();
 				}
-				else if (stick1.GetY()<0.0||stick2.GetY()<0.0) {
+				else {
 					l_b.Set(-stick1.GetY() * 0.9);
 					r_b.Set(stick2.GetY() * 0.9);
 					l_f.Set(-stick1.GetY() * 0.9);
 					r_f.Set(stick2.GetY() * 0.9);
-					ShiftControl();
-				}
-				else {
-					l_f.Set(0.0);
-					l_b.Set(0.0);
-					r_f.Set(0.0);
-					r_b.Set(0.0);
 					ShiftControl();
 				}
 	}
