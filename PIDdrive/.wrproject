@@ -12,6 +12,7 @@
             <stringAttribute key="BLD::Info|GlobalMacro|EXPAND_DBG" value="0"/>
             <stringAttribute key="BLD::Info|GlobalMacro|PROJECT_TYPE" value="DKM"/>
             <listAttribute key="BLD::Info|Incl|PPC32diab">
+                <stringAttribute value="-I$(WIND_BASE)/target/h/WPILib"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
             </listAttribute>
@@ -25,7 +26,14 @@
             </listAttribute>
             <listAttribute key="BLD::Info|Incl|PPC603gnu">
                 <stringAttribute value="-I$(WIND_BASE)/target/h"/>
+                <stringAttribute value="-I$(WIND_BASE)/target/h/WPILib"/>
                 <stringAttribute value="-I$(WIND_BASE)/target/h/wrn/coreip"/>
+            </listAttribute>
+            <listAttribute key="BLD::Info|Libs|PPC32diab">
+                <stringAttribute value="$(WIND_BASE)/target/lib/WPILib.a"/>
+            </listAttribute>
+            <listAttribute key="BLD::Info|Libs|PPC603gnu">
+                <stringAttribute value="$(WIND_BASE)/target/lib/WPILib.a"/>
             </listAttribute>
             <listAttribute key="BLD::Info|Macros">
                 <stringAttribute value="VX_CPU_FAMILY"/>
@@ -40,7 +48,7 @@
             <stringAttribute key="BLD::Info|Macro|CC_ARCH_SPEC|value|PPC32diab" value="-tPPCFH:vxworks63 -Xstmw-slow -DPPC32_fp60x"/>
             <stringAttribute key="BLD::Info|Macro|CC_ARCH_SPEC|value|PPC32gnu" value="-mhard-float -mstrict-align -mno-implicit-fp -DPPC32_fp60x"/>
             <stringAttribute key="BLD::Info|Macro|CC_ARCH_SPEC|value|PPC603diab" value="-tPPC603FH:vxworks63"/>
-            <stringAttribute key="BLD::Info|Macro|CC_ARCH_SPEC|value|PPC603gnu" value="-mcpu=603 -mstrict-align -mno-implicit-fp"/>
+            <stringAttribute key="BLD::Info|Macro|CC_ARCH_SPEC|value|PPC603gnu" value="-mcpu=603 -mstrict-align -mno-implicit-fp -mlongcall"/>
             <stringAttribute key="BLD::Info|Macro|CPU|value|PPC32diab" value="PPC32"/>
             <stringAttribute key="BLD::Info|Macro|CPU|value|PPC32gnu" value="PPC32"/>
             <stringAttribute key="BLD::Info|Macro|CPU|value|PPC603diab" value="PPC603"/>
@@ -115,7 +123,7 @@
             <stringAttribute key="BLD::Info|Tool|C++-Compiler|flags|PPC32diab" value="$(CC_ARCH_SPEC) -W:c:,-Xclib-optim-off -Xansi -Xlocal-data-area-static-only -Xforce-declarations  -Xmake-dependency=0xd"/>
             <stringAttribute key="BLD::Info|Tool|C++-Compiler|flags|PPC32gnu" value="$(CC_ARCH_SPEC) -ansi -Wall  -MD -MP"/>
             <stringAttribute key="BLD::Info|Tool|C++-Compiler|flags|PPC603diab" value="$(CC_ARCH_SPEC) -W:c:,-Xclib-optim-off -Xansi -Xlocal-data-area-static-only -Xforce-declarations  -Xmake-dependency=0xd"/>
-            <stringAttribute key="BLD::Info|Tool|C++-Compiler|flags|PPC603gnu" value="$(CC_ARCH_SPEC) -ansi -Wall  -MD -MP"/>
+            <stringAttribute key="BLD::Info|Tool|C++-Compiler|flags|PPC603gnu" value="$(CC_ARCH_SPEC) -ansi -Wall  -MD -MP -mlongcall"/>
             <stringAttribute key="BLD::Info|Tool|C++-Compiler|nonDbgFlags|PPC32diab" value="-XO -Xsize-opt"/>
             <stringAttribute key="BLD::Info|Tool|C++-Compiler|nonDbgFlags|PPC32gnu" value="-O2 -fstrength-reduce -fno-builtin"/>
             <stringAttribute key="BLD::Info|Tool|C++-Compiler|nonDbgFlags|PPC603diab" value="-XO -Xsize-opt"/>
@@ -138,7 +146,7 @@
             <stringAttribute key="BLD::Info|Tool|C-Compiler|flags|PPC32diab" value="$(CC_ARCH_SPEC) -W:c:,-Xclib-optim-off -Xansi -Xlocal-data-area-static-only -Xforce-declarations  -Xmake-dependency=0xd"/>
             <stringAttribute key="BLD::Info|Tool|C-Compiler|flags|PPC32gnu" value="$(CC_ARCH_SPEC) -ansi  -Wall  -MD -MP"/>
             <stringAttribute key="BLD::Info|Tool|C-Compiler|flags|PPC603diab" value="$(CC_ARCH_SPEC) -W:c:,-Xclib-optim-off -Xansi -Xlocal-data-area-static-only -Xforce-declarations  -Xmake-dependency=0xd"/>
-            <stringAttribute key="BLD::Info|Tool|C-Compiler|flags|PPC603gnu" value="$(CC_ARCH_SPEC) -ansi  -Wall  -MD -MP"/>
+            <stringAttribute key="BLD::Info|Tool|C-Compiler|flags|PPC603gnu" value="$(CC_ARCH_SPEC) -ansi  -Wall  -MD -MP -mlongcall"/>
             <stringAttribute key="BLD::Info|Tool|C-Compiler|nonDbgFlags|PPC32diab" value="-XO -Xsize-opt"/>
             <stringAttribute key="BLD::Info|Tool|C-Compiler|nonDbgFlags|PPC32gnu" value="-O2 -fstrength-reduce -fno-builtin"/>
             <stringAttribute key="BLD::Info|Tool|C-Compiler|nonDbgFlags|PPC603diab" value="-XO -Xsize-opt"/>
@@ -216,7 +224,7 @@
             <booleanAttribute key="BLD::Info|Tool|Partial Image Linker|passAble" value="true"/>
             <stringAttribute key="BLD::Info|Tool|Partial Image Linker|sigs" value=""/>
             <stringAttribute key="BLD::Info|cmd" value="%makeprefix% make --no-print-directory"/>
-            <stringAttribute key="BLD::Info|defaultSpec" value="PPC32diab"/>
+            <stringAttribute key="BLD::Info|defaultSpec" value="PPC603gnu"/>
             <stringAttribute key="BLD::Info|redirDir|PPC32diab" value="PPC32diab"/>
             <stringAttribute key="BLD::Info|redirDir|PPC32gnu" value="PPC32gnu"/>
             <stringAttribute key="BLD::Info|redirDir|PPC603diab" value="PPC603diab"/>
@@ -229,18 +237,21 @@
                 <stringAttribute value="PPC603gnu"/>
             </listAttribute>
             <intAttribute key="BuildSupportEnabled" value="1"/>
+            <listAttribute key="BuildSupportForBuildSpecs">
+                <stringAttribute value="PPC603gnu"/>
+            </listAttribute>
             <booleanAttribute key="BuildTargetCentric" value="true"/>
         </mapAttribute>
     </attributes>
     <buildtargets>
-        <buildtarget buildtool="Linker" name="babuShift" passed="false" targetname="babuShift">
+        <buildtarget buildtool="Linker" name="SimpleTemplate" passed="false" targetname="SimpleTemplate">
             <contents>
-                <buildtargetreference name="/babuShift/babuShift_partialImage"/>
+                <buildtargetreference name="/PIDdrive/SimpleTemplate_partialImage"/>
             </contents>
         </buildtarget>
-        <buildtarget buildtool="Partial Image Linker" name="babuShift_partialImage" passed="true" targetname="babuShift_partialImage">
+        <buildtarget buildtool="Partial Image Linker" name="SimpleTemplate_partialImage" passed="true" targetname="SimpleTemplate_partialImage">
             <contents>
-                <folder name="/babuShift" recursive="true"/>
+                <folder name="/PIDdrive" recursive="true"/>
             </contents>
         </buildtarget>
     </buildtargets>

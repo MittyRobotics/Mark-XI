@@ -17,7 +17,6 @@ public:
 		l_f(DRIVE_L1_ID), l_b(DRIVE_L2_ID), r_f(DRIVE_R1_ID), r_b(DRIVE_R2_ID),
 		stick1(STICK_1_PORT), stick2(STICK_2_PORT)		// as they are declared above.
 	{
-
 	}
 
 	/**
@@ -40,16 +39,16 @@ public:
 	
 	void TankDrive() {
 		if(stick1.GetY()>0.0||stick2.GetY()>0.0) {
-			l_f.Set(-stick1.GetY() * 0.9);
-			r_f.Set(stick2.GetY() * 0.9);
-			l_b.Set(-stick1.GetY() * 0.9);
-			r_b.Set(stick2.GetY() * 0.9);
-		}
+				l_f.Set(-stick1.GetY() * 0.9);
+				r_f.Set(stick2.GetY() * 0.9);
+				l_b.Set(-stick1.GetY() * 0.9);
+				r_b.Set(stick2.GetY() * 0.9);
+			}
 		else {
-			l_b.Set(-stick1.GetY() * 0.9);
-			r_b.Set(stick2.GetY() * 0.9);
-			l_f.Set(-stick1.GetY() * 0.9);
-			r_f.Set(stick2.GetY() * 0.9);
+				l_b.Set(-stick1.GetY() * 0.9);
+				r_b.Set(stick2.GetY() * 0.9);
+				l_f.Set(-stick1.GetY() * 0.9);
+				r_f.Set(stick2.GetY() * 0.9);
 		}
 	}
 	

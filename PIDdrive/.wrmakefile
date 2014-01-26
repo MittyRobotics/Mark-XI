@@ -6,7 +6,6 @@
 WIND_HOME := $(subst \,/,$(WIND_HOME))
 WIND_BASE := $(subst \,/,$(WIND_BASE))
 WIND_USR := $(subst \,/,$(WIND_USR))
-WRVX_COMPBASE := $(subst \,/,$(WRVX_COMPBASE))
 
 all : pre_build main_all post_build
 
@@ -19,15 +18,8 @@ _clean ::
 
 -include *.makefile
 
-JOBS?=1
-ifeq ($(JOBS),1)
-main_all : external_build  $(PROJECT_TARGETS)
+main_all : external_build $(PROJECT_TARGETS)
 	@echo "make: built targets of `pwd`"
-else
-main_all : external_build 
-	@$(MAKE) -f $(MAKEFILE) --jobs $(JOBS) $(MFLAGS) $(PROJECT_TARGETS);\
-	echo "make: built targets of `pwd`"
-endif 
 
 # entry point for extending the build
 external_build ::
