@@ -11,6 +11,7 @@ class RobotDemo : public SimpleRobot
 {
 	CANJaguar l_f, l_b, r_f, r_b;
 	Joystick stick1, stick2; // only joystick
+	bool usePID;
 
 public:
 	RobotDemo():
@@ -22,6 +23,7 @@ public:
 		r_f.SetSafetyEnabled(false);
 		r_b.SetSafetyEnabled(false);
 		SetSpeedReference();
+		usePID = true;
 	}
 
 	/**
@@ -42,15 +44,46 @@ public:
 		
 		while (IsOperatorControl()&&IsEnabled())
 		{
+			if (stick1.GetRawButton(3))
+				usePID = !usePID;
 			TankDrive();
 		}
 	}
 	
 	void TankDrive() {
-		l_f.Set(-stick1.GetY()*max_speed);
-		r_f.Set(stick2.GetY()*max_speed);
-		l_b.Set(l_f.GetOutputVoltage());
-		r_b.Set(r_b.GetOutputVoltage());
+		if (usePID == true) {
+			if (l_f.GetControlMode() == CANJaguar::kPercentVbus)
+				l_f.ChangeControlMode(CANJaguar::kSpeed);
+			
+			if (r_f.GetControlMode() == CANJaguar::kPercentVbus)
+				r_f.ChangeControlMode(CANJaguar::kSpeed);
+			
+			l_f.Set(-stick1.GetY()*max_speed);
+			r_f.Set(stick2.GetY()*max_speed);
+			l_b.Set(l_f.Get());
+			r_b.Set(r_b.Get());
+		}
+		
+		else {
+			if (l_f.GetControlMode() == CANJaguar::kSpeed)
+				l_f.ChangeControlMode(CANJaguar::kPercentVbus);
+						
+			if (r_f.GetControlMode() == CANJaguar::kSpeed)
+				r_f.ChangeControlMode(CANJaguar::kPercentVbus);
+			
+			if(stick1.GetY()>0.0||stick2.GetY()>0.0) {
+								l_f.Set(-stick1.GetY() * 0.9);
+								r_f.Set(stick2.GetY() * 0.9);
+								l_b.Set(-stick1.GetY() * 0.9);
+								r_b.Set(stick2.GetY() * 0.9);
+							}
+							else {
+								l_b.Set(-stick1.GetY() * 0.9);
+								r_b.Set(stick2.GetY() * 0.9);
+								l_f.Set(-stick1.GetY() * 0.9);
+								r_f.Set(stick2.GetY() * 0.9);
+							}
+		}
 	}
 	
 	void Test() {

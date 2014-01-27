@@ -27,14 +27,14 @@ public:
 		r_f.SetSafetyEnabled(false);
 		r_b.SetSafetyEnabled(false);
 		SetSpeedReference();
-		a_shift = false;
+		a_shift = true;
 	}
 
 	void Autonomous()
 	{
 		while (IsAutonomous()&&IsEnabled()) {
 			/*
-			 * 		SetPID();
+			 * 	
 			if (stick2.GetTrigger()) {
 				Stop();
 				break;
@@ -78,10 +78,10 @@ public:
 	}
 	
 	void SetSpeedReference() {
+		l_f.ConfigEncoderCodesPerRev(ENCODER_REVS);
+		r_f.ConfigEncoderCodesPerRev(ENCODER_REVS);
 		l_f.SetSpeedReference(JAG_SPEEDREF);
-		l_b.SetSpeedReference(JAG_SPEEDREF);
 		r_f.SetSpeedReference(JAG_SPEEDREF);
-		r_b.SetSpeedReference(JAG_SPEEDREF);
 	}
 	
 	void AutoShift() {
