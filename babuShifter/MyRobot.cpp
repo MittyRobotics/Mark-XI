@@ -8,18 +8,23 @@ class ShifterDemo : public SimpleRobot
 {
 
 public:
-	CANJaguar l_f, l_b, r_f, r_b;
+	CANJaguar l_f, l_b, r_f, r_b, temp;
+	RobotDrive drive;
 	Joystick stick1, stick2;
-	DoubleSolenoid s1, s2;
+	DoubleSolenoid s1;
 	Compressor comp;
 	bool a_shift;
+	double lastShift;
+	
 	ShifterDemo():
 		l_f(DRIVE_L1_ID, CANJaguar::kPercentVbus),
 		l_b(DRIVE_L2_ID, CANJaguar::kPercentVbus),
 		r_f(DRIVE_R1_ID, CANJaguar::kPercentVbus),
 		r_b(DRIVE_R2_ID, CANJaguar::kPercentVbus),
+		temp(7, CANJaguar::kPercentVbus),
+		drive(l_f, l_b, r_f, r_b),
 		stick1(STICK_1_PORT), stick2(STICK_2_PORT),
-		s1(2,1,2), s2(2,3,4),
+		s1(1,2),
 		comp(PRESSURE_SWITCH_PORT, COMPRESSOR_ID)
 	{
 		l_f.SetSafetyEnabled(false);
@@ -51,11 +56,16 @@ public:
 	void RobotInit()
 	{
 		comp.Start();
+		//drive.SetInvertedMotor(RobotDrive::kFrontRightMotor, true);
+		//drive.SetInvertedMotor(RobotDrive::kRearRightMotor, true);
+		lastShift = GetTime();
+		printf("Test\n");
 	}
 
 	void OperatorControl()
 	{
-		while (IsOperatorControl()&&IsEnabled()) {
+		while (IsOperatorControl()&&IsEnabled()) 
+		{
 			if (stick2.GetTrigger()) {
 				Stop();
 				break;
@@ -63,6 +73,9 @@ public:
 			if (stick2.GetRawButton(4))
 				a_shift = !a_shift;
 			TankDrive();
+			DSLog(1, "Time: %f", GetTime());
+			DSLog(2, "Last S: %f", lastShift);
+			DSLog(3, "Delta: %f", GetTime() - lastShift);
 		}
 	}
 	
@@ -97,30 +110,28 @@ public:
 	
 	void shiftToHighGear() {
 		s1.Set(s1.kForward);
-		s2.Set(s2.kForward);
 	}
 	
 	void shiftToLowGear() {
 		s1.Set(s1.kReverse);
-		s2.Set(s2.kReverse);
 	}
 	
 	void ManualShift() {
+		printf("Manual shifting\n");
+		if (GetTime() - lastShift < 1.)
+			return; 
+		
 		if (stick2.GetRawButton(3)) {
 			if (s1.Get() == s1.kReverse)
 				s1.Set(s1.kForward);
 			else
 				s1.Set(s1.kReverse);
-			if (s2.Get() == s2.kReverse)
-				s2.Set(s2.kForward);
-			else
-				s2.Set(s2.kReverse);
+			lastShift = GetTime();
 		}
 		if (stick1.GetTrigger()) {
 			s1.Set(s1.kOff);
-			s2.Set(s2.kOff);
 		}
-		Wait(1); ///TODO TEMP fix, need so holding down button wont toggle back and forth
+		//Wait(1.); ///TODO TEMP fix, need so holding down button wont toggle back and forth
 		
 	}
 	
@@ -161,18 +172,20 @@ public:
 	}
 	
 	void TankDrive() {
-		if(stick1.GetY()>0.0||stick2.GetY()>0.0) {
-					l_f.Set(-stick1.GetY() * 0.9);
-					r_f.Set(stick2.GetY() * 0.9);
-					l_b.Set(-stick1.GetY() * 0.9);
-					r_b.Set(stick2.GetY() * 0.9);
+		drive.TankDrive(stick1, stick2, true);
+		ShiftControl();
+		/*if(stick1.GetY()>0.0||stick2.GetY()>0.0) {
+					l_f.Set(stick1.GetY() * 0.9);
+					r_f.Set(-stick2.GetY() * 0.9);
+					l_b.Set(stick1.GetY() * 0.9);
+					r_b.Set(-stick2.GetY() * 0.9);
 					ShiftControl();
 				}
 				else if (stick1.GetY()<0.0||stick2.GetY()<0.0) {
-					l_b.Set(-stick1.GetY() * 0.9);
-					r_b.Set(stick2.GetY() * 0.9);
-					l_f.Set(-stick1.GetY() * 0.9);
-					r_f.Set(stick2.GetY() * 0.9);
+					l_b.Set(stick1.GetY() * 0.9);
+					r_b.Set(-stick2.GetY() * 0.9);
+					l_f.Set(stick1.GetY() * 0.9);
+					r_f.Set(-stick2.GetY() * 0.9);
 					ShiftControl();
 				}
 				else {
@@ -181,7 +194,7 @@ public:
 					r_f.Set(0.0);
 					r_b.Set(0.0);
 					ShiftControl();
-				}
+				}*/
 	}
 };
 
