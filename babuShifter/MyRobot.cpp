@@ -22,10 +22,7 @@ public:
 		s1(2,1,2), s2(2,3,4),
 		comp(PRESSURE_SWITCH_PORT, COMPRESSOR_ID)
 	{
-		l_f.SetSafetyEnabled(false);
-		l_b.SetSafetyEnabled(false);
-		r_f.SetSafetyEnabled(false);
-		r_b.SetSafetyEnabled(false);
+		DisableSafety();
 		SetSpeedReference();
 		a_shift = true;
 	}
@@ -176,6 +173,13 @@ public:
 					ShiftControl();
 				}
 	}
+	
+	void DisableSafety() {
+			l_f.SetSafetyEnabled(false);
+			l_b.SetSafetyEnabled(false);
+			r_f.SetSafetyEnabled(false);
+			r_b.SetSafetyEnabled(false);
+		}
 };
 
 START_ROBOT_CLASS(ShifterDemo);

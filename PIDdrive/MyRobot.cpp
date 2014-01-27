@@ -18,10 +18,7 @@ public:
 		l_f(DRIVE_L1_ID, CANJaguar::kSpeed), l_b(DRIVE_L2_ID, CANJaguar::kPercentVbus), r_f(DRIVE_R1_ID, CANJaguar::kSpeed), r_b(DRIVE_R2_ID, CANJaguar::kPercentVbus),
 		stick1(STICK_1_PORT), stick2(STICK_2_PORT)		// as they are declared above.
 	{
-		l_f.SetSafetyEnabled(false);
-		l_b.SetSafetyEnabled(false);
-		r_f.SetSafetyEnabled(false);
-		r_b.SetSafetyEnabled(false);
+		DisableSafety();
 		SetSpeedReference();
 		usePID = true;
 	}
@@ -40,7 +37,6 @@ public:
 	void OperatorControl(){
 		
 		SetPID();
-		EnablePIDControl();
 		
 		while (IsOperatorControl()&&IsEnabled())
 		{
@@ -58,6 +54,8 @@ public:
 			if (r_f.GetControlMode() == CANJaguar::kPercentVbus)
 				r_f.ChangeControlMode(CANJaguar::kSpeed);
 			
+			EnablePIDControl();
+			
 			l_f.Set(-stick1.GetY()*max_speed);
 			r_f.Set(stick2.GetY()*max_speed);
 			l_b.Set(l_f.Get());
@@ -70,6 +68,8 @@ public:
 						
 			if (r_f.GetControlMode() == CANJaguar::kSpeed)
 				r_f.ChangeControlMode(CANJaguar::kPercentVbus);
+			
+			DisablePIDControl();
 			
 			if(stick1.GetY()>0.0||stick2.GetY()>0.0) {
 								l_f.Set(-stick1.GetY() * 0.9);
@@ -108,6 +108,20 @@ public:
 		l_b.EnableControl();
 		r_f.EnableControl();
 		r_b.EnableControl();
+	}
+	
+	void DisablePIDControl() {
+		l_f.DisableControl();
+		l_b.DisableControl();
+		r_f.DisableControl();
+		r_b.DisableControl();
+	}
+	
+	void DisableSafety() {
+		l_f.SetSafetyEnabled(false);
+		l_b.SetSafetyEnabled(false);
+		r_f.SetSafetyEnabled(false);
+		r_b.SetSafetyEnabled(false);
 	}
 };
 
