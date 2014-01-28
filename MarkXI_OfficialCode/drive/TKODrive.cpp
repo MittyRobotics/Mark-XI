@@ -12,7 +12,8 @@ TKODrive::TKODrive() :
 	stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
 	stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 	stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
-	stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,	
+	stick4(STICK_4_PORT), // initialize joystick 4 < first EVOM joystick-m,	
+	shifterDS(1,2)
 {	
 	printf("Initializing drive\n");
 	driveTask = new Task("Driving", (FUNCPTR) DriveRunner);
@@ -29,6 +30,14 @@ TKODrive::TKODrive() :
 	drive2.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);   
 	drive3.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
 	drive4.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
+	drive1.SetSpeedReference(CANJaguar::kSpeedRef_Encoder); 
+	drive3.SetSpeedReference(CANJaguar::kSpeedRef_Encoder);
+	drive1.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+	drive3.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+	drive1.EnableControl();
+	drive3.EnableControl();
+	drive1.ConfigEncoderCodesPerRev(360);
+	drive3.ConfigEncoderCodesPerRev(360);
 	drive1.SetVoltageRampRate(0.0);
 	drive2.SetVoltageRampRate(0.0);
 	drive3.SetVoltageRampRate(0.0);
@@ -150,8 +159,8 @@ void TKODrive::switchToSpeed()
 {
 	drive1.ChangeControlMode(CANJaguar::kSpeed);
 	drive3.ChangeControlMode(CANJaguar::kSpeed);
-	drive1.SetSpeedReference(JAG_SPEEDREF);
-	drive3.SetSpeedReference(JAG_SPEEDREF);
+	drive1.SetSpeedReference(CANJaguar::kSpeedRef_Encoder);
+	drive3.SetSpeedReference(CANJaguar::kSpeedRef_Encoder);
 	drive1.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
 	drive3.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
 	drive1.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);  
