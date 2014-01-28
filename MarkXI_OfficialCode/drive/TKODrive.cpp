@@ -48,6 +48,7 @@ TKODrive::TKODrive() :
 	maxDrive3RPM = 0;
 	driveLogCounter = 0;
 	lastShift = GetTime();
+	lastDataLog = GetTime();
 	
 	printf("Finished initializing drive\n");
 	AddToSingletonList();
@@ -67,7 +68,7 @@ void TKODrive::DriveRunner()
 	{
 		m_Instance->TankDrive();
 		m_Instance->LogData();
-//		m_Instance->VerifyJags();
+		m_Instance->VerifyJags();
 		Wait(0.005);
 	}
 }
@@ -93,7 +94,7 @@ void TKODrive::LogData()
 	if (drive3.GetSpeed() > maxDrive3RPM)
 		maxDrive3RPM = drive3.GetSpeed();
 	
-	if (driveLogCounter % 100 != 0) return; //TODO tune speed of logging drive data
+	if (GetTime() - lastDataLog <= 1.) return; //TODO 1.0 means logs every 1 second
 	
 	TKOLogger::inst()->addMessage("-----DRIVE DATA------\n");
 	
@@ -114,8 +115,29 @@ void TKODrive::LogData()
 	
 	TKOLogger::inst()->addMessage("Drive 1 Speed: %f", drive1.GetSpeed());
 	TKOLogger::inst()->addMessage("Drive 3 Speed: %f\n", drive3.GetSpeed());
+	
+	printf("-----DRIVE DATA------\n");
+		
+	printf("Drive 1 Vbus Percent Output: %f\n", drive1.Get());
+	printf("Drive 2 Vbus Percent Output: %f\n", drive2.Get());
+	printf("Drive 3 Vbus Percent Output: %f\n", drive3.Get());
+	printf("Drive 4 Vbus Percent Output: %f\n\n", drive4.Get());
+	
+	printf("Drive 1 Voltage Output: %f\n", drive1.GetOutputVoltage());
+	printf("Drive 2 Voltage Output: %f\n", drive2.GetOutputVoltage());
+	printf("Drive 3 Voltage Output: %f\n", drive3.GetOutputVoltage());
+	printf("Drive 4 Voltage Output: %f\n\n", drive4.GetOutputVoltage());
+	
+	printf("Drive 1 Current Output: %f\n", drive1.GetOutputCurrent());
+	printf("Drive 2 Current Output: %f\n", drive2.GetOutputCurrent());
+	printf("Drive 3 Current Output: %f\n", drive3.GetOutputCurrent());
+	printf("Drive 4 Current Output: %f\n\n", drive4.GetOutputCurrent());
+	
+	printf("Drive 1 Speed: %f\n", drive1.GetSpeed());
+	printf("Drive 3 Speed: %f\n\n", drive3.GetSpeed());
 		
 	driveLogCounter++;
+	lastDataLog = GetTime();
 }
 
 void TKODrive::TankDrive()

@@ -21,7 +21,7 @@ private:
 	Task *driveTask;
 	
 	long driveLogCounter;
-	float lastShift;
+	float lastShift, lastDataLog;
 	double maxDrive1RPM, maxDrive3RPM;
 	
 	void TankDrive();
