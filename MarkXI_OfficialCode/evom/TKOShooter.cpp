@@ -60,11 +60,7 @@ int TKOShooter::runStateMachine()
 	DSClear();
 	//logging here
 	TKOLogger::inst()->addMessage("%s",s.state_to_string(&data).c_str());
-	DSLog(6, "%s", s.state_to_string(&data).c_str());
-	if(cur_state == STATE_ERR)
-	{
-		TKOLogger::inst()->addMessage("Potato. ");
-	}
+	DSLog(6, "State: %s", s.state_to_string(&data).c_str());
 	cur_state = s.run_state(cur_state,&data);
 	return -1;
 }

@@ -213,8 +213,10 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 
 state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 {
+	TKOLogger::inst()->addMessage("STATE ENTER ready to fire entry; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
     if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE) {
+    	TKOLogger::inst()->addMessage("STATE ERROR Ready to fire state entry setup; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }
     data->curState = STATE_READY_TO_FIRE;
@@ -222,13 +224,16 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
     // wait for the trigger then fire!
     while (!_triggerJoystick->GetTrigger() && GetSensorData(data) == CONST_READY_TO_FIRE) {}
     // go to next state
+    TKOLogger::inst()->addMessage("STATE SUCCESS Exiting ready to fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     return STATE_LATCH_UNLOCK;
 }
 
 state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
 {
+	TKOLogger::inst()->addMessage("STATE ENTER latch unlock entry; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
     if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE) {
+    	TKOLogger::inst()->addMessage("STATE ERROR latch unlock state entry setup; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }
     
@@ -247,18 +252,22 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
         if (_timer->Get() > 5.) {
             _timer->Stop();
             _timer->Reset();
+            TKOLogger::inst()->addMessage("STATE ERROR latch unlock state exit; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
+            
             return STATE_ERR;
         }
     }
     _timer->Stop();
     _timer->Reset();
 
-    if (sensors != CONST_READY_TO_FIRE)
+    if (sensors != DONE_FIRING)
     {
+    	TKOLogger::inst()->addMessage("STATE ERROR latch unlock state exit; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
+    	
         return STATE_ERR;
     }
-
     // go to next state
+	TKOLogger::inst()->addMessage("STATE SUCCESS latch unlock state exit; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     return STATE_PISTON_RETRACT;
 }
 
@@ -309,6 +318,7 @@ state_t StateMachine::do_err_state(instance_data_t *data)
 {
 	//GetSensorData(data);
     printf("%s\n",state_to_string(data).c_str());
+    TKOLogger::inst()->addMessage("STATE ERROR: %s ERROR!!! SENSORS: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     sensors_to_string(data);
     return STATE_ERR;
 }
