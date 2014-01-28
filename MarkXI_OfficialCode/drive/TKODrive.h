@@ -21,10 +21,12 @@ private:
 	Task *driveTask;
 	
 	long driveLogCounter;
+	float lastShift;
 	double maxDrive1RPM, maxDrive3RPM;
 	
 	void TankDrive();
 	void LogData();
+	void ManualShift();
 	TKODrive();
 	~TKODrive();
 	static TKODrive* m_Instance;

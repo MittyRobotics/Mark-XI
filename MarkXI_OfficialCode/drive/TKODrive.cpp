@@ -47,6 +47,7 @@ TKODrive::TKODrive() :
 	maxDrive1RPM = 0;
 	maxDrive3RPM = 0;
 	driveLogCounter = 0;
+	lastShift = GetTime();
 	
 	printf("Finished initializing drive\n");
 	AddToSingletonList();
@@ -176,6 +177,29 @@ void TKODrive::TankDrive()
 		drive2.Set(-stick1.GetY() * 0.8);
 		drive3.Set(stick2.GetY() * 0.8);
 		drive4.Set(stick2.GetY() * 0.8);
+	}
+	TKODrive::ManualShift();
+}
+void TKODrive::ManualShift()
+{
+	if (GetTime() - lastShift < 1.) //1. is the constant for min delay between shifts
+		return; 
+
+	printf("Manual shifting\n");
+	if (stick2.GetRawButton(3)) {
+		if (shifterDS.Get() == shifterDS.kReverse)
+			shifterDS.Set(shifterDS.kForward);
+		else
+			shifterDS.Set(shifterDS.kReverse);
+		if (shifterDS.Get() == shifterDS.kReverse)
+			shifterDS.Set(shifterDS.kForward);
+		else
+			shifterDS.Set(shifterDS.kReverse);
+		lastShift = GetTime();
+	}
+	if (stick1.GetTrigger()) {
+		shifterDS.Set(shifterDS.kOff);
+		shifterDS.Set(shifterDS.kOff);
 	}
 }
 bool TKODrive::VerifyJags() //if returns false, jag problems
