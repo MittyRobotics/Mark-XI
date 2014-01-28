@@ -1,38 +1,96 @@
-//Last edited by Ritwik Dutta
-//on 01/04/2014
+//Last edited by Vadim Korolik
+//on 01/12/2014
 #include "TKOShooter.h"
 
 TKOShooter*  TKOShooter::_instance = NULL;
-///Constructor for the tkoShooter class
 
 TKOShooter::TKOShooter ()
 {	
+	shooterTask = new Task("Shooter", (FUNCPTR) shooterTaskRunner);
+	stateMachineTask = new Task("StateMachine", (FUNCPTR) stateMachineTaskRunner);
+	//shooterTask->SetPriority(Task::kDefaultPriority);
+	//stateMachineTask->SetPriority(Task::kDefaultPriority);
 }
 
-TKOShooter* TKOShooter::newShooterInstance ()
+TKOShooter* TKOShooter::inst ()
 {
 	if (!_instance) {
-		printf("No tkoShooterInstance. Creating.");
+		printf("No TKOShooter instance. Creating.");
 		_instance = new TKOShooter;
 	}
 	return _instance;
 }
 
-int TKOShooter::runStateMachine ()
+bool TKOShooter::Start()
 {
-	return 0;
+	if (startStateMachine() and startShooter())
+		return true;
+	return false;
+}
+bool TKOShooter::Stop()
+{
+	if (stopStateMachine() and stopShooter())
+			return true;
+	return false;
 }
 
-void TKOShooter::startShooter ()
+void TKOShooter::initStateMachine()
 {
+	cur_state = s.init(&data);
+}
+bool TKOShooter::startStateMachine()
+{
+	initStateMachine();
+	if (not stateMachineTask->Verify())
+		if (stateMachineTask->Start())
+			return true;
+	
+	return false;
+}
+bool TKOShooter::stopStateMachine()
+{
+	if (stateMachineTask->Verify())
+		if (stateMachineTask->Stop())
+			return true;
+	
+	return false;
+}
+int TKOShooter::runStateMachine()
+{
+	DSClear();
+	//logging here
+	TKOLogger::inst()->addMessage("%s",s.state_to_string(&data).c_str());
+	DSLog(6, "State: %s", s.state_to_string(&data).c_str());
+	cur_state = s.run_state(cur_state,&data);
+	return -1;
 }
 
-void TKOShooter::stopShooter ()
+bool TKOShooter::startShooter()
 {
+	return false;
+}
+bool TKOShooter::stopShooter()
+{
+	return false;
+}
+bool TKOShooter::shooterDoAction(int action)
+{
+	return false;
 }
 
-void TKOShooter::launchShooter ()
+void TKOShooter::shooterTaskRunner()
 {
+	while (true)
+	{
+		
+	}
+}
+void TKOShooter::stateMachineTaskRunner()
+{
+	while (true)
+	{
+		_instance->runStateMachine();
+	}
 }
 
 TKOShooter::~TKOShooter ()

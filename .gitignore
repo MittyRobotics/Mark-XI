@@ -33,3 +33,6 @@ PPC603gnu/
 #.project
 #.wrmakefile
 #.wrproject
+*.cbp
+*.depend
+*.layout

@@ -1,31 +1,56 @@
-//Last edited by Ritwik Dutta
-//on 01/11/2014
+//Last edited by Vadim Korolik
+//on 01/12/2014
+
+//USEFULL LINK: http://stackoverflow.com/questions/133214/is-there-a-typical-state-machine-implementation-pattern
 #ifndef __TKOSHOOTER_H
 #define __TKOSHOOTER_H
 
 #include "../Definitions.h"
+#include "../log/TKOLogger.h"
+#include "state_machine_impl/StateMachine.h"
+
 
 class TKOShooter
 {
 	public:
-		//Constructor
 		TKOShooter();
-		//Destructor
 		~TKOShooter();
-		//Instance Creator
-		static TKOShooter* newShooterInstance();
-		//Instance variable
-		static TKOShooter* tkoShooterInstance;
-		//Shooter launcher
-		void launchShooter();
-		void startShooter();
-		void stopShooter();
-		
-		//State machine
-        static int runStateMachine();
-		
+		static TKOShooter* inst();
+		bool Start();
+		bool Stop();
+
+	private:
+		Task *shooterTask;
+		Task *stateMachineTask;
+		void initStateMachine();
+		bool startStateMachine();
+		bool stopStateMachine();
+		int runStateMachine();
+		bool startShooter();
+		bool stopShooter();
+		bool shooterDoAction(int action);
+
+		static void shooterTaskRunner();
+		static void stateMachineTaskRunner();
+
 		static TKOShooter* _instance;
 		
+		instance_data_t data;
+		state_t cur_state;
+		StateMachine s;
 };
 
 #endif
+
+/*
+ * int main( void ) {
+    state_t cur_state = STATE_INITIAL; // set our state
+    instance_data_t data; // set up some data to use
+
+    while ( 1 ) {
+        cur_state = run_state( cur_state, &data ); // start the state machine
+
+        // do other program logic, run other state machines, etc
+		}
+	}
+ */
