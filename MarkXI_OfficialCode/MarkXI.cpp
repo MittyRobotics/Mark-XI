@@ -16,6 +16,8 @@
  * 
  * For shooter, create calibration curve, best fit equation of shoot power VS. ball flight dist
  * Use equation to calculate needed power for desired distance 
+ * 
+ * Possibly add different log files for different tasks?
  * -----------------------------LAST DONE-------------------------------*
  * 01/04 
  * 		Preparing as a core for build season
@@ -92,11 +94,11 @@ void MarkXI::Disabled()
 {
 	printf("Robot Dying!\n");
 	TKOLogger::inst()->addMessage("Robot disabled.");
-	//TKOShooter::inst()->Stop();
-//	TKODrive::inst()->Stop();
-//	TKOGDrive::inst()->Stop();
-//	TKOVision::inst()->StopProcessing();
-//	TKOLogger::inst()->Stop();
+	TKOShooter::inst()->Stop();
+	TKODrive::inst()->Stop();
+	TKOGDrive::inst()->Stop();
+	TKOVision::inst()->StopProcessing();
+	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
 	{
@@ -136,7 +138,7 @@ void MarkXI::OperatorControl()
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->Start();
 	TKOGyro::inst()->reset();
-	//TKOShooter::inst()->Start();
+	TKOShooter::inst()->Start();
 	TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;

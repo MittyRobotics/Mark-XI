@@ -30,18 +30,24 @@ TKODrive::TKODrive() :
 	drive2.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);   
 	drive3.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
 	drive4.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
-	drive1.SetSpeedReference(CANJaguar::kSpeedRef_Encoder); 
-	drive3.SetSpeedReference(CANJaguar::kSpeedRef_Encoder);
-	drive1.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
-	drive3.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
-	drive1.EnableControl();
-	drive3.EnableControl();
-	drive1.ConfigEncoderCodesPerRev(360);
-	drive3.ConfigEncoderCodesPerRev(360);
 	drive1.SetVoltageRampRate(0.0);
 	drive2.SetVoltageRampRate(0.0);
 	drive3.SetVoltageRampRate(0.0);
 	drive4.SetVoltageRampRate(0.0);
+	
+	drive1.SetSpeedReference(CANJaguar::kSpeedRef_Encoder); 
+	drive3.SetSpeedReference(CANJaguar::kSpeedRef_Encoder);
+	drive1.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+	drive3.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+	drive1.ConfigEncoderCodesPerRev(360);
+	drive3.ConfigEncoderCodesPerRev(360);
+	drive1.EnableControl();
+	drive3.EnableControl();
+	
+	maxDrive1RPM = 0;
+	maxDrive3RPM = 0;
+	driveLogCounter = 0;
+	
 	printf("Finished initializing drive\n");
 	AddToSingletonList();
 }
@@ -59,6 +65,7 @@ void TKODrive::DriveRunner()
 	while (true)
 	{
 		m_Instance->TankDrive();
+		m_Instance->LogData();
 //		m_Instance->VerifyJags();
 		Wait(0.005);
 	}
@@ -73,6 +80,41 @@ void TKODrive::Stop()
 {
 	if (driveTask->Verify() or not driveTask->IsSuspended())
 		driveTask->Stop();
+	
+	TKOLogger::inst()->addMessage("Drive 1 Max Speed: %f", maxDrive1RPM);
+	TKOLogger::inst()->addMessage("Drive 3 Max Speed: %f", maxDrive3RPM);
+}
+
+void TKODrive::LogData()
+{
+	if (drive1.GetSpeed() > maxDrive1RPM)
+		maxDrive1RPM = drive1.GetSpeed();
+	if (drive3.GetSpeed() > maxDrive3RPM)
+		maxDrive3RPM = drive3.GetSpeed();
+	
+	if (driveLogCounter % 100 != 0) return; //TODO tune speed of logging drive data
+	
+	TKOLogger::inst()->addMessage("-----DRIVE DATA------\n");
+	
+	TKOLogger::inst()->addMessage("Drive 1 Vbus Percent Output: %f", drive1.Get());
+	TKOLogger::inst()->addMessage("Drive 2 Vbus Percent Output: %f", drive2.Get());
+	TKOLogger::inst()->addMessage("Drive 3 Vbus Percent Output: %f", drive3.Get());
+	TKOLogger::inst()->addMessage("Drive 4 Vbus Percent Output: %f\n", drive4.Get());
+	
+	TKOLogger::inst()->addMessage("Drive 1 Voltage Output: %f", drive1.GetOutputVoltage());
+	TKOLogger::inst()->addMessage("Drive 2 Voltage Output: %f", drive2.GetOutputVoltage());
+	TKOLogger::inst()->addMessage("Drive 3 Voltage Output: %f", drive3.GetOutputVoltage());
+	TKOLogger::inst()->addMessage("Drive 4 Voltage Output: %f\n", drive4.GetOutputVoltage());
+	
+	TKOLogger::inst()->addMessage("Drive 1 Current Output: %f", drive1.GetOutputCurrent());
+	TKOLogger::inst()->addMessage("Drive 2 Current Output: %f", drive2.GetOutputCurrent());
+	TKOLogger::inst()->addMessage("Drive 3 Current Output: %f", drive3.GetOutputCurrent());
+	TKOLogger::inst()->addMessage("Drive 4 Current Output: %f\n", drive4.GetOutputCurrent());
+	
+	TKOLogger::inst()->addMessage("Drive 1 Speed: %f", drive1.GetSpeed());
+	TKOLogger::inst()->addMessage("Drive 3 Speed: %f\n", drive3.GetSpeed());
+		
+	driveLogCounter++;
 }
 
 void TKODrive::TankDrive()

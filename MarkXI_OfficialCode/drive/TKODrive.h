@@ -19,7 +19,12 @@ private:
 	Joystick stick1, stick2, stick3, stick4; // define joysticks
 	DoubleSolenoid shifterDS;
 	Task *driveTask;
+	
+	long driveLogCounter;
+	double maxDrive1RPM, maxDrive3RPM;
+	
 	void TankDrive();
+	void LogData();
 	TKODrive();
 	~TKODrive();
 	static TKODrive* m_Instance;
