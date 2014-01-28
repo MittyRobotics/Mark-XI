@@ -106,13 +106,11 @@ public:
 		if (stick2.GetRawButton(3)) {
 			if (s1.Get() == s1.kReverse)
 				s1.Set(s1.kForward);
-			else
-				s1.Set(s1.kReverse);
-			if (s2.Get() == s2.kReverse)
-				s2.Set(s2.kForward);
-			else
-				s2.Set(s2.kReverse);
 		}
+		
+		if (stick2.GetRawButton(2))
+			s1.Set(s1.kReverse);
+		
 		if (stick1.GetTrigger()) {
 			s1.Set(s1.kOff);
 			s2.Set(s2.kOff);

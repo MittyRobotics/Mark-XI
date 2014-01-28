@@ -15,7 +15,7 @@ class RobotDemo : public SimpleRobot
 
 public:
 	RobotDemo():
-		l_f(DRIVE_L1_ID, CANJaguar::kSpeed), l_b(DRIVE_L2_ID, CANJaguar::kPercentVbus), r_f(DRIVE_R1_ID, CANJaguar::kSpeed), r_b(DRIVE_R2_ID, CANJaguar::kPercentVbus),
+		l_f(DRIVE_L1_ID, CANJaguar::kSpeed), l_b(DRIVE_L2_ID, CANJaguar::kSpeed), r_f(DRIVE_R1_ID, CANJaguar::kSpeed), r_b(DRIVE_R2_ID, CANJaguar::kSpeed),
 		stick1(STICK_1_PORT), stick2(STICK_2_PORT)		// as they are declared above.
 	{
 		DisableSafety();
@@ -51,23 +51,35 @@ public:
 			if (l_f.GetControlMode() == CANJaguar::kPercentVbus)
 				l_f.ChangeControlMode(CANJaguar::kSpeed);
 			
+			if (l_b.GetControlMode() == CANJaguar::kPercentVbus)
+				l_b.ChangeControlMode(CANJaguar::kSpeed);
+			
 			if (r_f.GetControlMode() == CANJaguar::kPercentVbus)
 				r_f.ChangeControlMode(CANJaguar::kSpeed);
+			
+			if (r_b.GetControlMode() == CANJaguar::kPercentVbus)
+				r_b.ChangeControlMode(CANJaguar::kSpeed);
 			
 			EnablePIDControl();
 			
 			l_f.Set(-stick1.GetY()*max_speed);
 			r_f.Set(stick2.GetY()*max_speed);
-			l_b.Set(l_f.Get());
-			r_b.Set(r_b.Get());
+			l_b.Set(l_f.GetSpeed());
+			r_b.Set(r_b.GetSpeed());
 		}
 		
 		else {
 			if (l_f.GetControlMode() == CANJaguar::kSpeed)
 				l_f.ChangeControlMode(CANJaguar::kPercentVbus);
+			
+			if (l_b.GetControlMode() == CANJaguar::kSpeed)
+				l_b.ChangeControlMode(CANJaguar::kPercentVbus);
 						
 			if (r_f.GetControlMode() == CANJaguar::kSpeed)
 				r_f.ChangeControlMode(CANJaguar::kPercentVbus);
+			
+			if (r_b.GetControlMode() == CANJaguar::kSpeed)
+				r_b.ChangeControlMode(CANJaguar::kPercentVbus);
 			
 			DisablePIDControl();
 			
