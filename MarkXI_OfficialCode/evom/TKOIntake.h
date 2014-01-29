@@ -1,4 +1,4 @@
-//Last Edited by Arjun Biju
+//Last Edited by Swag
 #ifndef __TKOINTAKE_H
 #define __TKOINTAKE_H
 
@@ -8,12 +8,11 @@
 
 class TKOIntake {
 public: 
-	TKOIntake(int port1, int port2);
+	TKOIntake(int rollerPort1, int rollerPort2);
 	~TKOIntake();
-	void RollerMove(bool trigger);
+	void rollerManualMove(Joystick stick);
 private:
 	CANJaguar _roller1, _roller2;
-	
 };
 
 #endif

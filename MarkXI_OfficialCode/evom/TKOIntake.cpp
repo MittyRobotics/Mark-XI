@@ -1,4 +1,4 @@
-//Last Edited by Arjun Biju
+//Last Edited by Zach Light
 #include "TKOIntake.h"
 /*
  * Initializes the 2 roller jaguars in percent Vbus mode
@@ -13,15 +13,14 @@ _roller2(port2, CANJaguar::kPercentVbus)
 
 TKOIntake::~TKOIntake() {}
 
-void TKOIntake::RollerMove(bool trigger){
-	if (trigger) {
-		_roller1.Set(-1);
-		_roller2.Set(-1);
+void TKOIntake::rollerManualMove(Joystick stick)
+	{
+		if(stick.GetRawButton(4))
+		{
+			_roller1.Set(stick.GetY());
+			_roller1.Set(stick.GetY());
+			_roller2.Set(-stick.GetY());
+			_roller2.Set(-stick.GetY());
+		}
 	}
-	else {
-		_roller1.Set(0);
-		_roller2.Set(0);
-	}
-}
 
-	
