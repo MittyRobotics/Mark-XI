@@ -58,6 +58,8 @@ const float HALF_G = .5 * 9.8 * 100. / 2.54;
 const float MID_FENDER = 0.425;
 const float TOP_FENDER = 0.585;
 
+const float CHANGE_RAM_AMP = 75;
+
 //PID constants
 const float SPINNER_kP = 0.2; //working P: 0.20, working I: .0034
 const float SPINNER_kI = 0.004;

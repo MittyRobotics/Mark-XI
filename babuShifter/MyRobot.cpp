@@ -13,6 +13,11 @@ public:
 	DoubleSolenoid s1, s2;
 	Compressor comp;
 	bool a_shift;
+	float last_voltage_cycle_l;
+	float last_voltage_cycle_r;
+	float shift_current_change;
+	//TODO Make sure to figure out change in voltage when ramming.
+	
 	ShifterDemo():
 		l_f(DRIVE_L1_ID, CANJaguar::kPercentVbus),
 		l_b(DRIVE_L2_ID, CANJaguar::kPercentVbus),
@@ -53,6 +58,8 @@ public:
 	void OperatorControl()
 	{
 		while (IsOperatorControl()&&IsEnabled()) {
+			last_voltage_cycle_l = max(l_f.GetOutputCurrent(), l_b.GetOutputCurrent());
+			last_voltage_cycle_r = max(r_f.GetOutputCurrent(), r_b.GetOutputCurrent());
 			if (stick2.GetTrigger()) {
 				Stop();
 				break;
@@ -87,7 +94,10 @@ public:
 			shiftToHighGear();
 		}
 		else if(fabs(l_f.GetSpeed()) < MIN_RPM_1
-		   || fabs(r_f.GetSpeed()) < MIN_RPM_1) {
+		   || fabs(r_f.GetSpeed()) < MIN_RPM_1 || CHANGE_RAM_AMP <
+		   (max(l_f.GetOutputCurrent(),l_b.GetOutputCurrent())-last_voltage_cycle_l)
+		   || CHANGE_RAM_AMP <
+		   (max(r_f.GetOutputCurrent(),r_b.GetOutputCurrent())-last_voltage_cycle_r)) {
 			shiftToLowGear();
 		}
 	}
