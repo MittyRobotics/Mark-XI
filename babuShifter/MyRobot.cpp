@@ -16,7 +16,7 @@ public:
 	float last_voltage_cycle_l;
 	float last_voltage_cycle_r;
 	float shift_current_change;
-	//TODO Make sure to figure out change in voltage when ramming.
+	///TODO Make sure to figure out change in voltage when ramming.
 	
 	ShifterDemo():
 		l_f(DRIVE_L1_ID, CANJaguar::kPercentVbus),
