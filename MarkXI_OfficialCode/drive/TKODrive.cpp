@@ -208,20 +208,15 @@ void TKODrive::ManualShift()
 		return; 
 
 	printf("Manual shifting\n");
-	if (stick2.GetRawButton(3)) {
-		if (shifterDS.Get() == shifterDS.kReverse)
-			shifterDS.Set(shifterDS.kForward);
-		else
-			shifterDS.Set(shifterDS.kReverse);
-		if (shifterDS.Get() == shifterDS.kReverse)
-			shifterDS.Set(shifterDS.kForward);
-		else
-			shifterDS.Set(shifterDS.kReverse);
+	if (stick2.GetRawButton(4)) 
+	{
+		shifterDS.Set(shifterDS.kForward);
 		lastShift = GetTime();
 	}
-	if (stick1.GetTrigger()) {
-		shifterDS.Set(shifterDS.kOff);
-		shifterDS.Set(shifterDS.kOff);
+	if (stick2.GetRawButton(2)) 
+	{
+		shifterDS.Set(shifterDS.kReverse);
+		lastShift = GetTime();
 	}
 }
 bool TKODrive::VerifyJags() //if returns false, jag problems

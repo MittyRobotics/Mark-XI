@@ -32,7 +32,6 @@ class MarkXI: public SimpleRobot
 	public:
 		Joystick stick1, stick2, stick3, stick4; // define joysticks
 		DriverStation *ds; // define driver station object
-		Servo camera;
 		void Disabled();
 		void Autonomous();
 		void RobotInit();
@@ -46,9 +45,9 @@ class MarkXI: public SimpleRobot
 			stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
-			stick4(STICK_4_PORT), // initialize joystick 4 < first EVOM joystick-m,
-			camera(1)
+			stick4(STICK_4_PORT)
 		{
+			printf("Robot boot\n");
 			TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------");
 		}
 };
@@ -72,8 +71,6 @@ void MarkXI::Test()
 	while (IsEnabled())
 	{
 		DSClear();
-		camera.Set(stick1.GetX());
-		camera.EnableDeadbandElimination(true);
 	}
 	printf("Stopping shooter, logger \n");
 	TKOShooter::inst()->Stop();
