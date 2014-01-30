@@ -24,7 +24,8 @@ TKOIntake::TKOIntake() :
 {
 	printf("Initializing intake\n");
 	intakeTask = new Task("TKOIntake", (FUNCPTR) IntakeRunner);
-	printf("intake priority not set\n");
+	_roller1.SetSafetyEnabled(true);
+	_roller2.SetSafetyEnabled(true);
 	AddToSingletonList();
 }
 
@@ -88,7 +89,7 @@ void TKOIntake::ArmMoveMiddle() {
 }
 
 void TKOIntake::ArmMoveHigh() {
-	ArmEncoder.Start;
+	ArmEncoder.Start();
 	_arm1.Set(-1);
 	if (LimitSwitchArm.Get() == 1) {//The highest limit switch is triggered, and the arm is off.
 		_arm1.Set(0);
