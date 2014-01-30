@@ -32,6 +32,7 @@ class MarkXI: public SimpleRobot
 	public:
 		Joystick stick1, stick2, stick3, stick4; // define joysticks
 		DriverStation *ds; // define driver station object
+		Encoder enc;
 		void Disabled();
 		void Autonomous();
 		void RobotInit();
@@ -45,7 +46,8 @@ class MarkXI: public SimpleRobot
 			stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
-			stick4(STICK_4_PORT)
+			stick4(STICK_4_PORT),
+			enc(1, 2, false, Encoder::k4X)
 		{
 			printf("Robot boot\n");
 			TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------");
@@ -61,6 +63,10 @@ void MarkXI::Test()
 		printf("Deleting log...\n");
 		remove("logT.txt");
 		printf("Digital input 1 true\n");
+	}
+	while (IsEnabled()) //encoder testing
+	{
+		printf("Encoder 1: %f", (float)enc.Get());
 	}
 	printf("Calling test function \n");
 	printf("Starting tasks \n");
