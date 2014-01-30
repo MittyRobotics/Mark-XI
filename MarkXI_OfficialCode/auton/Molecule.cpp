@@ -4,7 +4,7 @@
 
 
 Molecule::Molecule():
-drive1(DRIVE_L1_ID, CANJaguar::kPosition),
+drive1(DRIVE_L1_ID, CANJaguar::kPosition), //Initialization of all of the motors, creation of a list which can be formed into a molecule, the list is comprised of various atoms. 
 drive2(DRIVE_L2_ID, CANJaguar::kVoltage),
 drive3(DRIVE_R1_ID, CANJaguar::kPosition),
 drive4(DRIVE_R2_ID, CANJaguar::kVoltage),
@@ -13,6 +13,7 @@ _list()
 {}
 
 void Molecule::MoleculeInit() {
+	//All of this is setting the Jaguars in various modes, and putting the Encoders as 250 tick Encoders. This also disables the safety, and makes the second and fourth motors slaves. 
 	drive1.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 	drive1.ConfigEncoderCodesPerRev(250);
 	drive1.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
@@ -43,8 +44,8 @@ void Molecule::MoleculeInit() {
 	
 }
 
-Molecule::~Molecule(){
-	
+Molecule::~Molecule(){ 
+		
 	while(_list.size()>0)
 	{
 		Atom *a = _list.front();
@@ -54,7 +55,7 @@ Molecule::~Molecule(){
 }
 
 
-void Molecule::Test()
+void Molecule::Test() //Testing to make sure the motors are working and that the code is working on the CRio
 {
 		drive1.Set(100);
 		drive2.Set(drive1.GetOutputVoltage());
@@ -64,13 +65,13 @@ void Molecule::Test()
 }
 
 
-void Molecule::addAtom(Atom *a)
+void Molecule::addAtom(Atom *a) //Adds an atom to the end of the Molecule, to be run with the rest of the molecule. 
 {
 		_list.push(a);
 }
 
 
-void Molecule::start()
+void Molecule::start() 	//This runs the the molecule, and then deletes that member of the molecule, so it doesn't run in an infinite cycle. 
 {
 	int i = 0;
 	int anmt = _list.size();
