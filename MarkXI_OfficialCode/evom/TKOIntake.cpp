@@ -67,7 +67,6 @@ void TKOIntake::ArmMoveLow() { // Arm move code to move it to the lowest positio
 	if (LimitSwitchArm.Get() == 1) {
 		_arm1.Set(0);
 		
-		ArmEncoder.Get();
 		printf("The arm is at the lowest position.");
 
 	}
@@ -89,6 +88,7 @@ void TKOIntake::ArmMoveMiddle() {
 }
 
 void TKOIntake::ArmMoveHigh() {
+	ArmEncoder.Start;
 	_arm1.Set(-1);
 	if (LimitSwitchArm.Get() == 1) {//The highest limit switch is triggered, and the arm is off.
 		_arm1.Set(0);
