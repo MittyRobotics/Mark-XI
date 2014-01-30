@@ -9,7 +9,7 @@
 #include "WPILib.h"
 #include "Vision/RGBImage.h"
 #include "Vision/BinaryImage.h"
-#include "Math.h"
+#include "math.h"
 #include "stdlib.h"
 #include <cstring>
 
