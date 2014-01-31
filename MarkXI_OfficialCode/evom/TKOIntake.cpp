@@ -20,7 +20,7 @@ TKOIntake::TKOIntake() :
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT), // initialize joystick 4 < second EVOM joystick-m,
-			ArmEncoder(1,8,1,9,false)
+			ArmEncoder(1,8,1,9,true)
 {
 	printf("Initializing intake\n");
 	intakeTask = new Task("TKOIntake", (FUNCPTR) IntakeRunner);
