@@ -1,5 +1,6 @@
 #include "WPILib.h"
 #include "Definitions.h"
+#include <sstream>
 
 /**
  * This is a demo program showing the use of the RobotBase class.
@@ -10,17 +11,24 @@
 class RobotDemo : public SimpleRobot
 {
 	CANJaguar l_f, l_b, r_f, r_b;
-	Joystick stick1, stick2; // only joystick
+	Joystick stick1, stick2, stick3; // only joystick
+	DriverStationLCD* ds;
 	bool usePID;
+	float kP, kI, kD;
 
 public:
 	RobotDemo():
 		l_f(DRIVE_L1_ID, CANJaguar::kSpeed), l_b(DRIVE_L2_ID, CANJaguar::kSpeed), r_f(DRIVE_R1_ID, CANJaguar::kSpeed), r_b(DRIVE_R2_ID, CANJaguar::kSpeed),
-		stick1(STICK_1_PORT), stick2(STICK_2_PORT)		// as they are declared above.
+		stick1(STICK_1_PORT), stick2(STICK_2_PORT), stick3(STICK_3_PORT), ds()		// as they are declared above.
 	{
+		ds = DriverStationLCD::GetInstance();
+		SetPID();
 		DisableSafety();
 		SetSpeedReference();
 		usePID = true;
+		kP = 0.2;
+		kI = 0.0015;
+		kD = 0.0;
 	}
 
 	/**
@@ -36,18 +44,65 @@ public:
 	 */
 	void OperatorControl(){
 		
-		SetPID();
+		EnablePIDControl();
+		ds->PrintfLine(DriverStationLCD::kUser_Line1,"HI");
+		ds->UpdateLCD();
 		
 		while (IsOperatorControl()&&IsEnabled())
 		{
+			/*
 			if (stick1.GetRawButton(3))
 				usePID = !usePID;
+				*/
+			while(stick3.GetRawButton(3)) {
+				ds->Clear();
+				kP = fabs(stick3.GetY()*0.5);
+				char * p = reinterpret_cast<char *>(&kP);
+				char * i = reinterpret_cast<char *>(&kD);
+				char * d = reinterpret_cast<char *>(&kI);
+				ds->PrintfLine(DriverStationLCD::kUser_Line1, "P:");
+				ds->PrintfLine(DriverStationLCD::kUser_Line2, p);
+				ds->PrintfLine(DriverStationLCD::kUser_Line3, "I:");
+				ds->PrintfLine(DriverStationLCD::kUser_Line4, i);
+				ds->PrintfLine(DriverStationLCD::kUser_Line5, "D:");
+				ds->PrintfLine(DriverStationLCD::kUser_Line6, d);
+				ds->UpdateLCD();
+			}
+			while(stick3.GetRawButton(1)) {
+				ds->Clear();
+				kI = fabs(stick3.GetY()*0.004);
+				char * p = reinterpret_cast<char *>(&kP);
+				char * i = reinterpret_cast<char *>(&kD);
+				char * d = reinterpret_cast<char *>(&kI);
+				ds->PrintfLine(DriverStationLCD::kUser_Line1, "P:");
+				ds->PrintfLine(DriverStationLCD::kUser_Line2, p);
+				ds->PrintfLine(DriverStationLCD::kUser_Line3, "I:");
+				ds->PrintfLine(DriverStationLCD::kUser_Line4, i);
+				ds->PrintfLine(DriverStationLCD::kUser_Line5, "D:");
+				ds->PrintfLine(DriverStationLCD::kUser_Line6, d);
+				ds->UpdateLCD();
+			}
+			while(stick3.GetRawButton(2)) {
+				ds->Clear();
+				kD = fabs(stick3.GetY()*0.6);
+				char * p = reinterpret_cast<char *>(&kP);
+				char * i = reinterpret_cast<char *>(&kD);
+				char * d = reinterpret_cast<char *>(&kI);
+				ds->PrintfLine(DriverStationLCD::kUser_Line1, "P:");
+				ds->PrintfLine(DriverStationLCD::kUser_Line2, p);
+				ds->PrintfLine(DriverStationLCD::kUser_Line3, "I:");
+				ds->PrintfLine(DriverStationLCD::kUser_Line4, i);
+				ds->PrintfLine(DriverStationLCD::kUser_Line5, "D:");
+				ds->PrintfLine(DriverStationLCD::kUser_Line6, d);
+				ds->UpdateLCD();
+			}
 			TankDrive();
 		}
 	}
 	
 	void TankDrive() {
 		if (usePID == true) {
+			SetPID();
 			if (l_f.GetControlMode() == CANJaguar::kPercentVbus)
 				l_f.ChangeControlMode(CANJaguar::kSpeed);
 			
@@ -60,13 +115,14 @@ public:
 			if (r_b.GetControlMode() == CANJaguar::kPercentVbus)
 				r_b.ChangeControlMode(CANJaguar::kSpeed);
 			
-			EnablePIDControl();
+			//EnablePIDControl();
 			
 			l_f.Set(-stick1.GetY()*max_speed);
 			r_f.Set(stick2.GetY()*max_speed);
 			l_b.Set(l_f.GetSpeed());
 			r_b.Set(r_b.GetSpeed());
 		}
+		/*
 		
 		else {
 			if (l_f.GetControlMode() == CANJaguar::kSpeed)
@@ -96,6 +152,7 @@ public:
 								r_f.Set(stick2.GetY() * 0.9);
 							}
 		}
+		*/
 	}
 	
 	void Test() {
@@ -103,9 +160,9 @@ public:
 	}
 	
 	void SetPID() {
-			l_f.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+			l_f.SetPID(kP, kI, kD);
 			//l_b.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
-			r_f.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+			r_f.SetPID(kP, kI, kD);
 			//r_b.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
 		}
 		
