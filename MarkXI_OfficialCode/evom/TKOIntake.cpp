@@ -1,4 +1,4 @@
-//Last Edited by Arjun Biju
+//Last Edited by Murad Awad
 #include "TKOIntake.h"
 
 TKOIntake* TKOIntake::m_Instance = NULL;
@@ -45,11 +45,11 @@ void TKOIntake::Initialization() {
 	_arm1.Set(-1);
 	if(LimitSwitchArm.Get() == 1) { 
 		_arm1.Set(0);
-		armTop = ArmEncoder.Get();
+		encodervalueup = ArmEncoder.Get();
 		_arm1.Set(1);
 		if (LimitSwitchArm.Get() == 1){
 			_arm1.Set(0);
-			armBottom = ArmEncoder.Get();
+			encodervaluedown = ArmEncoder.Get();
 		}
 	}
 }
@@ -87,15 +87,16 @@ void TKOIntake::ArmMoveLow() { // Arm move code to move it to the lowest positio
 
 void TKOIntake::ArmMoveMiddle() {
 	
-	_arm1.Set(1); //Arm first moves in downward fashion in case it is above the second limit switch
-	if (LimitSwitchArm.Get() == 1) {//If it is under the second limit switch, it  hits the first one, and reverts to start moving up
+	_arm1.Set(-1); //Arm first moves in downward fashion in case it is above the second limit switch
+	if(ArmEncoder.Get()== encodervalueup + encodervaluedown){
 		_arm1.Set(0);
-		ArmEncoder.Start();
-		_arm1.Set(-1);
-	if (LimitSwitchArm.Get()==1)
-	_arm1.Set(0);
-	ArmEncoder.Get();
-
+	}
+	if (LimitSwitchArm.Get() == 1) {//If it is under the second limit switch
+		_arm1.Set(1);
+	}
+	if (ArmEncoder.Get() == armTop - armBottom)
+	{
+		_arm1.Set(0);	
 	}
 
 }

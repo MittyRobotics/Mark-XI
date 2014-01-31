@@ -19,6 +19,7 @@ public:
 	void LimitSwitchTest();
 	void RollerMoveOut();
 	void ArmMoveManual();
+	int encodervalueup, encodervaluedown;
 private:
 	DISALLOW_COPY_AND_ASSIGN(TKOIntake);
 	static TKOIntake* m_Instance;
