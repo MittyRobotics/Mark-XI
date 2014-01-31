@@ -1,0 +1,82 @@
+\hypertarget{classTKORelay}{\section{\-T\-K\-O\-Relay \-Class \-Reference}
+\label{classTKORelay}\index{\-T\-K\-O\-Relay@{\-T\-K\-O\-Relay}}
+}
+
+
+\-Wrapper for \-W\-P\-I \-Relay \-Class.  
+
+
+
+
+{\ttfamily \#include $<$\-T\-K\-O\-Relay.\-h$>$}
+
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classTKORelay_a185407021ca76d02fc2d34c1c05fc813}{\-T\-K\-O\-Relay} (int port)
+\begin{DoxyCompactList}\small\item\em \-Constructor for the \hyperlink{classTKORelay}{\-T\-K\-O\-Relay} class. \end{DoxyCompactList}\item 
+\hypertarget{classTKORelay_a426ee22f9bb8db0dad83c9b5944818f9}{\hyperlink{classTKORelay_a426ee22f9bb8db0dad83c9b5944818f9}{$\sim$\-T\-K\-O\-Relay} ()}\label{classTKORelay_a426ee22f9bb8db0dad83c9b5944818f9}
+
+\begin{DoxyCompactList}\small\item\em \-Destructor for the \hyperlink{classTKORelay}{\-T\-K\-O\-Relay} class. \end{DoxyCompactList}\item 
+void \hyperlink{classTKORelay_a03b62b4248237ccf41ea9abe5e2df746}{\-Set\-On} (int d)
+\begin{DoxyCompactList}\small\item\em \-Sets the spike relay. \end{DoxyCompactList}\item 
+void \hyperlink{classTKORelay_a7f4c94b16dc33d4165410d83ef01e191}{\-Pulse} ()
+\begin{DoxyCompactList}\small\item\em \-Pulses the spike relay. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-Wrapper for \-W\-P\-I \-Relay \-Class. 
+
+\subsection{\-Constructor \& \-Destructor \-Documentation}
+\hypertarget{classTKORelay_a185407021ca76d02fc2d34c1c05fc813}{\index{\-T\-K\-O\-Relay@{\-T\-K\-O\-Relay}!\-T\-K\-O\-Relay@{\-T\-K\-O\-Relay}}
+\index{\-T\-K\-O\-Relay@{\-T\-K\-O\-Relay}!TKORelay@{\-T\-K\-O\-Relay}}
+\subsubsection[{\-T\-K\-O\-Relay}]{\setlength{\rightskip}{0pt plus 5cm}{\bf \-T\-K\-O\-Relay\-::\-T\-K\-O\-Relay} (
+\begin{DoxyParamCaption}
+\item[{int}]{index}
+\end{DoxyParamCaption}
+)}}\label{classTKORelay_a185407021ca76d02fc2d34c1c05fc813}
+
+
+\-Constructor for the \hyperlink{classTKORelay}{\-T\-K\-O\-Relay} class. 
+
+\-Initial state is off. 
+\begin{DoxyParams}{\-Parameters}
+{\em int} & index -\/ the channel number of the \-\_\-relay constructor (\-W\-P\-I\-Lib) \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classTKORelay_a7f4c94b16dc33d4165410d83ef01e191}{\index{\-T\-K\-O\-Relay@{\-T\-K\-O\-Relay}!\-Pulse@{\-Pulse}}
+\index{\-Pulse@{\-Pulse}!TKORelay@{\-T\-K\-O\-Relay}}
+\subsubsection[{\-Pulse}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-T\-K\-O\-Relay\-::\-Pulse} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classTKORelay_a7f4c94b16dc33d4165410d83ef01e191}
+
+
+\-Pulses the spike relay. 
+
+\-Every time you call it, it turns on for 10 cycles, and then turns off for 10. \hypertarget{classTKORelay_a03b62b4248237ccf41ea9abe5e2df746}{\index{\-T\-K\-O\-Relay@{\-T\-K\-O\-Relay}!\-Set\-On@{\-Set\-On}}
+\index{\-Set\-On@{\-Set\-On}!TKORelay@{\-T\-K\-O\-Relay}}
+\subsubsection[{\-Set\-On}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-T\-K\-O\-Relay\-::\-Set\-On} (
+\begin{DoxyParamCaption}
+\item[{int}]{d}
+\end{DoxyParamCaption}
+)}}\label{classTKORelay_a03b62b4248237ccf41ea9abe5e2df746}
+
+
+\-Sets the spike relay. 
+
+
+\begin{DoxyParams}{\-Parameters}
+{\em int} & d -\/ 1 for forward, 2 for reverse, 0 for off. \\
+\hline
+\end{DoxyParams}
+
+
+\-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+\-T\-K\-O\-Relay.\-h\item 
+\-T\-K\-O\-Relay.\-cpp\end{DoxyCompactItemize}

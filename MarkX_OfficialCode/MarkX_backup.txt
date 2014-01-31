@@ -1,0 +1,431 @@
+//Last edited by Vadim Korolik
+//on 1/24/2013
+#include "WPILib.h"
+#include "Definitions.h"
+#include "TKOAutonomous.h"
+
+class MarkX: public SimpleRobot
+/// Main Robot Code
+{
+	Joystick stick1, stick2, stick3, stick4;
+	CANJaguar drive1, drive2, drive3, drive4;
+	RobotDrive drive;
+	TKOAutonomous auton;
+	TKOGyro* _gyro;
+	DriverStation *ds;
+	Timer timer;
+	bool usingTank;
+
+public:
+	MarkX(void) :
+		stick1(STICK_1_PORT), stick2(STICK_2_PORT), stick3(STICK_3_PORT),
+				stick4(STICK_4_PORT),
+				drive1(DRIVE_L1_ID, CANJaguar::kSpeed), // initialize motor 1 < first left drive motor
+				drive2(DRIVE_L2_ID, CANJaguar::kPercentVbus), // initialize motor 2 < second left drive motor
+				drive3(DRIVE_R1_ID, CANJaguar::kSpeed), // initialize motor 3 < first right drive motor
+				drive4(DRIVE_R2_ID, CANJaguar::kPercentVbus), // initialize motor 4 < second right drive motor
+				drive(&drive1, &drive2, &drive3, &drive4),
+				auton(DRIVE_L1_ID, DRIVE_L2_ID, DRIVE_R1_ID, DRIVE_R2_ID)
+	{
+		drive.SetInvertedMotor(RobotDrive::kRearLeftMotor, true);
+		drive.SetInvertedMotor(RobotDrive::kFrontRightMotor, true);
+		ds = DriverStation::GetInstance();
+		_gyro = _gyro->getInstance();
+
+		DSClear();
+		drive1.SetSpeedReference(CANJaguar::kSpeedRef_QuadEncoder);
+		drive1.ConfigEncoderCodesPerRev(250);
+		drive1.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kI);
+		drive1.SetSafetyEnabled(true);
+		drive2.SetSafetyEnabled(drive1.IsSafetyEnabled());
+		drive3.SetSpeedReference(CANJaguar::kSpeedRef_QuadEncoder);
+		drive3.ConfigEncoderCodesPerRev(250);
+		drive3.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kI);
+		drive3.SetSafetyEnabled(true);
+		drive4.SetSafetyEnabled(drive3.IsSafetyEnabled());
+	}
+private:
+	int driveToggle;
+	int burnoutIndexLeft;
+	int burnoutIndexRight;
+	int movingAverageToggle;
+	int movingAverageIndex;
+	double* newValues[2];
+	double* joystickValuesLeft[5];
+	double* joystickValuesRight[5];
+	float kDRIVE_STRAIGHT, kDRIVE_ROTATION;
+
+	//! Notifies driver if robot is disabled. Prints "Robot Died!" to console if it is disabled
+	/*!
+	 */
+	void Disabled()
+	{
+		printf("Robot Died!");
+	}
+
+	//! Autonomous code
+	/*!
+	 */
+	void Autonomous(void) //Choose autonomous mode between 4 options though DS
+	{
+		auton.initAutonomous();
+		auton.setDrivePID(20, 0.05, 0.01);
+		auton.setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
+		auton.startAutonomous();
+
+		while (auton.autonTimer.Get() < 15 && auton.runningAuton)
+		{
+			if (!ds->IsAutonomous())
+				auton.stopAutonomous();
+
+			auton.autonomousCode();
+			Wait(0.005);
+		}
+		auton.stopAutonomous();
+
+	}
+	//! Operator Control Initialize and runs the Operator Control loop
+	/*!
+	 Initializes drive motors, Prints number and location of balls and shooter's speed to DSLog
+	 */
+
+	void OperatorControl()
+	{
+		driveToggle = 1; //1 for new tank, 2 for old tank, 3 for old arcade
+
+		joystickValuesLeft[0] = 0;
+		joystickValuesLeft[1] = 0;
+		joystickValuesLeft[2] = 0;
+		joystickValuesLeft[3] = 0;
+		joystickValuesLeft[4] = 0;
+
+		movingAverageIndex = 0;
+		movingAverageToggle = 1;
+
+		drive.SetInvertedMotor(RobotDrive::kRearLeftMotor, true);
+		drive.SetInvertedMotor(RobotDrive::kFrontRightMotor, true);
+		while (IsOperatorControl())
+		{
+			Operator();
+
+			if (movingAverageIndex > 4)
+			{
+				movingAverageIndex = 0;
+			}
+			else
+			{
+				movingAverageIndex++;
+			}
+			if (driveToggle == 1)
+				TKODrive2();
+			else if (driveToggle == 2)
+				tankDrive();
+			else if (driveToggle == 3)
+				arcadeDrive();
+
+			DSLog(5, "Gyro angle: %d", _gyro->GetAngle());
+			printf("%f", _gyro->GetAngle());
+
+			Wait(.005);
+		}
+	}
+	//! Driving and EVOM code
+	/*!
+	 */
+	void JukeR(void)
+	{
+		printf("Juke manuever started\n");
+		timer.Start();
+		timer.Reset();
+		while (timer.Get() < .6)
+		{
+			drive1.Set(-5310);
+			drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+			drive3.Set(-5310);
+			drive4.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+		while (timer.Get() < .65)
+		{
+			drive1.Set(-5310);
+			drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+		while (timer.Get() < .3)
+		{
+			drive1.Set(-5310);
+			drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+			drive3.Set(-5310);
+			drive4.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+		while (timer.Get() < .6)
+		{
+			drive1.Set(5310);
+			drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+			drive3.Set(5310);
+			drive4.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+		while (timer.Get() < 1)
+		{
+			drive3.Set(5310);
+			drive4.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+		while (timer.Get() < .15)
+		{
+			drive1.Set(5310);
+			drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+			drive3.Set(5310);
+			drive4.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+		while (timer.Get() < 1.2)
+		{
+			drive1.Set(5310);
+			drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+			drive3.Set(-5310);
+			drive4.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+
+		timer.Stop();
+	}
+
+	void JukeL(void)
+	{
+		printf("Juke manuever started\n");
+		timer.Start();
+		timer.Reset();
+		while (timer.Get() < .6)
+		{
+			drive1.Set(-5310);
+			drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+			drive3.Set(-5310);
+			drive4.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+		while (timer.Get() < .65)
+		{
+			drive3.Set(-5310);
+			drive4.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+		while (timer.Get() < .3)
+		{
+			drive1.Set(-5310);
+			drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+			drive3.Set(-5310);
+			drive4.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+		while (timer.Get() < .6)
+		{
+			drive1.Set(5310);
+			drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+			drive3.Set(5310);
+			drive4.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+		while (timer.Get() < 1)
+		{
+			drive1.Set(5310);
+			drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+		while (timer.Get() < .15)
+		{
+			drive1.Set(5310);
+			drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+			drive3.Set(5310);
+			drive4.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+		while (timer.Get() < 1.2)
+		{
+			drive1.Set(5310);
+			drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+			drive3.Set(-5310);
+			drive4.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		}
+		timer.Reset();
+
+		timer.Stop();
+	}
+
+	void TKODrive2()
+	{
+		kDRIVE_STRAIGHT = .5;
+		kDRIVE_ROTATION = .1;
+		double left_joystick_y = stick1.GetY();
+		double right_joystick_y = stick2.GetY();
+		joystickValuesLeft[movingAverageIndex] = &left_joystick_y;
+		joystickValuesRight[movingAverageIndex] = &right_joystick_y;
+		double final_velocity_left;
+		double final_velocity_right;
+		//		if (movingAverageToggle == 1)
+		//		{
+		//			left_joystick_y = ((*joystickValuesLeft[0] + *joystickValuesLeft[1]
+		//					+ *joystickValuesLeft[2] + /*
+		//			 */*joystickValuesLeft[3] + *joystickValuesLeft[4]) / 5);
+		//			right_joystick_y = ((*joystickValuesRight[0]
+		//					+ *joystickValuesRight[1] + *joystickValuesRight[2] + /*
+		//			 */*joystickValuesRight[3] + *joystickValuesRight[4]) / 5);
+		//		}
+		if (fabs(left_joystick_y) > .2)
+		{
+			if ((left_joystick_y > 0.2 and right_joystick_y < 0.2)
+					or (right_joystick_y > 0.2 and left_joystick_y < 0.2))
+			{
+				final_velocity_left = left_joystick_y * 5310 * kDRIVE_ROTATION;
+			}
+			else
+			{
+				final_velocity_left = left_joystick_y * 5310 * kDRIVE_STRAIGHT;
+			}
+		}
+
+		else
+		{
+			final_velocity_left = 0;
+		}
+		if (fabs(right_joystick_y) > .2)
+		{
+			if ((left_joystick_y > 0.2 and right_joystick_y < 0.2)
+					or (right_joystick_y > 0.2 and left_joystick_y < 0.2))
+			{
+				final_velocity_right = right_joystick_y * 5310
+						* kDRIVE_ROTATION;
+			}
+			else
+			{
+				final_velocity_right = right_joystick_y * 5310
+						* kDRIVE_STRAIGHT;
+			}
+		}
+		else
+		{
+			final_velocity_right = 0;
+		}
+		if ((right_joystick_y >= 0 and left_joystick_y >= 0)
+				or (right_joystick_y <= 0 and left_joystick_y <= 0))
+		{
+			if (fabs(fabs(left_joystick_y) - fabs(right_joystick_y)) < .1)
+			{
+				if (final_velocity_right < final_velocity_left)
+				{
+					final_velocity_left = final_velocity_right;
+				}
+				else
+				{
+					final_velocity_right = final_velocity_left;
+				}
+			}
+		}
+		DSLog(1, "Joystick 1 y: %f",left_joystick_y);
+		DSLog(2, "Joystick 2 y: %f",right_joystick_y);
+		DSLog(3, "RPM Left: %f", final_velocity_left);
+		DSLog(4, "RPM Right: %f", final_velocity_right);
+
+		if ((final_velocity_left - drive3.GetSpeed()) > 1000)
+		{
+			burnoutIndexLeft++;
+		}
+		else
+		{
+			burnoutIndexLeft = 0;
+		}
+
+		if ((final_velocity_right - drive1.GetSpeed()) > 1000)
+		{
+			burnoutIndexRight++;
+		}
+		else
+		{
+			burnoutIndexRight = 0;
+		}
+
+		if (burnoutIndexLeft > 100)
+		{
+			final_velocity_left = 0;
+		}
+
+		if (burnoutIndexRight > 100)
+		{
+			final_velocity_right = 0;
+		}
+
+		// implement processing for left_joystick_x, left_joystick_y, right_joystick_x, and right_joystick_y to account for PID and other factors
+		// then we pass these values to the SetLeftRightMotorsOutput() function of TKODrive
+		drive1.Set(final_velocity_right);
+		drive2.Set(-drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		drive3.Set(final_velocity_left);
+		drive4.Set(-drive3.GetOutputVoltage() / drive3.GetBusVoltage());
+
+	}
+
+	void arcadeDrive()
+	{
+		if (stick1.GetTrigger())
+			drive.ArcadeDrive(stick1.GetY() * .654, stick2.GetX() * .654); //never gonna let you down
+		if (!stick1.GetTrigger())
+			drive.ArcadeDrive(stick1.GetY() * .9, stick2.GetX() * .9);
+	}
+	void tankDrive()
+	{
+		DSLog(6, "Tank");
+		if (!stick1.GetTrigger())
+			drive.TankDrive(stick1.GetY() * .9, stick2.GetY() * .9);
+		if (stick1.GetTrigger())
+			drive.TankDrive(stick1.GetY() * .654, stick2.GetY() * .654);
+	}
+	void Operator()
+	{
+		if (stick2.GetRawButton(7))
+			driveToggle = 1;
+		if (stick2.GetRawButton(8))
+			driveToggle = 2;
+		if (stick2.GetRawButton(9))
+			driveToggle = 3;
+		if (stick1.GetRawButton(5))
+			JukeR();
+		if (stick1.GetRawButton(4))
+			JukeL();
+		if (stick2.GetRawButton(3))
+		{
+			if (movingAverageToggle == 1)
+			{
+				movingAverageToggle = 0;
+			}
+			else
+			{
+				movingAverageToggle = 1;
+			}
+		}
+		if (stick1.GetTrigger())
+		{
+			kDRIVE_STRAIGHT = 0.25;
+			kDRIVE_ROTATION = 0.05;
+		}
+		if (stick3.GetRawButton(4))
+		{
+			//TKOShooter.shoot(stick3.GetY());
+			DSLog(6, "Manual shoot pow: %f", stick3.GetY());
+		}
+		if (stick4.GetRawButton(6))
+		{
+			//TKOShooter.autoShoot();
+			DSLog(6, "Autoshoot");
+		}
+		if (stick3.GetRawButton(9) and stick4.GetRawButton(9))
+		{
+			//TKOClimber.autoClimb();
+			DSLog(6, "Autoclimbing");
+		}
+	}
+};
+
+START_ROBOT_CLASS(MarkX)
+;
+

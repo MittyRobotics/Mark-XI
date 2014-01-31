@@ -1,0 +1,383 @@
+\hypertarget{Definitions_8h}{\section{\-Definitions.\-h \-File \-Reference}
+\label{Definitions_8h}\index{\-Definitions.\-h@{\-Definitions.\-h}}
+}
+
+
+\-Defines constants and macros used by the other files in the project.  
+
+
+{\ttfamily \#include \char`\"{}\-W\-P\-I\-Lib.\-h\char`\"{}}\*
+{\ttfamily \#include \char`\"{}\-Vision/\-R\-G\-B\-Image.\-h\char`\"{}}\*
+{\ttfamily \#include \char`\"{}\-Math.\-h\char`\"{}}\*
+{\ttfamily \#include \char`\"{}stdlib.\-h\char`\"{}}\*
+{\ttfamily \#include \char`\"{}\-Logger.\-h\char`\"{}}\*
+\subsection*{\-Defines}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{Definitions_8h_a52fbe995d963fa1aed1c93876bd3f88e}{\-D\-S\-Clear}()
+\item 
+\#define \hyperlink{Definitions_8h_aed3a9572cfa5e302a92714aa15559bf8}{\-D\-S\-Log}(line, msg,...)
+\item 
+\hypertarget{Definitions_8h_a4452d769b760cabbdf6acbfaf8826320}{\#define {\bfseries space}~printf(\char`\"{}$\backslash$n\char`\"{});}\label{Definitions_8h_a4452d769b760cabbdf6acbfaf8826320}
+
+\item 
+\hypertarget{Definitions_8h_a363f7301d59f318277d74a2390b37538}{\#define {\bfseries \-G\-O\-\_\-\-A\-W\-A\-Y}~\-N\-U\-L\-L;}\label{Definitions_8h_a363f7301d59f318277d74a2390b37538}
+
+\item 
+\hypertarget{Definitions_8h_ac0e3768602c8ce664874b2921711143f}{\#define {\bfseries write\-M}(c)~message\mbox{[}indx++\mbox{]} = c;}\label{Definitions_8h_ac0e3768602c8ce664874b2921711143f}
+
+\item 
+\hypertarget{Definitions_8h_ab29504f22d9ac28d030f228787aba7e6}{\#define {\bfseries write\-M\-D}(c, f)~message\mbox{[}indx\mbox{]} = c; data\mbox{[}indx++\mbox{]} = f;}\label{Definitions_8h_ab29504f22d9ac28d030f228787aba7e6}
+
+\end{DoxyCompactItemize}
+\subsection*{\-Variables}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{Definitions_8h_a23a461f1771e099651296e04f1913754}{char {\bfseries message} \mbox{[}10240\mbox{]}}\label{Definitions_8h_a23a461f1771e099651296e04f1913754}
+
+\item 
+\hypertarget{Definitions_8h_a40af71c7589191ffd315a351acdc5e61}{float {\bfseries data} \mbox{[}10240\mbox{]}}\label{Definitions_8h_a40af71c7589191ffd315a351acdc5e61}
+
+\item 
+\hypertarget{Definitions_8h_a9dfb3c0a520fbd1e2170dc80ea966119}{short {\bfseries indx}}\label{Definitions_8h_a9dfb3c0a520fbd1e2170dc80ea966119}
+
+\item 
+\hypertarget{Definitions_8h_aa6feb98f622d667f271e338ea0aea662}{const int {\bfseries \-S\-T\-I\-C\-K\-\_\-1\-\_\-\-P\-O\-R\-T} = 1}\label{Definitions_8h_aa6feb98f622d667f271e338ea0aea662}
+
+\item 
+\hypertarget{Definitions_8h_a225818df20976d6d5e358072219c1484}{const int {\bfseries \-S\-T\-I\-C\-K\-\_\-2\-\_\-\-P\-O\-R\-T} = 2}\label{Definitions_8h_a225818df20976d6d5e358072219c1484}
+
+\item 
+\hypertarget{Definitions_8h_a85ec6390aa04c46e4def5c9dc525d51b}{const int {\bfseries \-S\-T\-I\-C\-K\-\_\-3\-\_\-\-P\-O\-R\-T} = 3}\label{Definitions_8h_a85ec6390aa04c46e4def5c9dc525d51b}
+
+\item 
+\hypertarget{Definitions_8h_a7b1a92dc0c2ab08ccd3aa5e06582f9e9}{const int {\bfseries \-S\-T\-I\-C\-K\-\_\-4\-\_\-\-P\-O\-R\-T} = 4}\label{Definitions_8h_a7b1a92dc0c2ab08ccd3aa5e06582f9e9}
+
+\item 
+\hypertarget{Definitions_8h_afc02f632927535ca77a9717dd499e8b0}{const int {\bfseries \-D\-R\-I\-V\-E\-\_\-\-L1\-\_\-\-I\-D} = 2}\label{Definitions_8h_afc02f632927535ca77a9717dd499e8b0}
+
+\item 
+\hypertarget{Definitions_8h_a79d25e5f6d0a23aacca0e0d22e701deb}{const int {\bfseries \-D\-R\-I\-V\-E\-\_\-\-L2\-\_\-\-I\-D} = 3}\label{Definitions_8h_a79d25e5f6d0a23aacca0e0d22e701deb}
+
+\item 
+\hypertarget{Definitions_8h_a95652ff7e842de547a3658b94c3f304a}{const int {\bfseries \-D\-R\-I\-V\-E\-\_\-\-R1\-\_\-\-I\-D} = 4}\label{Definitions_8h_a95652ff7e842de547a3658b94c3f304a}
+
+\item 
+\hypertarget{Definitions_8h_a0efeb7ee192d310d828de4eb31b68fc3}{const int {\bfseries \-D\-R\-I\-V\-E\-\_\-\-R2\-\_\-\-I\-D} = 5}\label{Definitions_8h_a0efeb7ee192d310d828de4eb31b68fc3}
+
+\item 
+\hypertarget{Definitions_8h_a70b8d36e21ca65124267fc2f278a5dbe}{const int {\bfseries \-T\-U\-R\-R\-E\-T\-\_\-\-I\-D} = 10}\label{Definitions_8h_a70b8d36e21ca65124267fc2f278a5dbe}
+
+\item 
+\hypertarget{Definitions_8h_afac41a3d997ac1df497453ef7a07d578}{const int {\bfseries \-S\-H\-O\-O\-T\-E\-R\-\_\-\-P\-O\-R\-T} = 8}\label{Definitions_8h_afac41a3d997ac1df497453ef7a07d578}
+
+\item 
+\hypertarget{Definitions_8h_a7994be31dfb0557c4a24b41fc45078cb}{const int {\bfseries \-W\-I\-N\-C\-H\-\_\-1\-\_\-\-P\-O\-R\-T} = 6}\label{Definitions_8h_a7994be31dfb0557c4a24b41fc45078cb}
+
+\item 
+\hypertarget{Definitions_8h_a4959804a2ac9e8ff21de94635a2e20b8}{const int {\bfseries \-W\-I\-N\-C\-H\-\_\-2\-\_\-\-P\-O\-R\-T} = 7}\label{Definitions_8h_a4959804a2ac9e8ff21de94635a2e20b8}
+
+\item 
+\hypertarget{Definitions_8h_a25f4c757bb5fec09ffe5de5b10b7f672}{const float {\bfseries \-R\-A\-D\-I\-U\-S\-\_\-\-W\-H\-E\-E\-L\-S} = 4}\label{Definitions_8h_a25f4c757bb5fec09ffe5de5b10b7f672}
+
+\item 
+\hypertarget{Definitions_8h_add27461c4d62e6e482d86ddd0f4e8be9}{const float {\bfseries \-T\-A\-N\-\_\-\-S\-P\-I\-N\-N\-E\-R\-\_\-\-T\-H\-E\-T\-A} = tan(57.\-5)}\label{Definitions_8h_add27461c4d62e6e482d86ddd0f4e8be9}
+
+\item 
+\hypertarget{Definitions_8h_a485e1e2efc6d9d985d6182c21b536dbb}{const float {\bfseries \-S\-P\-I\-N\-N\-E\-R\-\_\-\-D\-I\-V} = 4250.\-0}\label{Definitions_8h_a485e1e2efc6d9d985d6182c21b536dbb}
+
+\item 
+\hypertarget{Definitions_8h_adcc579cbaaf9229a148095a38fe00eab}{const float {\bfseries \-H\-A\-L\-F\-\_\-\-G} = .\-5 $\ast$ 9.\-8 $\ast$ 100. / 2.\-54}\label{Definitions_8h_adcc579cbaaf9229a148095a38fe00eab}
+
+\item 
+\hypertarget{Definitions_8h_a6f055cfd3dc25ba52ea94dffeb4667fd}{const float {\bfseries \-M\-I\-D\-\_\-\-F\-E\-N\-D\-E\-R} = 0.\-425}\label{Definitions_8h_a6f055cfd3dc25ba52ea94dffeb4667fd}
+
+\item 
+\hypertarget{Definitions_8h_a39041f4f4b7fcb2cbe59720734b9b826}{const float {\bfseries \-T\-O\-P\-\_\-\-F\-E\-N\-D\-E\-R} = 0.\-585}\label{Definitions_8h_a39041f4f4b7fcb2cbe59720734b9b826}
+
+\item 
+\hypertarget{Definitions_8h_a61cce14e5ebc1a1e4173c7a2c183a84e}{const float {\bfseries \-S\-P\-I\-N\-N\-E\-R\-\_\-k\-P} = 0.\-2}\label{Definitions_8h_a61cce14e5ebc1a1e4173c7a2c183a84e}
+
+\item 
+\hypertarget{Definitions_8h_a0697f6cdd743a3e5fd4bfe87ab891562}{const float {\bfseries \-S\-P\-I\-N\-N\-E\-R\-\_\-k\-I} = 0.\-004}\label{Definitions_8h_a0697f6cdd743a3e5fd4bfe87ab891562}
+
+\item 
+\hypertarget{Definitions_8h_affbebfb7f3967c70411a37c078400045}{const float {\bfseries \-S\-P\-I\-N\-N\-E\-R\-\_\-k\-D} = 0.\-0}\label{Definitions_8h_affbebfb7f3967c70411a37c078400045}
+
+\item 
+\hypertarget{Definitions_8h_aded4460312ee59a2a5dc672c80a54f4a}{const float {\bfseries \-D\-R\-I\-V\-E\-\_\-k\-P} = 0.\-2}\label{Definitions_8h_aded4460312ee59a2a5dc672c80a54f4a}
+
+\item 
+\hypertarget{Definitions_8h_a364220be6d81e623c7c97905ea1d7731}{const float {\bfseries \-D\-R\-I\-V\-E\-\_\-k\-I} = 0.\-004}\label{Definitions_8h_a364220be6d81e623c7c97905ea1d7731}
+
+\item 
+\hypertarget{Definitions_8h_afeec3bf38cdde05f742cc282ebefc1c7}{const float {\bfseries \-D\-R\-I\-V\-E\-\_\-k\-D} = 0.\-0}\label{Definitions_8h_afeec3bf38cdde05f742cc282ebefc1c7}
+
+\item 
+\hypertarget{Definitions_8h_a23a2713de398650fcca75264506efdcb}{const float {\bfseries \-W\-I\-N\-C\-H\-\_\-k\-P} = 30}\label{Definitions_8h_a23a2713de398650fcca75264506efdcb}
+
+\item 
+\hypertarget{Definitions_8h_aac3f5b7c28a90b28f0b51dfe693c494b}{const float {\bfseries \-W\-I\-N\-C\-H\-\_\-k\-I} = 0.\-001}\label{Definitions_8h_aac3f5b7c28a90b28f0b51dfe693c494b}
+
+\item 
+\hypertarget{Definitions_8h_a5af65b0514492bb4b49f64bb0e3d5ec2}{const float {\bfseries \-W\-I\-N\-C\-H\-\_\-k\-D} = 0.\-0}\label{Definitions_8h_a5af65b0514492bb4b49f64bb0e3d5ec2}
+
+\item 
+\hypertarget{Definitions_8h_a4451dacb601814110f0c2aa32e8c8bf5}{const float {\bfseries \-R\-E\-V\-S\-\_\-\-P\-E\-R\-\_\-\-M\-E\-T\-E\-R} = 2.\-51}\label{Definitions_8h_a4451dacb601814110f0c2aa32e8c8bf5}
+
+\item 
+\hypertarget{Definitions_8h_a63cb2699ebb5da2234e871e4984084d1}{const int {\bfseries \-E\-N\-C\-O\-D\-E\-R\-\_\-\-R\-E\-V\-S} = 250}\label{Definitions_8h_a63cb2699ebb5da2234e871e4984084d1}
+
+\item 
+\hypertarget{Definitions_8h_a02fe72d38903e3bb09b4a5fab2b74932}{const bool {\bfseries \-J\-A\-G\-\_\-\-S\-A\-F\-E\-T\-Y} = true}\label{Definitions_8h_a02fe72d38903e3bb09b4a5fab2b74932}
+
+\item 
+\hypertarget{Definitions_8h_aab86e4e0077cb44db09153e2403a6adc}{const \-C\-A\-N\-Jaguar\-::\-Speed\-Reference {\bfseries \-J\-A\-G\-\_\-\-S\-P\-E\-E\-D\-R\-E\-F} = \-C\-A\-N\-Jaguar\-::k\-Speed\-Ref\-\_\-\-Quad\-Encoder}\label{Definitions_8h_aab86e4e0077cb44db09153e2403a6adc}
+
+\item 
+\hypertarget{Definitions_8h_a51d0900119af98a350049bcb267ba0f4}{const \-C\-A\-N\-Jaguar\-::\-Position\-Reference {\bfseries \-J\-A\-G\-\_\-\-P\-O\-S\-R\-E\-F} = \-C\-A\-N\-Jaguar\-::k\-Pos\-Ref\-\_\-\-Quad\-Encoder}\label{Definitions_8h_a51d0900119af98a350049bcb267ba0f4}
+
+\item 
+\hypertarget{Definitions_8h_a93cff846c3601f4c436838e8ac84e360}{const float {\bfseries k\-M\-A\-X\-\_\-\-D\-R\-I\-V\-E\-\_\-\-R\-P\-M} = 700}\label{Definitions_8h_a93cff846c3601f4c436838e8ac84e360}
+
+\item 
+\hypertarget{Definitions_8h_abfa8e61b02a2bbc6666b9a7a16d6313f}{const float {\bfseries deadzone} = 0.\-1}\label{Definitions_8h_abfa8e61b02a2bbc6666b9a7a16d6313f}
+
+\item 
+\hypertarget{Definitions_8h_ae78fb0b7c3bcb94c3e8bedfc0099c528}{const int {\bfseries k\-B\-U\-R\-N\-O\-U\-T} = 500}\label{Definitions_8h_ae78fb0b7c3bcb94c3e8bedfc0099c528}
+
+\item 
+\hypertarget{Definitions_8h_addb57997ef4fc3c3f999fd0ff67c74f5}{const int {\bfseries k\-B\-U\-R\-N\-O\-U\-T\-\_\-\-C\-Y\-C\-L\-E\-S} = 100}\label{Definitions_8h_addb57997ef4fc3c3f999fd0ff67c74f5}
+
+\item 
+\hypertarget{Definitions_8h_a82808b0b6e5639df9ea9bc821c5cdec7}{const int {\bfseries \-G\-Y\-R\-O\-\_\-\-P\-O\-R\-T} = 1}\label{Definitions_8h_a82808b0b6e5639df9ea9bc821c5cdec7}
+
+\item 
+\hypertarget{Definitions_8h_ade500f9b23c397dcd62629dfdebaeb6e}{const int {\bfseries \-C\-O\-M\-P\-R\-E\-S\-S\-O\-R\-\_\-\-I\-D} = 1}\label{Definitions_8h_ade500f9b23c397dcd62629dfdebaeb6e}
+
+\item 
+\hypertarget{Definitions_8h_aa0547ddab7a5fe4aae69726d7f1957a5}{const int {\bfseries \-P\-R\-E\-S\-S\-U\-R\-E\-\_\-\-S\-W\-I\-T\-C\-H\-\_\-\-P\-O\-R\-T} = 14}\label{Definitions_8h_aa0547ddab7a5fe4aae69726d7f1957a5}
+
+\item 
+\hypertarget{Definitions_8h_a7d5f8055fc0b6bb9c1154adf569f0527}{const int {\bfseries \-P\-N\-\_\-\-R1\-\_\-\-I\-D} = 4}\label{Definitions_8h_a7d5f8055fc0b6bb9c1154adf569f0527}
+
+\item 
+\hypertarget{Definitions_8h_a28851203431853b4c3bda0ee16469bc2}{const int {\bfseries \-P\-N\-\_\-\-R2\-\_\-\-I\-D} = 3}\label{Definitions_8h_a28851203431853b4c3bda0ee16469bc2}
+
+\item 
+\hypertarget{Definitions_8h_a71eb4aaa14d9e0022ba63e2479d559a3}{const int {\bfseries \-P\-N\-\_\-\-R3\-\_\-\-I\-D} = 2}\label{Definitions_8h_a71eb4aaa14d9e0022ba63e2479d559a3}
+
+\item 
+\hypertarget{Definitions_8h_ab5b145d0fd9914d196c063a6800ded43}{const int {\bfseries \-P\-N\-\_\-\-S1\-R\-\_\-\-I\-D} = 8}\label{Definitions_8h_ab5b145d0fd9914d196c063a6800ded43}
+
+\item 
+\hypertarget{Definitions_8h_a42f4bec22e10d2bfd71bc864c9506f06}{const int {\bfseries \-P\-N\-\_\-\-S1\-E\-\_\-\-I\-D} = 7}\label{Definitions_8h_a42f4bec22e10d2bfd71bc864c9506f06}
+
+\item 
+\hypertarget{Definitions_8h_aa904264bdff904a00e9e5064fd1909da}{const int {\bfseries \-P\-N\-\_\-\-S3\-R\-\_\-\-I\-D} = 3}\label{Definitions_8h_aa904264bdff904a00e9e5064fd1909da}
+
+\item 
+\hypertarget{Definitions_8h_ada3cca7586354174324d1f35e9aee6e9}{const int {\bfseries \-P\-N\-\_\-\-S3\-E\-\_\-\-I\-D} = 4}\label{Definitions_8h_ada3cca7586354174324d1f35e9aee6e9}
+
+\item 
+\hypertarget{Definitions_8h_ae4cef323db07072634bcc7576cb6b5f3}{const int {\bfseries \-P\-N\-\_\-\-S4\-R\-\_\-\-I\-D} = 1}\label{Definitions_8h_ae4cef323db07072634bcc7576cb6b5f3}
+
+\item 
+\hypertarget{Definitions_8h_aec7972f0d488f4252352025ade83b2fa}{const int {\bfseries \-P\-N\-\_\-\-S4\-E\-\_\-\-I\-D} = 2}\label{Definitions_8h_aec7972f0d488f4252352025ade83b2fa}
+
+\item 
+\hypertarget{Definitions_8h_af2696afe64b43c7acbf32c457ac1a7dd}{const int {\bfseries \-B\-O\-R\-D\-E\-R\-\_\-\-S\-I\-Z\-E} = 3}\label{Definitions_8h_af2696afe64b43c7acbf32c457ac1a7dd}
+
+\item 
+\hypertarget{Definitions_8h_a793c43fc9e4397acbea22672c74c37ff}{const int {\bfseries \-C\-A\-M\-E\-R\-A\-\_\-\-S\-E\-R\-V\-O\-\_\-\-P\-O\-R\-T} = 1}\label{Definitions_8h_a793c43fc9e4397acbea22672c74c37ff}
+
+\item 
+\hypertarget{Definitions_8h_ad198a3ee540ba9a8f61c4dfa9dda4838}{const int {\bfseries \-C\-A\-M\-E\-R\-A\-\_\-\-P\-W\-M\-\_\-\-I\-N\-C\-R\-E\-M\-E\-N\-T} = 1}\label{Definitions_8h_ad198a3ee540ba9a8f61c4dfa9dda4838}
+
+\item 
+\hypertarget{Definitions_8h_aa08a577393243b86dfd2a97e61443673}{const float {\bfseries \-P\-I} = 3.\-14159265}\label{Definitions_8h_aa08a577393243b86dfd2a97e61443673}
+
+\item 
+\hypertarget{Definitions_8h_a6730edb31d440ead4c2f2e87b76d4fed}{const float {\bfseries \-D\-E\-G\-R\-E\-E\-S\-\_\-\-P\-E\-R\-\_\-\-R\-A\-D\-I\-A\-N} = 180 / \-P\-I}\label{Definitions_8h_a6730edb31d440ead4c2f2e87b76d4fed}
+
+\item 
+\hypertarget{Definitions_8h_a4da27832b0eade4d13a289fc7fe77efa}{const int \hyperlink{Definitions_8h_a4da27832b0eade4d13a289fc7fe77efa}{\-I\-N\-I\-T\-I\-A\-L\-\_\-\-S\-T\-A\-T\-E} = 2}\label{Definitions_8h_a4da27832b0eade4d13a289fc7fe77efa}
+
+\begin{DoxyCompactList}\small\item\em state machine constants \end{DoxyCompactList}\item 
+\hypertarget{Definitions_8h_ada4307c43a8e0ef108e98f6dea2a1874}{const int {\bfseries \-O\-P\-E\-R\-A\-T\-O\-R\-\_\-\-C\-O\-N\-T\-R\-O\-L} = 1}\label{Definitions_8h_ada4307c43a8e0ef108e98f6dea2a1874}
+
+\item 
+\hypertarget{Definitions_8h_a7c781cbb2399ff6f71a25f82a5d21cfb}{const int {\bfseries \-R\-O\-B\-O\-T\-\_\-\-P\-U\-L\-L\-E\-D\-\_\-\-U\-P} = 2}\label{Definitions_8h_a7c781cbb2399ff6f71a25f82a5d21cfb}
+
+\item 
+\hypertarget{Definitions_8h_afaa4905970814c55554f8ccd0bd7b39e}{const int {\bfseries \-R\-E\-T\-R\-A\-C\-T\-I\-N\-G\-\_\-\-R\-A\-T\-C\-H\-E\-T} = 3}\label{Definitions_8h_afaa4905970814c55554f8ccd0bd7b39e}
+
+\item 
+\hypertarget{Definitions_8h_a1a5b79b39c55b3fc1219559fbc9ed4f3}{const int {\bfseries \-C\-H\-A\-N\-G\-E\-\_\-\-S\-E\-T\-P\-O\-I\-N\-T\-\_\-\-M\-O\-V\-E\-\_\-\-H\-O\-O\-K\-S\-\_\-\-D\-O\-W\-N} = 4}\label{Definitions_8h_a1a5b79b39c55b3fc1219559fbc9ed4f3}
+
+\item 
+\hypertarget{Definitions_8h_a11d5e4a6f001225b0c8d9fab6e30b401}{const int {\bfseries \-D\-E\-P\-L\-O\-Y\-\_\-\-C\-L\-I\-P\-S} = 5}\label{Definitions_8h_a11d5e4a6f001225b0c8d9fab6e30b401}
+
+\item 
+\hypertarget{Definitions_8h_add29c81ec44b9ba087bd74b427cd917e}{const int {\bfseries \-M\-O\-V\-E\-\_\-\-H\-O\-O\-K\-S\-\_\-\-U\-P} = 6}\label{Definitions_8h_add29c81ec44b9ba087bd74b427cd917e}
+
+\item 
+\hypertarget{Definitions_8h_a289da79eb0f17fdbb7a5726eed9789f1}{const int {\bfseries \-M\-O\-V\-E\-\_\-\-A\-R\-M\-\_\-\-F\-O\-R\-W\-A\-R\-D} = 7}\label{Definitions_8h_a289da79eb0f17fdbb7a5726eed9789f1}
+
+\item 
+\hypertarget{Definitions_8h_afda2df879673d8697f43133c8564f9f1}{const int {\bfseries \-D\-E\-P\-L\-O\-Y\-I\-N\-G\-\_\-\-R\-A\-T\-C\-H\-E\-T} = 8}\label{Definitions_8h_afda2df879673d8697f43133c8564f9f1}
+
+\item 
+\hypertarget{Definitions_8h_ab6b65fb2e40265d6c1a7dd66563f8f1e}{const int {\bfseries \-M\-O\-V\-E\-\_\-\-H\-O\-O\-K\-S\-\_\-\-D\-O\-W\-N} = 9}\label{Definitions_8h_ab6b65fb2e40265d6c1a7dd66563f8f1e}
+
+\item 
+\hypertarget{Definitions_8h_afb56ae3d898a0d38b871b24fd0a04802}{const int {\bfseries \-R\-E\-T\-R\-A\-C\-T\-I\-N\-G\-\_\-\-C\-L\-I\-P\-S} = 10}\label{Definitions_8h_afb56ae3d898a0d38b871b24fd0a04802}
+
+\item 
+\hypertarget{Definitions_8h_a5205394fa309c5dcdd110d1c9336aa22}{const int {\bfseries \-W\-E\-\_\-\-M\-A\-D\-E\-\_\-\-I\-T} = 12}\label{Definitions_8h_a5205394fa309c5dcdd110d1c9336aa22}
+
+\item 
+\hypertarget{Definitions_8h_a58dfe55abbc10acf090f0383c45b2df0}{const int {\bfseries \-O\-H\-\_\-\-S\-H\-I\-T} = 13}\label{Definitions_8h_a58dfe55abbc10acf090f0383c45b2df0}
+
+\item 
+\hypertarget{Definitions_8h_ae98414406d07248794819449ffb96809}{const int {\bfseries \-W\-T\-F} = 13}\label{Definitions_8h_ae98414406d07248794819449ffb96809}
+
+\item 
+\hypertarget{Definitions_8h_aa25196f38ccf759a96e18cf619ef50f3}{const int {\bfseries \-P\-Y\-R\-A\-M\-I\-D\-\_\-\-S\-I\-Z\-E} = 3}\label{Definitions_8h_aa25196f38ccf759a96e18cf619ef50f3}
+
+\item 
+\hypertarget{Definitions_8h_aa8474b46ab34a3ea449f92b5611d8d39}{const double {\bfseries \-S\-E\-T\-P\-O\-I\-N\-T\-\_\-\-R\-A\-T\-C\-H\-E\-T\-\_\-\-R\-E\-T\-R\-A\-C\-T} = .\-9}\label{Definitions_8h_aa8474b46ab34a3ea449f92b5611d8d39}
+
+\item 
+\hypertarget{Definitions_8h_a9bb0bcb1a629da8b88ab0b14a74e120d}{const double {\bfseries \-S\-E\-T\-P\-O\-I\-N\-T\-\_\-\-B\-O\-T\-T\-O\-M} = .\-3}\label{Definitions_8h_a9bb0bcb1a629da8b88ab0b14a74e120d}
+
+\item 
+\hypertarget{Definitions_8h_a03bbddd4709c8839cd3f96a830b807da}{const double {\bfseries \-S\-E\-T\-P\-O\-I\-N\-T\-\_\-\-T\-O\-P} = 4.\-5}\label{Definitions_8h_a03bbddd4709c8839cd3f96a830b807da}
+
+\item 
+\hypertarget{Definitions_8h_ae8bbe0f183e66ea1ba0ca48e3e4aa9da}{const double {\bfseries \-S\-E\-T\-P\-O\-I\-N\-T\-\_\-\-L\-A\-S\-T} = 1.\-5}\label{Definitions_8h_ae8bbe0f183e66ea1ba0ca48e3e4aa9da}
+
+\item 
+\hypertarget{Definitions_8h_a89311a98397f9d6967d2cb10d5152d77}{const double {\bfseries \-T\-O\-L\-E\-R\-A\-N\-C\-E} = .\-2}\label{Definitions_8h_a89311a98397f9d6967d2cb10d5152d77}
+
+\item 
+\hypertarget{Definitions_8h_acad6459b912dc5439d153c4681b6e2ed}{const double {\bfseries \-L\-I\-F\-T\-\_\-\-I\-N\-C\-R\-E\-M\-E\-N\-T} = .\-75}\label{Definitions_8h_acad6459b912dc5439d153c4681b6e2ed}
+
+\item 
+\hypertarget{Definitions_8h_ab57a99ecbcef7ab16a82ca4256a345cc}{const double {\bfseries \-L\-I\-F\-T\-\_\-\-I\-N\-C\-R\-E\-M\-E\-N\-T\-\_\-\-R\-A\-T\-C\-H\-E\-T} = \-L\-I\-F\-T\-\_\-\-I\-N\-C\-R\-E\-M\-E\-N\-T / 20}\label{Definitions_8h_ab57a99ecbcef7ab16a82ca4256a345cc}
+
+\item 
+\hypertarget{Definitions_8h_a978949a36ea94da06cbbc4acd5cd5d7f}{const int {\bfseries \-T\-I\-M\-E\-O\-U\-T2} = 15}\label{Definitions_8h_a978949a36ea94da06cbbc4acd5cd5d7f}
+
+\item 
+\hypertarget{Definitions_8h_aa8d0bc257572c874b1b8844e6189f78e}{const int {\bfseries \-T\-I\-M\-E\-O\-U\-T3} = 1}\label{Definitions_8h_aa8d0bc257572c874b1b8844e6189f78e}
+
+\item 
+\hypertarget{Definitions_8h_a9d592797ab4643244fb47ce04649e18a}{const int {\bfseries \-T\-I\-M\-E\-O\-U\-T4} = 3}\label{Definitions_8h_a9d592797ab4643244fb47ce04649e18a}
+
+\item 
+\hypertarget{Definitions_8h_a748b60a0456624988d1dc929087abc38}{const int {\bfseries \-T\-I\-M\-E\-O\-U\-T5} = 1}\label{Definitions_8h_a748b60a0456624988d1dc929087abc38}
+
+\item 
+\hypertarget{Definitions_8h_ab820943f1dca97865d26666959a891e4}{const int {\bfseries \-T\-I\-M\-E\-O\-U\-T6} = 10}\label{Definitions_8h_ab820943f1dca97865d26666959a891e4}
+
+\item 
+\hypertarget{Definitions_8h_a5da96b04a9c9741ccedc673879c58211}{const int {\bfseries \-T\-I\-M\-E\-O\-U\-T7} = 1}\label{Definitions_8h_a5da96b04a9c9741ccedc673879c58211}
+
+\item 
+\hypertarget{Definitions_8h_afcb69bce64a8f99cd8997e6175146184}{const int {\bfseries \-T\-I\-M\-E\-O\-U\-T8} = 5}\label{Definitions_8h_afcb69bce64a8f99cd8997e6175146184}
+
+\item 
+\hypertarget{Definitions_8h_a17392f17fd7b455f322a67a3e2184a8f}{const double {\bfseries \-T\-I\-M\-E\-O\-U\-T8\-D\-E\-L\-T\-A} = .\-25}\label{Definitions_8h_a17392f17fd7b455f322a67a3e2184a8f}
+
+\item 
+\hypertarget{Definitions_8h_ab25a93f1c94cb024afb6ce70888f2593}{const int {\bfseries \-T\-I\-M\-E\-O\-U\-T9} = 1}\label{Definitions_8h_ab25a93f1c94cb024afb6ce70888f2593}
+
+\item 
+\hypertarget{Definitions_8h_a91c77f28aff3ad13f0f3874b3a8c0914}{const int {\bfseries \-T\-I\-M\-E\-O\-U\-T10} = 2}\label{Definitions_8h_a91c77f28aff3ad13f0f3874b3a8c0914}
+
+\item 
+\hypertarget{Definitions_8h_ab412089ffc8a4e690ac5ce61107ecd78}{const int {\bfseries \-D\-E\-C\-I\-D\-E\-\_\-\-T\-I\-M\-E\-O\-U\-T} = 5}\label{Definitions_8h_ab412089ffc8a4e690ac5ce61107ecd78}
+
+\item 
+\hypertarget{Definitions_8h_a04338d186c646d7b30608f4ea4571dcd}{const float {\bfseries \-D\-R\-I\-V\-E\-\_\-\-C\-U\-R\-R\-E\-N\-T\-\_\-\-C\-U\-T\-O\-F\-F} = 7.\-0}\label{Definitions_8h_a04338d186c646d7b30608f4ea4571dcd}
+
+\item 
+\hypertarget{Definitions_8h_a69e498d83b4c36372a97cf664bd8d21b}{const float {\bfseries \-R\-A\-M\-P\-\_\-\-R\-A\-T\-E} = 0.\-005}\label{Definitions_8h_a69e498d83b4c36372a97cf664bd8d21b}
+
+\item 
+\hypertarget{Definitions_8h_adea291188914d2ccec7e09f62b69630f}{const float {\bfseries \-R\-A\-M\-P\-\_\-\-R\-A\-T\-E\-\_\-2} = 0.\-0005}\label{Definitions_8h_adea291188914d2ccec7e09f62b69630f}
+
+\item 
+\hypertarget{Definitions_8h_acfa9c515efe63bc34a430977e75f74a4}{const float {\bfseries \-T\-A\-N\-G\-E\-N\-T\-\_\-\-V\-E\-R\-T\-I\-C\-A\-L\-\_\-\-C\-A\-M\-E\-R\-A\-\_\-\-A\-N\-G\-L\-E} = tan(19 / \-D\-E\-G\-R\-E\-E\-S\-\_\-\-P\-E\-R\-\_\-\-R\-A\-D\-I\-A\-N)}\label{Definitions_8h_acfa9c515efe63bc34a430977e75f74a4}
+
+\item 
+\hypertarget{Definitions_8h_a8d6057876a59e5f25f12684eb315381d}{const float {\bfseries \-T\-A\-N\-G\-E\-N\-T\-\_\-\-H\-O\-R\-I\-Z\-O\-N\-T\-A\-L\-\_\-\-C\-A\-M\-E\-R\-A\-\_\-\-A\-N\-G\-L\-E} = tan(27. / \-D\-E\-G\-R\-E\-E\-S\-\_\-\-P\-E\-R\-\_\-\-R\-A\-D\-I\-A\-N)}\label{Definitions_8h_a8d6057876a59e5f25f12684eb315381d}
+
+\item 
+\hypertarget{Definitions_8h_a988584929d1585905aaaac75a5ff0134}{const int {\bfseries \-S\-C\-R\-E\-E\-N\-\_\-\-W\-I\-D\-T\-H\-\_\-\-P\-I\-X\-E\-L\-S} = 320}\label{Definitions_8h_a988584929d1585905aaaac75a5ff0134}
+
+\item 
+\hypertarget{Definitions_8h_aab31d032b2007f94a58778fbe77201df}{const int {\bfseries \-S\-C\-R\-E\-E\-N\-\_\-\-H\-E\-I\-G\-H\-T\-\_\-\-P\-I\-X\-E\-L\-S} = 240}\label{Definitions_8h_aab31d032b2007f94a58778fbe77201df}
+
+\item 
+\hypertarget{Definitions_8h_aeadf55c1b0f7efa97a264f44b88bfdff}{const float {\bfseries \-T\-A\-R\-G\-E\-T\-\_\-\-H\-E\-I\-G\-H\-T} = 17.}\label{Definitions_8h_aeadf55c1b0f7efa97a264f44b88bfdff}
+
+\item 
+\hypertarget{Definitions_8h_a170faefc9f9e27c7a428d440a03b6191}{const float {\bfseries \-T\-A\-R\-G\-E\-T\-\_\-\-W\-I\-D\-T\-H} = 24.}\label{Definitions_8h_a170faefc9f9e27c7a428d440a03b6191}
+
+\item 
+\hypertarget{Definitions_8h_a05ba7520536877a9c74b6c2725b5c958}{const float {\bfseries \-H\-O\-O\-P\-\_\-\-D\-I\-A\-M\-E\-T\-E\-R} = 18.}\label{Definitions_8h_a05ba7520536877a9c74b6c2725b5c958}
+
+\item 
+\hypertarget{Definitions_8h_a271e2d3b9c278e27a5a45741a57af449}{const float {\bfseries \-B\-A\-C\-K\-B\-O\-A\-R\-D\-\_\-\-T\-O\-\_\-\-H\-O\-O\-P\-\_\-\-R\-I\-M} = 6.}\label{Definitions_8h_a271e2d3b9c278e27a5a45741a57af449}
+
+\item 
+\hypertarget{Definitions_8h_a2c38940e4527b07510fbb92702b41ad7}{const float {\bfseries \-D\-I\-S\-T\-A\-N\-C\-E\-\_\-\-C\-O\-N\-S\-T\-A\-N\-T} = .\-5 $\ast$ \-T\-A\-R\-G\-E\-T\-\_\-\-H\-E\-I\-G\-H\-T $\ast$ \-S\-C\-R\-E\-E\-N\-\_\-\-H\-E\-I\-G\-H\-T\-\_\-\-P\-I\-X\-E\-L\-S / \-T\-A\-N\-G\-E\-N\-T\-\_\-\-V\-E\-R\-T\-I\-C\-A\-L\-\_\-\-C\-A\-M\-E\-R\-A\-\_\-\-A\-N\-G\-L\-E}\label{Definitions_8h_a2c38940e4527b07510fbb92702b41ad7}
+
+\item 
+\hypertarget{Definitions_8h_ace700adffb750a35ddc313aed144f07d}{const float {\bfseries \-Q\-U\-A\-R\-T\-E\-R\-\_\-\-T\-A\-R\-G\-E\-T\-\_\-\-W\-I\-D\-T\-H\-\_\-\-S\-Q\-U\-A\-R\-E\-D} = .\-25 $\ast$ \-T\-A\-R\-G\-E\-T\-\_\-\-W\-I\-D\-T\-H $\ast$ \-T\-A\-R\-G\-E\-T\-\_\-\-W\-I\-D\-T\-H}\label{Definitions_8h_ace700adffb750a35ddc313aed144f07d}
+
+\item 
+\hypertarget{Definitions_8h_a55c8110329942ba48b6c82703dd05f76}{const float {\bfseries \-B\-A\-C\-K\-B\-O\-A\-R\-D\-\_\-\-T\-O\-\_\-\-H\-O\-O\-P\-\_\-\-C\-E\-N\-T\-E\-R} = \-B\-A\-C\-K\-B\-O\-A\-R\-D\-\_\-\-T\-O\-\_\-\-H\-O\-O\-P\-\_\-\-R\-I\-M + \-H\-O\-O\-P\-\_\-\-D\-I\-A\-M\-E\-T\-E\-R / 2}\label{Definitions_8h_a55c8110329942ba48b6c82703dd05f76}
+
+\item 
+\hypertarget{Definitions_8h_a6f0c25e7c16110c0916ba16d62a6c64c}{const float {\bfseries \-B\-A\-C\-K\-B\-O\-A\-R\-D\-\_\-\-T\-O\-\_\-\-H\-O\-O\-P\-\_\-\-C\-E\-N\-T\-E\-R\-\_\-\-S\-Q\-U\-A\-R\-E\-D} = \-B\-A\-C\-K\-B\-O\-A\-R\-D\-\_\-\-T\-O\-\_\-\-H\-O\-O\-P\-\_\-\-C\-E\-N\-T\-E\-R $\ast$ \-B\-A\-C\-K\-B\-O\-A\-R\-D\-\_\-\-T\-O\-\_\-\-H\-O\-O\-P\-\_\-\-C\-E\-N\-T\-E\-R}\label{Definitions_8h_a6f0c25e7c16110c0916ba16d62a6c64c}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-Defines constants and macros used by the other files in the project. 
+
+\subsection{\-Define \-Documentation}
+\hypertarget{Definitions_8h_a52fbe995d963fa1aed1c93876bd3f88e}{\index{\-Definitions.\-h@{\-Definitions.\-h}!\-D\-S\-Clear@{\-D\-S\-Clear}}
+\index{\-D\-S\-Clear@{\-D\-S\-Clear}!Definitions.h@{\-Definitions.\-h}}
+\subsubsection[{\-D\-S\-Clear}]{\setlength{\rightskip}{0pt plus 5cm}\#define {\bf \-D\-S\-Clear}(
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{Definitions_8h_a52fbe995d963fa1aed1c93876bd3f88e}
+{\bfseries \-Value\-:}
+\begin{DoxyCode}
+DriverStationLCD::GetInstance()->Clear(); \
+                                                                
+      DriverStationLCD::GetInstance()->UpdateLCD();
+\end{DoxyCode}
+\-Clears the \-Driver \-Station \-L\-C\-D of all text. \hypertarget{Definitions_8h_aed3a9572cfa5e302a92714aa15559bf8}{\index{\-Definitions.\-h@{\-Definitions.\-h}!\-D\-S\-Log@{\-D\-S\-Log}}
+\index{\-D\-S\-Log@{\-D\-S\-Log}!Definitions.h@{\-Definitions.\-h}}
+\subsubsection[{\-D\-S\-Log}]{\setlength{\rightskip}{0pt plus 5cm}\#define {\bf \-D\-S\-Log}(
+\begin{DoxyParamCaption}
+\item[{}]{line, }
+\item[{}]{msg, }
+\item[{}]{...}
+\end{DoxyParamCaption}
+)}}\label{Definitions_8h_aed3a9572cfa5e302a92714aa15559bf8}
+{\bfseries \-Value\-:}
+\begin{DoxyCode}
+DriverStationLCD::GetInstance()->Printf(DriverStationLCD::GetInstance()->
+      kUser_Line##line, 1, msg, ##__VA_ARGS__); \
+                                                                
+      DriverStationLCD::GetInstance()->UpdateLCD();
+\end{DoxyCode}
+\-Formatted printing of msg to the specified line on the \-Driver \-Station \-L\-C\-D. 

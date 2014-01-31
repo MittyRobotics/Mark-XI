@@ -41,7 +41,18 @@ TKOIntake* TKOIntake::inst() {
 	}
 	return m_Instance;
 }
-
+void TKOIntake::Initialization() {
+	_arm1.Set(-1);
+	if(LimitSwitchArm.Get() == 1) { 
+		_arm1.Set(0);
+		armTop = ArmEncoder.Get();
+		_arm1.Set(1);
+		if (LimitSwitchArm.Get() == 1){
+			_arm1.Set(0);
+			armBottom = ArmEncoder.Get();
+		}
+	}
+}
 void TKOIntake::RollerMove() {
 	//intake of ball.
 	_roller1.Set(1);

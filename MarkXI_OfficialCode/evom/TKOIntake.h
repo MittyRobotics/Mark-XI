@@ -11,6 +11,7 @@ public:
 	TKOIntake();
 	~TKOIntake();
 	static TKOIntake* inst();
+	void Initialization();
 	void RollerMove();
 	void ArmMoveLow();
 	void ArmMoveMiddle();
@@ -28,5 +29,7 @@ private:
 	DigitalInput LimitSwitchArm, limitIn;
 	Joystick stick1, stick2, stick3, stick4;
 	Encoder ArmEncoder;
+	int armTop; 
+	int armBottom; 
 };
 #endif
