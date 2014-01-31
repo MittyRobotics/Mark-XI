@@ -6,21 +6,23 @@
  *  \parm int port 2- roller 2 Jaguar ID
  */
 
-TKOIntake::TKOIntake(int port1,int port2):
-_roller1(port1, CANJaguar::kPercentVbus),
-_roller2(port2, CANJaguar::kPercentVbus)
+TKOIntake::TKOIntake(int rollerPort1,int rollerPort2):
+_roller1(rollerPort1, CANJaguar::kPercentVbus),
+_roller2(rollerPort2, CANJaguar::kPercentVbus),
+stick3(3)
 {}
 
 TKOIntake::~TKOIntake() {}
 
-void TKOIntake::rollerManualMove(Joystick stick)
+void TKOIntake::rollerManualMove()
 	{
-		if(stick.GetRawButton(4))
+		if(stick3.GetRawButton(4))
 		{
-			_roller1.Set(stick.GetY());
-			_roller1.Set(stick.GetY());
-			_roller2.Set(-stick.GetY());
-			_roller2.Set(-stick.GetY());
+			_roller1.Set(stick3.GetY());
+			_roller1.Set(stick3.GetY());
+			_roller2.Set(-stick3.GetY());
+			_roller2.Set(-stick3.GetY());
 		}
+		printf("%f %f Current currents:", _roller1.GetOutputCurrent(), _roller2.GetOutputCurrent());
 	}
 

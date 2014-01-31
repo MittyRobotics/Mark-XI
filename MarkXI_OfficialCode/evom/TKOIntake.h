@@ -10,9 +10,10 @@ class TKOIntake {
 public: 
 	TKOIntake(int rollerPort1, int rollerPort2);
 	~TKOIntake();
-	void rollerManualMove(Joystick stick);
+	void rollerManualMove();
 private:
 	CANJaguar _roller1, _roller2;
+	Joystick stick3;
 };
 
 #endif
