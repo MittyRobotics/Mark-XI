@@ -27,6 +27,7 @@ TKOIntake::TKOIntake() :
 	_roller1.SetSafetyEnabled(true);
 	_roller2.SetSafetyEnabled(true);
 	AddToSingletonList();
+	ArmEncoder.Start(); 
 }
 
 TKOIntake::~TKOIntake() {
@@ -62,7 +63,7 @@ void TKOIntake::RollerMoveOut() {
  _roller2.Set(0);*/
 
 void TKOIntake::ArmMoveLow() { // Arm move code to move it to the lowest position
-	ArmEncoder.Start();
+	
 
 	_arm1.Set(1); // The arm starts going in a downwards fashion. This can be changed if needed.
 	if (LimitSwitchArm.Get() == 1) {
@@ -89,7 +90,7 @@ void TKOIntake::ArmMoveMiddle() {
 }
 
 void TKOIntake::ArmMoveHigh() {
-	ArmEncoder.Start();
+	
 	_arm1.Set(-1);
 	if (LimitSwitchArm.Get() == 1) {//The highest limit switch is triggered, and the arm is off.
 		_arm1.Set(0);
