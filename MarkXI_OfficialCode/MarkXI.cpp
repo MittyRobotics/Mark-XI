@@ -56,7 +56,8 @@ class MarkXI: public SimpleRobot
 void MarkXI::Test()
 {
 	TKOLogger::inst()->addMessage("STARTING TEST MODE");
-	
+	enc.Start();
+	enc.Reset();
 	if (DriverStation::GetInstance()->GetDigitalIn(1))
 	{
 		printf("----------------------\n");
@@ -66,7 +67,8 @@ void MarkXI::Test()
 	}
 	while (IsEnabled()) //encoder testing
 	{
-		printf("Encoder 1: %f", (float)enc.Get());
+		printf("Encoder 1: %f\n", (float)enc.Get());
+		printf("Encoder Rate 1: %f\n", enc.GetRate());
 	}
 	printf("Calling test function \n");
 	printf("Starting tasks \n");
@@ -100,7 +102,7 @@ void MarkXI::Disabled()
 	TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOGDrive::inst()->Stop();
-	TKOVision::inst()->StopProcessing();
+	//TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
@@ -112,7 +114,7 @@ void MarkXI::Disabled()
 void MarkXI::Autonomous(void)
 {
 	printf("Starting Autonomous \n");
-	TKOVision::inst()->StartProcessing();
+	//TKOVision::inst()->StartProcessing();
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->addMessage("--------------Autonomous started-------------");
 	if (ds->IsFMSAttached())
@@ -131,7 +133,7 @@ void MarkXI::Autonomous(void)
 //	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
 //	TKOAutonomous::inst()->startAutonomous();
 	
-	TKOVision::inst()->StopProcessing();
+	//TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
 }
 
@@ -141,8 +143,8 @@ void MarkXI::OperatorControl()
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->Start();
 	TKOGyro::inst()->reset();
-	TKOShooter::inst()->Start();
-	TKOVision::inst()->StartProcessing();  //NEW VISION START
+	//TKOShooter::inst()->Start();
+	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;
 	loopTimer.Start();
@@ -160,11 +162,11 @@ void MarkXI::OperatorControl()
 			TKOLogger::inst()->addMessage("!!!CRITICAL Operator loop very long, length", loopTimer.Get());
 			printf("!!!CRITICAL Operator loop very long, %f%s\n", loopTimer.Get(), " seconds.");
 		}
-		DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
-		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
+		/*DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
+		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);*/
 		DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		DSLog(4, "Clock %f\n", GetClock());
-		DSLog(5, "")
+		//DSLog(5, "")
 		Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}
@@ -182,10 +184,10 @@ void MarkXI::Operator()
 		GyroDrive();
 	if (stick3.GetTrigger())
 	{
-		if ((GetFPGATime() - TKOVision::inst()->lastTimestamp) <= 1000)
+		/*if ((GetFPGATime() - TKOVision::inst()->lastTimestamp) <= 1000)
 		{
 			//TKOShooter::inst()->shootDist(TKOVision::inst()->lastDist);
-		}
+		}*/
 	}
 }
 

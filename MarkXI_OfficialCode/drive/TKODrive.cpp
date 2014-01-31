@@ -22,10 +22,10 @@ TKODrive::TKODrive() :
 //	else
 		printf("driving priority not set\n");
 
-	drive1.SetSafetyEnabled(true);
-	drive2.SetSafetyEnabled(true);
-	drive3.SetSafetyEnabled(true);
-	drive4.SetSafetyEnabled(true);
+	drive1.SetSafetyEnabled(false);
+	drive2.SetSafetyEnabled(false);
+	drive3.SetSafetyEnabled(false);
+	drive4.SetSafetyEnabled(false);
 	drive1.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
 	drive2.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);   
 	drive3.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
@@ -34,13 +34,17 @@ TKODrive::TKODrive() :
 	drive2.SetVoltageRampRate(0.0);
 	drive3.SetVoltageRampRate(0.0);
 	drive4.SetVoltageRampRate(0.0);
+	drive1.ConfigFaultTime(0.1);
+	drive2.ConfigFaultTime(0.1);
+	drive3.ConfigFaultTime(0.1);
+	drive4.ConfigFaultTime(0.1);
 	
 	drive1.SetSpeedReference(CANJaguar::kSpeedRef_Encoder); 
 	drive3.SetSpeedReference(CANJaguar::kSpeedRef_Encoder);
-	drive1.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
-	drive3.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
-	drive1.ConfigEncoderCodesPerRev(360);
-	drive3.ConfigEncoderCodesPerRev(360);
+	//drive1.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+	//drive3.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+	drive1.ConfigEncoderCodesPerRev(250);
+	drive3.ConfigEncoderCodesPerRev(250);
 	drive1.EnableControl();
 	drive3.EnableControl();
 	
@@ -68,8 +72,8 @@ void TKODrive::DriveRunner()
 	{
 		m_Instance->TankDrive();
 		m_Instance->LogData();
-		m_Instance->VerifyJags();
-		Wait(0.005);
+		//m_Instance->VerifyJags();
+		Wait(0.001);
 	}
 }
 
@@ -174,31 +178,31 @@ void TKODrive::TankDrive()
 	}
 	else if (stick1.GetTrigger())
 	{
-		drive1.Set(-stick1.GetY() * 0.4);
-		drive2.Set(-stick1.GetY() * 0.4);
-		drive3.Set(stick2.GetY() * 0.4);
-		drive4.Set(stick2.GetY() * 0.4);
+		drive1.Set(stick1.GetY() * 0.4);
+		drive2.Set(stick1.GetY() * 0.4);
+		drive3.Set(-stick2.GetY() * 0.4);
+		drive4.Set(-stick2.GetY() * 0.4);
 	}
 	else if (stick1.GetRawButton(2))
 	{
-		drive1.Set(-stick1.GetY() * 0.2);
-		drive2.Set(-stick1.GetY() * 0.2);
-		drive3.Set(stick2.GetY() * 0.2);
-		drive4.Set(stick2.GetY() * 0.2);
+		drive1.Set(stick1.GetY() * 0.2);
+		drive2.Set(stick1.GetY() * 0.2);
+		drive3.Set(-stick2.GetY() * 0.2);
+		drive4.Set(-stick2.GetY() * 0.2);
 	}
 	else if (stick1.GetRawButton(4))
 	{
-		drive1.Set(-stick1.GetY());
-		drive2.Set(-stick1.GetY());
-		drive3.Set(stick2.GetY());
-		drive4.Set(stick2.GetY());
+		drive1.Set(stick1.GetY());
+		drive2.Set(stick1.GetY());
+		drive3.Set(-stick2.GetY());
+		drive4.Set(-stick2.GetY());
 	}
 	else
 	{
-		drive1.Set(-stick1.GetY() * 0.8);
-		drive2.Set(-stick1.GetY() * 0.8);
-		drive3.Set(stick2.GetY() * 0.8);
-		drive4.Set(stick2.GetY() * 0.8);
+		drive1.Set(stick1.GetY() * 0.8);
+		drive2.Set(stick1.GetY() * 0.8);
+		drive3.Set(-stick2.GetY() * 0.8);
+		drive4.Set(-stick2.GetY() * 0.8);
 	}
 	TKODrive::ManualShift();
 }
@@ -207,7 +211,7 @@ void TKODrive::ManualShift()
 	if (GetTime() - lastShift < 1.) //1. is the constant for min delay between shifts
 		return; 
 
-	printf("Manual shifting\n");
+	//printf("Manual shifting\n");
 	if (stick2.GetRawButton(4)) 
 	{
 		shifterDS.Set(shifterDS.kForward);
