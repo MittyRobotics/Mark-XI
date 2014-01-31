@@ -17,9 +17,9 @@ TKODrive::TKODrive() :
 {	
 	printf("Initializing drive\n");
 	driveTask = new Task("Driving", (FUNCPTR) DriveRunner);
-//	if (driveTask->SetPriority(5))
-//		printf("driving priority set to 5\n");
-//	else
+	if (driveTask->SetPriority(5))
+		printf("driving priority set to 5\n");
+	else
 		printf("driving priority not set\n");
 
 	drive1.SetSafetyEnabled(false);
@@ -68,12 +68,12 @@ TKODrive* TKODrive::inst()
 }
 void TKODrive::DriveRunner()
 {
-	while (true)
+	while (true)//TODO Add timer to make sure how long the loop runs
 	{
 		m_Instance->TankDrive();
 		m_Instance->LogData();
 		//m_Instance->VerifyJags();
-		Wait(0.001);
+		//Wait(0.001);
 	}
 }
 
