@@ -1,14 +1,14 @@
 //Last edited by Vadim Korolik
 //on 01/06/2014
 #include "Definitions.h"
-#include "component/TKORelay.h"
+//#include "component/TKORelay.h"
 #include "log/TKOLogger.h"
 #include "drive/TKODrive.h"
-#include "drive/TKOGDrive.h"
-#include "component/TKOGyro.h"
-#include "vision/TKOVision.h"
-#include "evom/TKOShooter.h"
-#include "evom/state_machine_impl/StateMachine.h"
+//#include "drive/TKOGDrive.h"
+//#include "component/TKOGyro.h"
+//#include "vision/TKOVision.h"
+//#include "evom/TKOShooter.h"
+//#include "evom/state_machine_impl/StateMachine.h"
 
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
  * Auton, vision tests
@@ -33,6 +33,8 @@ class MarkXI: public SimpleRobot
 		Joystick stick1, stick2, stick3, stick4; // define joysticks
 		DriverStation *ds; // define driver station object
 		Encoder enc;
+		Solenoid light;
+		DigitalInput lightVal;
 		void Disabled();
 		void Autonomous();
 		void RobotInit();
@@ -47,7 +49,9 @@ class MarkXI: public SimpleRobot
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT),
-			enc(1, 2, false, Encoder::k4X)
+			enc(1, 2, false, Encoder::k4X),
+			light(8),
+			lightVal(3)
 		{
 			printf("Robot boot\n");
 			TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------");
@@ -58,6 +62,7 @@ void MarkXI::Test()
 	TKOLogger::inst()->addMessage("STARTING TEST MODE");
 	enc.Start();
 	enc.Reset();
+	light.Set(true);
 	if (DriverStation::GetInstance()->GetDigitalIn(1))
 	{
 		printf("----------------------\n");
@@ -67,13 +72,15 @@ void MarkXI::Test()
 	}
 	while (IsEnabled()) //encoder testing
 	{
+		DSLog(1, "Lval: %f", lightVal.Get());
 		printf("Encoder 1: %f\n", (float)enc.Get());
 		printf("Encoder Rate 1: %f\n", enc.GetRate());
+		printf("Light: %f\n", lightVal.Get());
 	}
 	printf("Calling test function \n");
 	printf("Starting tasks \n");
 	TKOLogger::inst()->Start();
-	TKOShooter::inst()->Start();
+	//TKOShooter::inst()->Start();
 	printf("Started shooter, logger \n");
 	TKOLogger::inst()->addMessage("STARTED SHOOTER, LOGGER IN TEST");
 	while (IsEnabled())
@@ -81,7 +88,8 @@ void MarkXI::Test()
 		DSClear();
 	}
 	printf("Stopping shooter, logger \n");
-	TKOShooter::inst()->Stop();
+	//TKOShooter::inst()->Stop();
+	light.Set(false);
 	TKOLogger::inst()->Stop();
 	printf("Stopped testing \n");
 	TKOLogger::inst()->addMessage("ENDED TEST MODE");
@@ -99,9 +107,9 @@ void MarkXI::Disabled()
 {
 	printf("Robot Dying!\n");
 	TKOLogger::inst()->addMessage("Robot disabled.");
-	TKOShooter::inst()->Stop();
+	//TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
-	TKOGDrive::inst()->Stop();
+	//TKOGDrive::inst()->Stop();
 	//TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
@@ -142,7 +150,7 @@ void MarkXI::OperatorControl()
 	printf("Starting OperatorControl \n");
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->Start();
-	TKOGyro::inst()->reset();
+	//TKOGyro::inst()->reset();
 	//TKOShooter::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
@@ -164,20 +172,21 @@ void MarkXI::OperatorControl()
 		}
 		/*DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
 		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);*/
-		DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
+		//DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		DSLog(4, "Clock %f\n", GetClock());
 		//DSLog(5, "")
 		Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}
 	printf("Ending OperatorControl \n");
+	TKODrive::inst()->Stop();
 	TKOLogger::inst()->addMessage("Ending OperatorControl");
 }
 
 void MarkXI::Operator()
 {
-	if (stick1. GetRawButton(11))
-		TKOGyro::inst()->reset();
+	//if (stick1. GetRawButton(11))
+		//TKOGyro::inst()->reset();
 	if (stick1.GetRawButton(8))
 		RegDrive();
 	if (stick1.GetRawButton(9))
@@ -193,13 +202,13 @@ void MarkXI::Operator()
 
 void MarkXI::RegDrive()
 {
-	TKOGDrive::inst()->Stop();
+	//TKOGDrive::inst()->Stop();
 	TKODrive::inst()->Start();
 }
 void MarkXI::GyroDrive()
 {
 	TKODrive::inst()->Stop();
-	TKOGDrive::inst()->Start();
+	//TKOGDrive::inst()->Start();
 }
 
 START_ROBOT_CLASS(MarkXI);
