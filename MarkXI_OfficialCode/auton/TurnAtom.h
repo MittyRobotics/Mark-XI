@@ -1,16 +1,16 @@
-#ifndef _TURN_ATOM_H
-#define _TURN_ATOM_H
+#ifndef _TURNATOM_H
+#define _TURNATOM_H
 
 #include "Atom.h"
 #include "../component/TKOGyro.h"
 #include "../Definitions.h"
 
-class Turn_Atom: public Atom {
+class TurnAtom: public Atom {
 public:
 	// For angle, positive is (left/right) in relation to the front of the robot
-	Turn_Atom(float ang, CANJaguar* drive1, CANJaguar* drive2,
+	TurnAtom(float ang, CANJaguar* drive1, CANJaguar* drive2,
 			CANJaguar* drive3, CANJaguar* drive4, TKOGyro* gyro);
-	~Turn_Atom();
+	~TurnAtom();
 	void run();
 private:
 	CANJaguar* _drive1;
