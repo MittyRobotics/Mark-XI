@@ -1,4 +1,4 @@
-//Last Edited by Arjun Biju, Murad Awad, and Ishan Shah, and Maybe Steven 'cuz he was watching
+//Last Edited by Arjun Biju, Murad Awad, and Ishan Shah
 // on 01/31/2014
 #include "TKOIntake.h"
 TKOIntake* TKOIntake::m_Instance = NULL;
@@ -13,7 +13,8 @@ TKOIntake::TKOIntake() :
 			//jaguar numbers undefined
 			_roller1(6, CANJaguar::kPercentVbus),
 			_roller2(7, CANJaguar::kPercentVbus),
-			_arm1(8, CANJaguar::kPercentVbus), limitSwitchArm(1), // Optical limit switch
+			_arm1(8, CANJaguar::kPercentVbus), 
+			limitSwitchArm(1), // Optical limit switch
 			stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
@@ -41,16 +42,16 @@ TKOIntake* TKOIntake::inst() {
 void TKOIntake::init() {
 	armEncoder.Reset();
 	_arm1.Set(-1);
-	if (limitSwitchArm.Get() == 0) {
+	if (limitSwitchArm.Get() == 0) { //If the top limit switch is triggered. WE assume that it outputs a value of 0 when triggered
 		_arm1.Set(0);
 		encoderValueBack = armEncoder.Get();
 	}
 	_arm1.Set(1);
-	if (limitSwitchArm.Get() == 0) {
+	if (limitSwitchArm.Get() == 0) { //If the bottom limit switch is triggered.
 		_arm1.Set(0);
 		encoderValueFront = armEncoder.Get();
 	}
-	encoderValueMid = (encoderValueBack + encoderValueFront) /2;
+	encoderValueMid = (encoderValueBack + encoderValueFront) /2; //Sets middle limit switch value
 	
 }
 
@@ -59,39 +60,39 @@ void TKOIntake::armMoveFront() { // Arm move code to move it to the lowest posit
 
 
 	_arm1.Set(-1); // The arm starts going in a downwards fashion. This can be changed if needed.
-	if (limitSwitchArm.Get() == 1) {
+	if (limitSwitchArm.Get() == 0) {
 		_arm1.Set(0);
 		printf("The arm is at the front.\n");
 	}
 }
 
 void TKOIntake::armMoveMiddle() {
-	if (armEncoder.Get() < encoderValueMid) {//If it is under the second limit switch
+	if (armEncoder.Get() < encoderValueMid) {//If it is under the middle position set it to go up
 		_arm1.Set(1);
 	}
-	if (armEncoder.Get() > encoderValueMid) {//If it is under the second limit switch
+	if (armEncoder.Get() > encoderValueMid) {//If it is above the middle position, set it 
 		_arm1.Set(-1); 
 	}
 	if (armEncoder.Get() == (encoderValueBack + encoderValueFront)/2) {
 		_arm1.Set(0);
-		printf("The arm is middle as fuuuuuuuuuu\n"); //I think you meant middle C:
+		printf("The arm is at the middle"); 
 	}
 
 }
 
 void TKOIntake::armMoveBack() {
 	_arm1.Set(1);
-	if (limitSwitchArm.Get() == 1) {//The highest limit switch is triggered, and the arm is off.
+	if (limitSwitchArm.Get() == 0) {//The highest limit switch is triggered, and the arm is off.
 		_arm1.Set(0);
 		printf("The arm is at the back.\n");
 	}
 }
 void TKOIntake::armMoveManual() {
-	if(limitSwitchArm.Get() == 0)
+	if(limitSwitchArm.Get() == 1)
 	{
 		if(armEncoder.Get() > encoderValueMid)
 		{
-			if(-stick3.GetY() < 0) //By the way Murad says WHAT THE UAGH
+			if(-stick3.GetY() < 0) 
 			{
 				_arm1.Set(stick3.GetY());
 			}

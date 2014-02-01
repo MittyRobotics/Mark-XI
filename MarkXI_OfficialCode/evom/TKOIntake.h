@@ -1,4 +1,4 @@
-//Last Edited by Arjun Biju, Murad Awad, and Ishan Shah, and maybe Steven 'cuz he was in a 20 foot radius of us.
+//Last Edited by Arjun Biju, Murad Awad, and Ishan Shah, 
 // on 01/31/2014
 #ifndef __TKOINTAKE_H
 #define __TKOINTAKE_H
@@ -25,7 +25,7 @@ private:
 	Task *intakeTask;
 
 	CANJaguar _roller1, _roller2, _arm1;
-	DigitalInput limitSwitchArm;
+	DigitalInput limitSwitchArm; 
 	Joystick stick1, stick2, stick3, stick4;
 	Encoder armEncoder; 
 };
