@@ -1,20 +1,20 @@
 //Last Edited by Zach Light
-#include "TKOIntake.h"
+#include "TKORoller.h"
 /*
  * Initializes the 2 roller jaguars in percent Vbus mode
  *  \parm int port 1 - roller 1 Jaguar ID
  *  \parm int port 2- roller 2 Jaguar ID
  */
 
-TKOIntake::TKOIntake(int rollerPort1,int rollerPort2):
+TKORoller::TKORoller(int rollerPort1,int rollerPort2):
 _roller1(rollerPort1, CANJaguar::kPercentVbus),
 _roller2(rollerPort2, CANJaguar::kPercentVbus),
 stick3(3)
 {}
 
-TKOIntake::~TKOIntake() {}
+TKORoller::~TKORoller() {}
 
-void TKOIntake::rollerManualMove()
+void TKORoller::rollerManualMove()
 	{
 		if(stick3.GetRawButton(4))
 		{

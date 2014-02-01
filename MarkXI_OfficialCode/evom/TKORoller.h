@@ -1,15 +1,15 @@
 //Last Edited by Swag
-#ifndef __TKOINTAKE_H
-#define __TKOINTAKE_H
+#ifndef __TKORoller_H
+#define __TKORoller_H
 
 #include "../Definitions.h"
 
 //Code for intake roller
 
-class TKOIntake {
+class TKORoller {
 public: 
-	TKOIntake(int rollerPort1, int rollerPort2);
-	~TKOIntake();
+	TKORoller(int rollerPort1, int rollerPort2);
+	~TKORoller();
 	void rollerManualMove();
 private:
 	CANJaguar _roller1, _roller2;
