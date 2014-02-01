@@ -154,13 +154,13 @@ void MarkXI::Operator() {
 		}
 	}
 	if (stick4.GetRawButton(1)) {
-		intake.ArmMoveLow();
+		intake.ArmMoveFront();
 	}
 	if (stick4.GetRawButton(2)) {
 		intake.ArmMoveMiddle();
 	}
 	if (stick4.GetRawButton(3)) {
-		intake.ArmMoveHigh();
+		intake.ArmMoveBack();
 	}
 }
 

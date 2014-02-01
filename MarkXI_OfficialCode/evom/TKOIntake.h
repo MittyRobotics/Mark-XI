@@ -11,15 +11,14 @@ public:
 	TKOIntake();
 	~TKOIntake();
 	static TKOIntake* inst();
-	void Initialization();
+	void init();
 	void RollerMove();
-	void ArmMoveLow();
+	void ArmMoveFront();
 	void ArmMoveMiddle();
-	void ArmMoveHigh();
+	void ArmMoveBack();
 	void LimitSwitchTest();
-	void RollerMoveOut();
 	void ArmMoveManual();
-	int encodervalueup, encodervaluedown;
+	float encoderValueBack, encoderValueFront, encoderValueMid;
 private:
 	DISALLOW_COPY_AND_ASSIGN(TKOIntake);
 	static TKOIntake* m_Instance;
@@ -29,8 +28,6 @@ private:
 	CANJaguar _roller1, _roller2, _arm1;
 	DigitalInput LimitSwitchArm, limitIn;
 	Joystick stick1, stick2, stick3, stick4;
-	Encoder ArmEncoder;
-	int armTop; 
-	int armBottom; 
+	Encoder ArmEncoder; 
 };
 #endif
