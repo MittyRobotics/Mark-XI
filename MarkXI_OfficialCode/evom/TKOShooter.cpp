@@ -4,10 +4,19 @@
 
 TKOShooter*  TKOShooter::_instance = NULL;
 
-TKOShooter::TKOShooter ()
+TKOShooter::TKOShooter ():
+		stick1(1), stick2(2), stick3(3), stick4(4)
 {	
 	shooterTask = new Task("Shooter", (FUNCPTR) shooterTaskRunner);
 	stateMachineTask = new Task("StateMachine", (FUNCPTR) stateMachineTaskRunner);
+	if (shooterTask->SetPriority(4))
+			printf("shooterTask priority set to 4\n");
+		else
+			printf("shooterTask priority not set\n");
+	if (stateMachineTask->SetPriority(5))
+			printf("stateMachineTask priority set to 5\n");
+		else
+			printf("stateMachineTask priority not set\n");
 	//shooterTask->SetPriority(Task::kDefaultPriority);
 	//stateMachineTask->SetPriority(Task::kDefaultPriority);
 }
@@ -36,7 +45,7 @@ bool TKOShooter::Stop()
 
 void TKOShooter::initStateMachine()
 {
-	cur_state = s.init(&data);
+	cur_state = s.init(&data, &stick3);
 }
 bool TKOShooter::startStateMachine()
 {

@@ -1,14 +1,14 @@
 //Last edited by Vadim Korolik
 //on 01/06/2014
 #include "Definitions.h"
-//#include "component/TKORelay.h"
+#include "component/TKORelay.h"
 #include "log/TKOLogger.h"
 #include "drive/TKODrive.h"
 //#include "drive/TKOGDrive.h"
 //#include "component/TKOGyro.h"
-//#include "vision/TKOVision.h"
-//#include "evom/TKOShooter.h"
-//#include "evom/state_machine_impl/StateMachine.h"
+#include "vision/TKOVision.h"
+#include "evom/TKOShooter.h"
+#include "evom/StateMachine.h"
 
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
  * Auton, vision tests
@@ -59,6 +59,8 @@ class MarkXI: public SimpleRobot
 };
 void MarkXI::Test()
 {
+	if (!IsEnabled()) return;
+	printf("Calling test function \n");
 	TKOLogger::inst()->addMessage("STARTING TEST MODE");
 	enc.Start();
 	enc.Reset();
@@ -70,17 +72,17 @@ void MarkXI::Test()
 		remove("logT.txt");
 		printf("Digital input 1 true\n");
 	}
-	while (IsEnabled()) //encoder testing
+	/*while (IsEnabled()) //encoder testing
 	{
 		DSLog(1, "Lval: %f", lightVal.Get());
 		printf("Encoder 1: %f\n", (float)enc.Get());
 		printf("Encoder Rate 1: %f\n", enc.GetRate());
 		printf("Light: %f\n", lightVal.Get());
-	}
-	printf("Calling test function \n");
+	}*/
+	
 	printf("Starting tasks \n");
 	TKOLogger::inst()->Start();
-	//TKOShooter::inst()->Start();
+	TKOShooter::inst()->Start();
 	printf("Started shooter, logger \n");
 	TKOLogger::inst()->addMessage("STARTED SHOOTER, LOGGER IN TEST");
 	while (IsEnabled())
@@ -88,7 +90,7 @@ void MarkXI::Test()
 		DSClear();
 	}
 	printf("Stopping shooter, logger \n");
-	//TKOShooter::inst()->Stop();
+	TKOShooter::inst()->Stop();
 	light.Set(false);
 	TKOLogger::inst()->Stop();
 	printf("Stopped testing \n");
@@ -107,7 +109,7 @@ void MarkXI::Disabled()
 {
 	printf("Robot Dying!\n");
 	TKOLogger::inst()->addMessage("Robot disabled.");
-	//TKOShooter::inst()->Stop();
+	TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	//TKOGDrive::inst()->Stop();
 	//TKOVision::inst()->StopProcessing();
@@ -154,29 +156,17 @@ void MarkXI::OperatorControl()
 	//TKOShooter::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
-	Timer loopTimer;
-	loopTimer.Start();
 	
 	TKOLogger::inst()->addMessage("--------------Teleoperated started-------------");
 	
 	while (IsOperatorControl() && IsEnabled())
 	{
-		loopTimer.Reset();
-		DSClear();
-		
 		MarkXI::Operator();
-		if (loopTimer.Get() > 0.1)
-		{
-			TKOLogger::inst()->addMessage("!!!CRITICAL Operator loop very long, length", loopTimer.Get());
-			printf("!!!CRITICAL Operator loop very long, %f%s\n", loopTimer.Get(), " seconds.");
-		}
+		
 		/*DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
 		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);*/
 		//DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		DSLog(4, "Clock %f\n", GetClock());
-		//DSLog(5, "")
-		Wait(LOOPTIME - loopTimer.Get());
-		loopTimer.Reset();
 	}
 	printf("Ending OperatorControl \n");
 	TKODrive::inst()->Stop();

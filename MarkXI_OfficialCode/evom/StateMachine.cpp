@@ -23,7 +23,7 @@ DigitalInput* StateMachine::_piston_retract = new DigitalInput(PISTON_SWITCH_RET
 DigitalInput* StateMachine::_piston_extend = new DigitalInput(PISTON_SWITCH_EXTEND_CHANNEL);
 DigitalInput* StateMachine::_latch_lock = new DigitalInput(LATCH_PISTON_LOCK_CHANNEL);
 DigitalInput* StateMachine::_is_cocked = new DigitalInput(IS_COCKED_SWITCH_CHANNEL);
-Joystick* StateMachine::_triggerJoystick = new Joystick(1);
+Joystick* StateMachine::_triggerJoystick = NULL;
 
 // TODO nums are bs
 DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2,1,1);
@@ -37,6 +37,8 @@ StateMachine::StateMachine()
     _state_table[STATE_READY_TO_FIRE] = do_state_ready_to_fire;
     _state_table[STATE_LATCH_UNLOCK] = do_state_latch_unlock;
     _state_table[STATE_ERR] = do_err_state;
+    lastSensorStringPrint = GetTime();
+    //Joystick* StateMachine::_triggerJoystick = new Joystick(1);
 }
 
 StateMachine::~StateMachine()
@@ -76,8 +78,9 @@ int StateMachine::createIntFromBoolArray(instance_data_t *data)
     return num;
 }
 
-state_t StateMachine::init(instance_data_t *data)
+state_t StateMachine::init(instance_data_t *data, Joystick *stick3)
 {
+	_triggerJoystick = stick3;
     int sensors = GetSensorData(data);
     printf("Initializing state machine \n");
     sensors_to_string(data);
@@ -306,12 +309,16 @@ string StateMachine::state_to_string(instance_data_t *data)
 
 void StateMachine::sensors_to_string(instance_data_t *data)
 {
+	if (GetTime() - lastSensorStringPrint <= 1.) return;
+	
     printf("0b (ic) (ll) (Pe) (Pr)\n0b");
     int sensors = createIntFromBoolArray(data);
     int i = NUM_STATES-2;
     for (; i > -1; i--) {
         printf("  %2d ",(sensors & (1 << i)));
     }
+    
+    lastSensorStringPrint = GetTime();
 }
 
 state_t StateMachine::do_err_state(instance_data_t *data)

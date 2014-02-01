@@ -48,7 +48,7 @@ public:
     ~StateMachine();
 
     state_t run_state(state_t, instance_data_t*);
-    state_t init(instance_data_t *data);
+    state_t init(instance_data_t *data, Joystick *stick3);
     static string state_to_string(instance_data_t *data);
     static void sensors_to_string(instance_data_t *data);
 private:
@@ -62,7 +62,7 @@ private:
     static int GetSensorData(instance_data_t *data);
     static int createIntFromBoolArray(instance_data_t *data);
 
-    
+    static float lastSensorStringPrint;
     
 
     state_func_t*  _state_table[NUM_STATES + 1];

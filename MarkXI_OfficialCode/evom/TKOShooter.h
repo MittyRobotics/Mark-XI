@@ -22,6 +22,7 @@ class TKOShooter
 	private:
 		Task *shooterTask;
 		Task *stateMachineTask;
+		Joystick stick1, stick2, stick3, stick4;
 		void initStateMachine();
 		bool startStateMachine();
 		bool stopStateMachine();

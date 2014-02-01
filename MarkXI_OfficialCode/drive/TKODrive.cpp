@@ -17,9 +17,9 @@ TKODrive::TKODrive() :
 {	
 	printf("Initializing drive\n");
 	driveTask = new Task("Driving", (FUNCPTR) DriveRunner);
-//	if (driveTask->SetPriority(5))
-//		printf("driving priority set to 5\n");
-//	else
+	if (driveTask->SetPriority(0))
+		printf("driving priority set to 0\n");
+	else
 		printf("driving priority not set\n");
 
 	drive1.SetSafetyEnabled(false);
@@ -68,12 +68,12 @@ TKODrive* TKODrive::inst()
 }
 void TKODrive::DriveRunner()
 {
-	while (true)
+	while (DriverStation::GetInstance()->IsEnabled())
 	{
 		m_Instance->TankDrive();
 		m_Instance->LogData();
 		//m_Instance->VerifyJags();
-		Wait(0.001);
+		//Wait(0.001);
 	}
 }
 
@@ -84,7 +84,7 @@ void TKODrive::Start()
 }
 void TKODrive::Stop()
 {
-	if (driveTask->Verify() or not driveTask->IsSuspended())
+	if (driveTask->Verify())
 		driveTask->Stop();
 	
 	TKOLogger::inst()->addMessage("Drive 1 Max Speed: %f", maxDrive1RPM);
@@ -98,6 +98,7 @@ void TKODrive::LogData()
 	if (drive3.GetSpeed() > maxDrive3RPM)
 		maxDrive3RPM = drive3.GetSpeed();
 	
+	if (!DriverStation::GetInstance()->IsEnabled()) return;
 	if (GetTime() - lastDataLog <= 1.) return; //TODO 1.0 means logs every 1 second
 	
 	TKOLogger::inst()->addMessage("-----DRIVE DATA------\n");
@@ -146,6 +147,7 @@ void TKODrive::LogData()
 
 void TKODrive::TankDrive()
 {
+	if (!DriverStation::GetInstance()->IsEnabled()) return;
 	if (stick2.GetRawButton(4))
 	{
 		drive1.SetVoltageRampRate(0.0);
