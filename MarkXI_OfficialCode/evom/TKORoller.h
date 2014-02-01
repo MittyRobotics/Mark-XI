@@ -1,6 +1,6 @@
 //Last Edited by Swag
-#ifndef __TKORoller_H
-#define __TKORoller_H
+#ifndef __TKOROLLER_H
+#define __TKOROLLER_H
 
 #include "../Definitions.h"
 
