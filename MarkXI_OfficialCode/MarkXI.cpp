@@ -8,7 +8,7 @@
 #include "component/TKOGyro.h"
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
-#include "evom/state_machine_impl/StateMachine.h"
+#include "evom/StateMachine.h"
 
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
  * Auton, vision tests

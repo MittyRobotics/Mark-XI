@@ -1,13 +1,12 @@
 //Last edited by Vadim Korolik
 //on 01/12/2014
 
-//USEFUL LINK: http://stackoverflow.com/questions/133214/is-there-a-typical-state-machine-implementation-pattern
 #ifndef __TKOSHOOTER_H
 #define __TKOSHOOTER_H
 
 #include "../Definitions.h"
 #include "../log/TKOLogger.h"
-#include "state_machine_impl/StateMachine.h"
+#include "StateMachine.h"
 
 
 class TKOShooter

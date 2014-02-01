@@ -4,11 +4,13 @@
 // Last edited by Matt Pleva 01/31/2014 
 //
 
+//USEFUL LINK: http://stackoverflow.com/questions/133214/is-there-a-typical-state-machine-implementation-pattern
+
 #ifndef ____STATEMACHINE__H
 #define ____STATEMACHINE__H
 
-#include "../../Definitions.h"
-#include "../../log/TKOLogger.h"
+#include "../Definitions.h"
+#include "../log/TKOLogger.h"
 
 
 #define DONE_FIRING 2
