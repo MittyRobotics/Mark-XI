@@ -8,7 +8,6 @@
 #include "component/TKOGyro.h"
 //#include "auton/TKOAutonomous.h"
 #include "vision/TKOVision.h"
-#include "evom/TKOShooter.h"
 #include "evom/TKOIntake.h"
 
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
@@ -45,9 +44,9 @@ public:
 
 	MarkXI::MarkXI() :
 		stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
-				stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
-				stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
-				stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
+		stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
+		stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
+		stick4(STICK_4_PORT) // initialize joystick 4 < second EVOM joystick
 	{
 	}
 };
@@ -85,11 +84,9 @@ void MarkXI::Autonomous(void) {
 		TKOLogger::inst()->addMessage("-----------FMS DETECTED------------");
 		TKOLogger::inst()->addMessage("PROBABLY A SERIOUS MATCH");
 		if (ds->GetAlliance() == ds->kBlue)
-			;
-		TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
+			TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
 		if (ds->GetAlliance() == ds->kRed)
-			;
-		TKOLogger::inst()->addMessage("RED ALLIANCE!");
+			TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
 	Wait(.1);
 
@@ -113,8 +110,7 @@ void MarkXI::OperatorControl() {
 	Timer loopTimer;
 	loopTimer.Start();
 
-	TKOLogger::inst()->addMessage(
-			"--------------Teleoperated started-------------");
+	TKOLogger::inst()->addMessage("--------------Teleoperated started-------------");
 
 	while (IsOperatorControl() && IsEnabled()) {
 		loopTimer.Reset();
@@ -122,11 +118,8 @@ void MarkXI::OperatorControl() {
 
 		MarkXI::Operator();
 		if (loopTimer.Get() > 0.1) {
-			TKOLogger::inst()->addMessage(
-					"!!!CRITICAL Operator loop very long, length",
-					loopTimer.Get());
-			printf("!!!CRITICAL Operator loop very long, %f%s\n",
-					loopTimer.Get(), " seconds.");
+			TKOLogger::inst()->addMessage("!!!CRITICAL Operator loop very long, length", loopTimer.Get());
+			printf("!!!CRITICAL Operator loop very long, %f%s\n", loopTimer.Get(), " seconds.");
 		}
 		DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
 		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
