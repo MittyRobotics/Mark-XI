@@ -26,8 +26,9 @@ DigitalInput* StateMachine::_is_cocked = new DigitalInput(IS_COCKED_SWITCH_CHANN
 Joystick* StateMachine::_triggerJoystick = NULL;
 
 // TODO nums are bs
-DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2,1,1);
-DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(2,1,1);
+DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2,3,4);
+DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(2,5,6);
+float StateMachine::lastSensorStringPrint = GetTime();
 
 StateMachine::StateMachine()
 {
@@ -37,7 +38,6 @@ StateMachine::StateMachine()
     _state_table[STATE_READY_TO_FIRE] = do_state_ready_to_fire;
     _state_table[STATE_LATCH_UNLOCK] = do_state_latch_unlock;
     _state_table[STATE_ERR] = do_err_state;
-    lastSensorStringPrint = GetTime();
     //Joystick* StateMachine::_triggerJoystick = new Joystick(1);
 }
 
@@ -115,7 +115,7 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
     _timer->Start();
 
     //TODO add in code to make pistons reteact
-    // _piston_retract_extend.Set(DoubleSolenoid::kReverse?)
+    _piston_retract_extend->Set(DoubleSolenoid::kReverse);
 
     int sensors = 0;
     // reason for 8 is that piston is retracted then
@@ -150,7 +150,7 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
     _timer->Start();
 
     // TODO add in code to make piston lock
-    // _latch_lock_unlock.Set(DoubleSolenoid::kForward?)
+    _latch_lock_unlock->Set(DoubleSolenoid::kForward);
 
     int sensors = 0;
 
@@ -188,7 +188,7 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
     _timer->Start();
 
     // TODO add in code to make piston extend
-    // _piston_retract_extend.Set(DoubleSolenoid::kForward?)
+    _piston_retract_extend->Set(DoubleSolenoid::kForward);
 
     int sensors = 0;
 
@@ -245,7 +245,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     _timer->Start();
 
     // TODO add in code to make piston unlock
-    // _latch_lock_unlock.Set(DoubleSolenoid::kReverse?)
+    _latch_lock_unlock->Set(DoubleSolenoid::kReverse);
 
     int sensors = 0;
 
