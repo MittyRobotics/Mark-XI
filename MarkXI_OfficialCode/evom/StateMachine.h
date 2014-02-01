@@ -12,12 +12,17 @@
 #include "../Definitions.h"
 #include "../log/TKOLogger.h"
 
+/*
+ * 0b | IC | LL | PE | PR |
+ * 0b |  8 |  4 |  2 |  1 |
+ */
 
-#define DONE_FIRING 2
-#define PISTON_RETRACTED 1
-#define LATCH_LOCKED_PISTON_RETRACTED 5
-#define CONST_READY_TO_FIRE 14
+#define DONE_FIRING 2	// PE
+#define PISTON_RETRACTED 1	// PR
+#define LATCH_LOCKED_PISTON_RETRACTED 5	// LL and PR
+#define CONST_READY_TO_FIRE 14	// IC and LL and PE
 
+// refer to switchboard mockup
 #define PISTON_SWITCH_RETRACT_CHANNEL 4
 #define PISTON_SWITCH_EXTEND_CHANNEL 7
 #define LATCH_PISTON_LOCK_CHANNEL 6
@@ -64,9 +69,6 @@ private:
 
     static int getSensorData(instance_data_t *data);
     static int createIntFromBoolArray(instance_data_t *data);
-
-    
-    
 
     state_func_t*  _state_table[NUM_STATES + 1];
 
