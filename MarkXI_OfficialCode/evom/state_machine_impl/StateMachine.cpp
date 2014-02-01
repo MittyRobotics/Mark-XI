@@ -50,7 +50,7 @@ state_t StateMachine::run_state( state_t cur_state, instance_data_t *data ) {
 };
 
 
-int StateMachine::GetSensorData(instance_data_t *data)
+int StateMachine::getSensorData(instance_data_t *data)
 {
     // TODO what is off or on in terms of numbers?
     data->state[0] = (_piston_retract->Get() == 0);
@@ -80,7 +80,7 @@ int StateMachine::createIntFromBoolArray(instance_data_t *data)
 
 state_t StateMachine::init(instance_data_t *data)
 {
-    int sensors = GetSensorData(data);
+    int sensors = getSensorData(data);
     printf("Initializing state machine \n");
     sensors_to_string(data);
     printf("\n %d \n", sensors);
@@ -114,11 +114,11 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
     _timer->Start();
 
     //TODO add in code to make pistons reteact
-    // _piston_retract_extend.Set(DoubleSolenoid::kReverse?)
+    _piston_retract_extend->Set(DoubleSolenoid::kReverse);
 
     int sensors = 0;
     // reason for 8 is that piston is retracted then
-    while (sensors = GetSensorData(data), sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING) ) {
+    while (sensors = getSensorData(data), sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING) ) {
     	printf("Piston Retract running: %d\n", sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING));
         if (_timer->Get() > 25.) {
             _timer->Stop();
@@ -149,12 +149,12 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
     _timer->Start();
 
     // TODO add in code to make piston lock
-    // _latch_lock_unlock.Set(DoubleSolenoid::kForward?)
+    _latch_lock_unlock->Set(DoubleSolenoid::kForward);
 
     int sensors = 0;
 
     // reason for 8 is that piston is retracted then
-    while (sensors = GetSensorData(data), sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED)) {
+    while (sensors = getSensorData(data), sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED)) {
     	printf("latch_lock running: %d\n", sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED));
     	      
     	if (_timer->Get() > 25.) {
@@ -187,12 +187,12 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
     _timer->Start();
 
     // TODO add in code to make piston extend
-    // _piston_retract_extend.Set(DoubleSolenoid::kForward?)
+    _piston_retract_extend->Set(DoubleSolenoid::kForward);
 
     int sensors = 0;
 
     // reason for 8 is that piston is retracted then
-    while (sensors = GetSensorData(data), sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6)) {
+    while (sensors = getSensorData(data), sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6)) {
     	printf("piston_extend running: %d\n", sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6));
     	    	 
     	if (_timer->Get() > 25.) {
@@ -224,7 +224,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
     data->curState = STATE_READY_TO_FIRE;
 
     // wait for the trigger then fire!
-    while (!_triggerJoystick->GetTrigger() && GetSensorData(data) == CONST_READY_TO_FIRE) {}
+    while (!_triggerJoystick->GetTrigger() && getSensorData(data) == CONST_READY_TO_FIRE) {}
     // go to next state
     TKOLogger::inst()->addMessage("STATE SUCCESS Exiting ready to fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     return STATE_LATCH_UNLOCK;
@@ -244,12 +244,12 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     _timer->Start();
 
     // TODO add in code to make piston unlock
-    // _latch_lock_unlock.Set(DoubleSolenoid::kReverse?)
+    _latch_lock_unlock->Set(DoubleSolenoid::kReverse);
 
     int sensors = 0;
 
     // reason for 4 is that piston is extended after this step
-    while (sensors = GetSensorData(data), sensors != DONE_FIRING && (sensors == CONST_READY_TO_FIRE || sensors == 10))
+    while (sensors = getSensorData(data), sensors != DONE_FIRING && (sensors == CONST_READY_TO_FIRE || sensors == 10))
     {
         if (_timer->Get() > 5.) {
             _timer->Stop();
@@ -318,7 +318,7 @@ void StateMachine::sensors_to_string(instance_data_t *data)
 
 state_t StateMachine::do_err_state(instance_data_t *data)
 {
-	//GetSensorData(data);
+	//getSensorData(data);
     printf("%s\n",state_to_string(data).c_str());
     TKOLogger::inst()->addMessage("STATE ERROR: %s ERROR!!! SENSORS: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     sensors_to_string(data);

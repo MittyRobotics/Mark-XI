@@ -4,8 +4,8 @@
 // Last edited by Matt Pleva 01/31/2014 
 //
 
-#ifndef ____StateMachine__
-#define ____StateMachine__
+#ifndef ____STATEMACHINE__H
+#define ____STATEMACHINE__H
 
 #include "../../Definitions.h"
 #include "../../log/TKOLogger.h"
@@ -60,7 +60,7 @@ private:
     static state_t do_state_ready_to_fire(instance_data_t *data);
     static state_t do_err_state(instance_data_t *data);
 
-    static int GetSensorData(instance_data_t *data);
+    static int getSensorData(instance_data_t *data);
     static int createIntFromBoolArray(instance_data_t *data);
 
     

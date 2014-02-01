@@ -1,7 +1,7 @@
 //Last edited by Vadim Korolik
 //on 01/12/2014
 
-//USEFULL LINK: http://stackoverflow.com/questions/133214/is-there-a-typical-state-machine-implementation-pattern
+//USEFUL LINK: http://stackoverflow.com/questions/133214/is-there-a-typical-state-machine-implementation-pattern
 #ifndef __TKOSHOOTER_H
 #define __TKOSHOOTER_H
 
