@@ -1,5 +1,5 @@
-//Last edited by Vadim Korolik
-//on 01/06/2014
+//Last Edited by Zach Light and Ben Kim
+// on 01/31/2014
 #include "Definitions.h"
 #include "component/TKORelay.h"
 #include "log/TKOLogger.h"

@@ -1,4 +1,5 @@
-	//Last Edited by Ishan Shah and Murad Awad
+//Last Edited by Zach Light and Ben Kim
+// on 01/31/2014
 #ifndef __TKOINTAKE_H
 #define __TKOINTAKE_H
 
