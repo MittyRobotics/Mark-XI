@@ -54,16 +54,16 @@ public:
 			if (stick1.GetRawButton(3))
 				usePID = !usePID;
 				*/
-			while(stick3.GetRawButton(3)) {
-				kP = fabs(stick3.GetY()*0.5);
+			while(stick2.GetRawButton(3)) {
+				kP = fabs(stick2.GetY()*0.5);
 				PID_Station();
 			}
-			while(stick3.GetRawButton(1)) {
-				kI = fabs(stick3.GetY()*0.004);
+			while(stick2.GetTrigger()) {
+				kI = fabs(stick2.GetY()*0.004);
 				PID_Station();
 			}
-			while(stick3.GetRawButton(2)) {
-				kD = fabs(stick3.GetY()*0.002);
+			while(stick2.GetRawButton(2)) {
+				kD = fabs(stick2.GetY()*0.002);
 				PID_Station();
 			}
 			TankDrive();
@@ -88,7 +88,7 @@ public:
 			//EnablePIDControl();
 			
 			l_f.Set(-stick1.GetY()*max_speed);
-			r_f.Set(stick2.GetY()*max_speed);
+			r_f.Set(stick1.GetY()*max_speed);
 			l_b.Set(l_f.GetSpeed());
 			r_b.Set(r_f.GetSpeed());
 		}
@@ -165,15 +165,16 @@ public:
 	
 	void PID_Station() {
 		ds->Clear();
-		char * p = reinterpret_cast<char *>(&kP);
-		char * i = reinterpret_cast<char *>(&kD);
-		char * d = reinterpret_cast<char *>(&kI);
-		ds->PrintfLine(DriverStationLCD::kUser_Line1, "P:");
-		ds->PrintfLine(DriverStationLCD::kUser_Line2, p);
-		ds->PrintfLine(DriverStationLCD::kUser_Line3, "I:");
-		ds->PrintfLine(DriverStationLCD::kUser_Line4, i);
-		ds->PrintfLine(DriverStationLCD::kUser_Line5, "D:");
-		ds->PrintfLine(DriverStationLCD::kUser_Line6, d);
+		char pv[50], iv[50], dv[50];
+		sprintf(pv, "%f", kP);
+		sprintf(iv, "%f", kI);
+		sprintf(dv, "%f", kD);
+		ds->PrintfLine(DriverStationLCD::kUser_Line1, "P(3):");
+		ds->PrintfLine(DriverStationLCD::kUser_Line2, pv);
+		ds->PrintfLine(DriverStationLCD::kUser_Line3, "I(1):");
+		ds->PrintfLine(DriverStationLCD::kUser_Line4, iv);
+		ds->PrintfLine(DriverStationLCD::kUser_Line5, "D(2):");
+		ds->PrintfLine(DriverStationLCD::kUser_Line6, dv);
 		ds->UpdateLCD();
 	}
 };
