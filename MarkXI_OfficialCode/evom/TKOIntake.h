@@ -1,4 +1,4 @@
-//Last Edited by Zach Light and Ben Kim
+//Last Edited by Arjun Biju, Murad Awad, and Ishan Shah, and maybe Steven 'cuz he was in a 20 foot radius of us.
 // on 01/31/2014
 #ifndef __TKOINTAKE_H
 #define __TKOINTAKE_H

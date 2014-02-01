@@ -1,13 +1,12 @@
-//Last Edited by Zach Light and Ben Kim
+//Last Edited by Arjun Biju, Murad Awad, and Ishan Shah, and Maybe Steven 'cuz he was watching
 // on 01/31/2014
 #include "TKOIntake.h"
-
 TKOIntake* TKOIntake::m_Instance = NULL;
 
 /*
  * Initializes the 2 roller jaguars in percent Vbus mode
- *  \parm int port 1 - roller 1 Jaguar ID
- *  \parm int port 2- roller 2 Jaguar ID
+ *  \param int port 1 - roller 1 Jaguar ID
+ *  \param int port 2- roller 2 Jaguar ID
  */
 
 TKOIntake::TKOIntake() :
@@ -75,7 +74,7 @@ void TKOIntake::armMoveMiddle() {
 	}
 	if (armEncoder.Get() == (encoderValueBack + encoderValueFront)/2) {
 		_arm1.Set(0);
-		printf("The arm is high as fuuuuuuuuuu\n");
+		printf("The arm is middle as fuuuuuuuuuu\n"); //I think you meant middle C:
 	}
 
 }
@@ -92,12 +91,12 @@ void TKOIntake::armMoveManual() {
 	{
 		if(armEncoder.Get() > encoderValueMid)
 		{
-			if(-stick3.GetY() < 0)
+			if(-stick3.GetY() < 0) //By the way Murad says WHAT THE UAGH
 			{
 				_arm1.Set(stick3.GetY());
 			}
 		}
-		else if(armEncoder.Get() < encoderValueMid)
+		else if(armEncoder.Get() < encoderValueMid) 
 		{
 			if(-stick3.GetY() > 0)
 			{
