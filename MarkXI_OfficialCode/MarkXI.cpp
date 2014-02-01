@@ -10,6 +10,10 @@
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
 #include "evom/TKOIntake.h"
+#include "auton/Molecule.h"
+#include "auton/Atom.h"
+#include "auton/TurnAtom.h"
+#include "auton/DriveAtom.h"
 
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
  * Auton, vision tests
@@ -77,21 +81,19 @@ void MarkXI::Disabled() {
 
 void MarkXI::Autonomous(void) {
 	printf("Starting Autonomous \n");
-	TKOVision::inst()->StartProcessing();
-	ds = DriverStation::GetInstance();
-	TKOLogger::inst()->addMessage(
-			"--------------Autonomous started-------------");
-	if (ds->IsFMSAttached()) {
-		TKOLogger::inst()->addMessage("-----------FMS DETECTED------------");
-		TKOLogger::inst()->addMessage("PROBABLY A SERIOUS MATCH");
-		if (ds->GetAlliance() == ds->kBlue)
-			;
-		TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
-		if (ds->GetAlliance() == ds->kRed)
-			;
-		TKOLogger::inst()->addMessage("RED ALLIANCE!");
-	}
-	Wait(.1);
+	Molecule* turnRightBox = new Molecule();
+		turnRightBox->MoleculeInit();
+	//	printf("Test start");
+	//	turnRightBox->Test();
+//	//	printf("Test done");
+//	DSLog(1, "Gyro Value: %f", TKOGyro::inst()->GetAngle());
+		for(int i = 0; i < 1; i++){
+			Atom* driveStraightTwoFeet = new DriveAtom(5.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+			//Atom* turnRightAngleR = new Turn_Atom(90.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4), TKOGyro::inst());
+			turnRightBox->addAtom(driveStraightTwoFeet);
+			//turnRightBox->addAtom(turnRightAngleR);
+		}
+		turnRightBox->start();
 
 	//	TKOAutonomous::inst()->initAutonomous();
 	//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
