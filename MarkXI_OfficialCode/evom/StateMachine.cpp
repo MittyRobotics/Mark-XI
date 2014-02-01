@@ -20,7 +20,7 @@
 
 Timer* StateMachine::_timer = new Timer();
 
-//TODO define teh stuff
+//TODO define teh stuff, currently set to switchboard values
 DigitalInput* StateMachine::_piston_retract = new DigitalInput(PISTON_SWITCH_RETRACT_CHANNEL);
 DigitalInput* StateMachine::_piston_extend = new DigitalInput(PISTON_SWITCH_EXTEND_CHANNEL);
 DigitalInput* StateMachine::_latch_lock = new DigitalInput(LATCH_PISTON_LOCK_CHANNEL);
@@ -70,7 +70,7 @@ int StateMachine::createIntFromBoolArray(instance_data_t *data)
 {
     int i = 0;
     int num = 0;
-    for (; i<NUM_STATES-1; i++) {
+    for (; i < NUM_STATES - 1; i++) {
         if (data->state[i]) {
             num |= 1 << i;
         }
@@ -113,7 +113,6 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
     data->curState = STATE_PISTON_RETRACT;
     _timer->Start();
 
-    //TODO add in code to make pistons reteact
     _piston_retract_extend->Set(DoubleSolenoid::kReverse);
 
     int sensors = 0;
@@ -148,7 +147,6 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
     data->curState = STATE_LATCH_LOCK;
     _timer->Start();
 
-    // TODO add in code to make piston lock
     _latch_lock_unlock->Set(DoubleSolenoid::kForward);
 
     int sensors = 0;
@@ -186,7 +184,6 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
     data->curState = STATE_PISTON_EXTEND;
     _timer->Start();
 
-    // TODO add in code to make piston extend
     _piston_retract_extend->Set(DoubleSolenoid::kForward);
 
     int sensors = 0;
@@ -243,7 +240,6 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     
     _timer->Start();
 
-    // TODO add in code to make piston unlock
     _latch_lock_unlock->Set(DoubleSolenoid::kReverse);
 
     int sensors = 0;
