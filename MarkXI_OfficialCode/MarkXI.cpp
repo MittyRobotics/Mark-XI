@@ -33,6 +33,8 @@ class MarkXI: public SimpleRobot
 		Joystick stick1, stick2, stick3, stick4; // define joysticks
 		DriverStation *ds; // define driver station object
 		Encoder enc;
+		Solenoid light;
+		DigitalInput lightVal;
 		void Disabled();
 		void Autonomous();
 		void RobotInit();
@@ -47,7 +49,9 @@ class MarkXI: public SimpleRobot
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT),
-			enc(1, 2, false, Encoder::k4X)
+			enc(1, 2, false, Encoder::k4X),
+			light(8),
+			lightVal(3)
 		{
 			printf("Robot boot\n");
 			TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------");
@@ -58,6 +62,7 @@ void MarkXI::Test()
 	TKOLogger::inst()->addMessage("STARTING TEST MODE");
 	enc.Start();
 	enc.Reset();
+	light.Set(true);
 	if (DriverStation::GetInstance()->GetDigitalIn(1))
 	{
 		printf("----------------------\n");
@@ -67,8 +72,10 @@ void MarkXI::Test()
 	}
 	while (IsEnabled()) //encoder testing
 	{
+		DSLog(1, "Lval: %f", lightVal.Get());
 		printf("Encoder 1: %f\n", (float)enc.Get());
 		printf("Encoder Rate 1: %f\n", enc.GetRate());
+		printf("Light: %f\n", lightVal.Get());
 	}
 	printf("Calling test function \n");
 	printf("Starting tasks \n");
@@ -82,6 +89,7 @@ void MarkXI::Test()
 	}
 	printf("Stopping shooter, logger \n");
 	//TKOShooter::inst()->Stop();
+	light.Set(false);
 	TKOLogger::inst()->Stop();
 	printf("Stopped testing \n");
 	TKOLogger::inst()->addMessage("ENDED TEST MODE");
@@ -171,6 +179,7 @@ void MarkXI::OperatorControl()
 		loopTimer.Reset();
 	}
 	printf("Ending OperatorControl \n");
+	TKODrive::inst()->Stop();
 	TKOLogger::inst()->addMessage("Ending OperatorControl");
 }
 
