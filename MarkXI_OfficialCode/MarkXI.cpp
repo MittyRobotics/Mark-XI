@@ -34,7 +34,6 @@ class MarkXI: public SimpleRobot {
 public:
 	Joystick stick1, stick2, stick3, stick4; // define joysticks
 	DriverStation *ds; // define driver station object
-	TKOIntake intake;
 	void Disabled();
 	void Autonomous();
 	void RobotInit();
@@ -152,15 +151,6 @@ void MarkXI::Operator() {
 		if ((GetFPGATime() - TKOVision::inst()->lastTimestamp) <= 1000) {
 			//TKOShooter::inst()->shootDist(TKOVision::inst()->lastDist);
 		}
-	}
-	if (stick4.GetRawButton(1)) {
-		intake.armMoveFront();
-	}
-	if (stick4.GetRawButton(2)) {
-		intake.armMoveMiddle();
-	}
-	if (stick4.GetRawButton(3)) {
-		intake.armMoveBack();
 	}
 }
 
