@@ -5,7 +5,7 @@
 #include "log/TKOLogger.h"
 #include "drive/TKODrive.h"
 //#include "drive/TKOGDrive.h"
-//#include "component/TKOGyro.h"
+#include "component/TKOGyro.h"
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
 #include "evom/StateMachine.h"
@@ -100,7 +100,7 @@ void MarkXI::Test()
 void MarkXI::RobotInit()
 {
 	printf("Initializing MarkXI class \n");
-	//TKOGyro::inst()->reset();
+	TKOGyro::inst()->reset();
 //	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
@@ -152,7 +152,7 @@ void MarkXI::OperatorControl()
 	printf("Starting OperatorControl \n");
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->Start();
-	//TKOGyro::inst()->reset();
+	TKOGyro::inst()->reset();
 	//TKOShooter::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
@@ -175,8 +175,8 @@ void MarkXI::OperatorControl()
 
 void MarkXI::Operator()
 {
-	//if (stick1. GetRawButton(11))
-		//TKOGyro::inst()->reset();
+	if (stick1. GetRawButton(11))
+		TKOGyro::inst()->reset();
 	if (stick1.GetRawButton(8))
 		RegDrive();
 	if (stick1.GetRawButton(9))
