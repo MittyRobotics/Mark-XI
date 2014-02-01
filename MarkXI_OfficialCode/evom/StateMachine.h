@@ -6,8 +6,8 @@
 #ifndef ____StateMachine__
 #define ____StateMachine__
 
-#include "../../Definitions.h"
-#include "../../log/TKOLogger.h"
+#include "../Definitions.h"
+#include "../log/TKOLogger.h"
 
 
 #define DONE_FIRING 2

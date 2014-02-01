@@ -7,7 +7,7 @@
 
 #include "../Definitions.h"
 #include "../log/TKOLogger.h"
-#include "state_machine_impl/StateMachine.h"
+#include "StateMachine.h"
 
 
 class TKOShooter
