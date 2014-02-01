@@ -10,12 +10,6 @@ TKOIntake* TKOIntake::m_Instance = NULL;
  *  \parm int port 2- roller 2 Jaguar ID
  */
 
-<<<<<<< HEAD
-TKOIntake::TKOIntake(int port1,int port2):
-_roller1(port1, CANJaguar::kPercentVbus),
-_roller2(port2, CANJaguar::kPercentVbus)
-{}
-=======
 TKOIntake::TKOIntake() :
 			//jaguar numbers undefined
 			_roller1(6, CANJaguar::kPercentVbus),
@@ -33,22 +27,11 @@ TKOIntake::TKOIntake() :
 	AddToSingletonList();
 	armEncoder.Start();
 }
->>>>>>> tkoShooterCode
 
 TKOIntake::~TKOIntake() {
 	m_Instance = NULL;
 }
 
-<<<<<<< HEAD
-void TKOIntake::RollerMove(bool trigger){
-	if (trigger) {
-		_roller1.Set(-1);
-		_roller2.Set(-1);
-	}
-	else {
-		_roller1.Set(0);
-		_roller2.Set(0);
-=======
 TKOIntake* TKOIntake::inst() {
 	if (!m_Instance) {
 		printf("TKOIntake instance is null\n");
@@ -80,7 +63,6 @@ void TKOIntake::armMoveFront() { // Arm move code to move it to the lowest posit
 	if (limitSwitchArm.Get() == 1) {
 		_arm1.Set(0);
 		printf("The arm is at the front.\n");
->>>>>>> tkoShooterCode
 	}
 }
 
@@ -93,7 +75,7 @@ void TKOIntake::armMoveMiddle() {
 	}
 	if (armEncoder.Get() == (encoderValueBack + encoderValueFront)/2) {
 		_arm1.Set(0);
-		printf("The arm is high as fuuuuuuuuuu\n");
+		printf("The arm is in the middle\n");
 	}
 
 }

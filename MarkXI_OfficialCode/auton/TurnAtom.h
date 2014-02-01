@@ -2,11 +2,7 @@
 #define _TURN_ATOM_H
 
 #include "Atom.h"
-<<<<<<< HEAD
-#include "../component/TKOGyro.h"
-=======
 #include "../Component/TKOGyro.h"
->>>>>>> tkoShooterCode
 #include "../Definitions.h"
 
 class Turn_Atom : public Atom{

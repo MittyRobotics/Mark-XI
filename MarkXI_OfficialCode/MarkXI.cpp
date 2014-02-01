@@ -6,6 +6,7 @@
 #include "drive/TKODrive.h"
 #include "drive/TKOGDrive.h"
 #include "component/TKOGyro.h"
+//#include "auton/TKOAutonomous.h"
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
 #include "evom/TKOIntake.h"
@@ -63,11 +64,11 @@ void MarkXI::RobotInit() {
 
 void MarkXI::Disabled() {
 	printf("Robot Dying!\n");
-	TKOLogger::inst()->Stop();
 	//TKOShooter::inst()->Stop();
-//	TKODrive::inst()->Stop();
-//	TKOGDrive::inst()->Stop();
-	//TKOVision::inst()->StopProcessing();
+	TKODrive::inst()->Stop();
+	TKOGDrive::inst()->Stop();
+	TKOVision::inst()->StopProcessing();
+	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled()) {
 
@@ -105,27 +106,8 @@ void MarkXI::OperatorControl() {
 	printf("Starting OperatorControl \n");
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->Start();
-	//TKOGyro::inst()->reset();
+	TKOGyro::inst()->reset();
 	//TKOShooter::inst()->Start();
-<<<<<<< HEAD
-	//TKOVision::inst()->StartProcessing();  //NEW VISION START
-	RegDrive(); //Choose here between kind of drive to start with
-	Timer loopTimer;
-	loopTimer.Start();
-	
-	TKOLogger::inst()->addMessage("--------------Teleoperated started-------------");
-	long counter = 0;
-	while (IsOperatorControl() && IsEnabled())
-	{
-		DSClear();
-		loopTimer.Reset();
-		counter ++;
-		//if (counter % 10 == 0)
-		{
-			TKOLogger::inst()->addMessage("Test: %d : test", counter);
-			//printf("Added%i\n", counter);
-		}
-=======
 	TKOVision::inst()->StartProcessing(); //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;
@@ -138,7 +120,6 @@ void MarkXI::OperatorControl() {
 		loopTimer.Reset();
 		DSClear();
 
->>>>>>> tkoShooterCode
 		MarkXI::Operator();
 		if (loopTimer.Get() > 0.1) {
 			TKOLogger::inst()->addMessage(
@@ -147,11 +128,11 @@ void MarkXI::OperatorControl() {
 			printf("!!!CRITICAL Operator loop very long, %f%s\n",
 					loopTimer.Get(), " seconds.");
 		}
-		DSLog(1, "Dist: %f", TKOVision::inst()->getLastDistance());
-		DSLog(2, "Hot: %s", TKOVision::inst()->getLastTargetReport().Hot);
-		DSLog(3, "G_ang: %f", TKOGyro::inst()->GetAngle());
-		DSLog(4, "Clock %f", GetClock());
-		DSLog(5, "Buf Len %i", TKOLogger::inst()->getBufferLength());
+		DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
+		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
+		DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
+		DSLog(4, "Clock %f\n", GetClock());
+		DSLog(5, "")
 		Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}
@@ -173,17 +154,6 @@ void MarkXI::Operator() {
 	}
 }
 
-<<<<<<< HEAD
-void MarkXI::RegDrive()
-{
-//	TKOGDrive::inst()->Stop();
-//	TKODrive::inst()->Start();
-}
-void MarkXI::GyroDrive()
-{
-//	TKODrive::inst()->Stop();
-//	TKOGDrive::inst()->Start();
-=======
 void MarkXI::RegDrive() {
 	TKOGDrive::inst()->Stop();
 	TKODrive::inst()->Start();
@@ -191,7 +161,6 @@ void MarkXI::RegDrive() {
 void MarkXI::GyroDrive() {
 	TKODrive::inst()->Stop();
 	TKOGDrive::inst()->Start();
->>>>>>> tkoShooterCode
 }
 
 START_ROBOT_CLASS(MarkXI)
