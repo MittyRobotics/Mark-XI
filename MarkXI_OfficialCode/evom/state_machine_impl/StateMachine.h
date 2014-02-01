@@ -1,7 +1,8 @@
 //
 //  StateMachine.h
 //
-
+// Last edited by Matt Pleva 
+//
 
 #ifndef ____StateMachine__
 #define ____StateMachine__
