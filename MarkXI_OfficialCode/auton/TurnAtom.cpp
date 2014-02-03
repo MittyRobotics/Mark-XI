@@ -3,8 +3,9 @@
 #include <cstring>
 
 // positive turns the robot clockwise.
+// q
 
-Turn_Atom::Turn_Atom(float ang, CANJaguar* drive1, CANJaguar* drive2,
+TurnAtom::TurnAtom(float ang, CANJaguar* drive1, CANJaguar* drive2,
 		CANJaguar* drive3, CANJaguar* drive4, TKOGyro* gyro) {
 	_angle = ang /* * REVS_PER_FOOT*/;
 	_drive1 = drive1;
@@ -14,15 +15,15 @@ Turn_Atom::Turn_Atom(float ang, CANJaguar* drive1, CANJaguar* drive2,
 	_gryo = gyro;
 }
 
-Turn_Atom::~Turn_Atom() {
+TurnAtom::~TurnAtom() {
 }
 
-void Turn_Atom::resetEncoders() {
+void TurnAtom::resetEncoders() {
 	_drive1->EnableControl(0);
 	_drive3->EnableControl(0);
 }
 
-void Turn_Atom::run() {
+void TurnAtom::run() {
 
 	TKOGyro::inst()->reset();
 
@@ -37,7 +38,7 @@ void Turn_Atom::run() {
 	}
 }
 
-bool Turn_Atom::turn(double target) {
+bool TurnAtom::turn(double target) {
 	double currAngle = TKOGyro::inst()->GetAngle();
 
 	if (_drive1->GetOutputCurrent() > DRIVE_CURRENT_CUTOFF

@@ -1,8 +1,9 @@
 //Last Edited by Ishan Shah and Alex Parks
 #include "DriveAtom.h"
 #include <cstring>
+// new branch
 
-Drive_Atom::Drive_Atom(float feet, CANJaguar* drive1, CANJaguar* drive2,
+DriveAtom::DriveAtom(float feet, CANJaguar* drive1, CANJaguar* drive2,
 		CANJaguar* drive3, CANJaguar* drive4) {
 	const float REVS_PER_FOOT = 0.7652439024;
 	_distance = feet * REVS_PER_FOOT;
@@ -12,10 +13,10 @@ Drive_Atom::Drive_Atom(float feet, CANJaguar* drive1, CANJaguar* drive2,
 	_drive4 = drive4;
 }
 
-Drive_Atom::~Drive_Atom() {
+DriveAtom::~DriveAtom() {
 }
 
-void Drive_Atom::run() {
+void DriveAtom::run() {
 	ds = DriverStation::GetInstance();
 	//don't forget to divide number of rotations by REVS_PER_FOOT in order to get feet traveled
 	_drive1->EnableControl(0);

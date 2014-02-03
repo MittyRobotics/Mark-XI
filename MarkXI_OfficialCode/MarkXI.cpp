@@ -8,7 +8,12 @@
 #include "component/TKOGyro.h"
 //#include "auton/TKOAutonomous.h"
 #include "vision/TKOVision.h"
+#include "evom/TKOShooter.h"
 #include "evom/TKOIntake.h"
+#include "auton/Molecule.h"
+#include "auton/Atom.h"
+#include "auton/TurnAtom.h"
+#include "auton/DriveAtom.h"
 
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
  * Auton, vision tests
@@ -44,9 +49,9 @@ public:
 
 	MarkXI::MarkXI() :
 		stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
-		stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
-		stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
-		stick4(STICK_4_PORT) // initialize joystick 4 < second EVOM joystick
+				stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
+				stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
+				stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
 	{
 	}
 };
@@ -76,19 +81,19 @@ void MarkXI::Disabled() {
 
 void MarkXI::Autonomous(void) {
 	printf("Starting Autonomous \n");
-	TKOVision::inst()->StartProcessing();
-	ds = DriverStation::GetInstance();
-	TKOLogger::inst()->addMessage(
-			"--------------Autonomous started-------------");
-	if (ds->IsFMSAttached()) {
-		TKOLogger::inst()->addMessage("-----------FMS DETECTED------------");
-		TKOLogger::inst()->addMessage("PROBABLY A SERIOUS MATCH");
-		if (ds->GetAlliance() == ds->kBlue)
-			TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
-		if (ds->GetAlliance() == ds->kRed)
-			TKOLogger::inst()->addMessage("RED ALLIANCE!");
-	}
-	Wait(.1);
+	Molecule* turnRightBox = new Molecule();
+		turnRightBox->MoleculeInit();
+	//	printf("Test start");
+	//	turnRightBox->Test();
+//	//	printf("Test done");
+//	DSLog(1, "Gyro Value: %f", TKOGyro::inst()->GetAngle());
+		for(int i = 0; i < 1; i++){
+			Atom* driveStraightTwoFeet = new DriveAtom(5.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+			//Atom* turnRightAngleR = new Turn_Atom(90.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4), TKOGyro::inst());
+			turnRightBox->addAtom(driveStraightTwoFeet);
+			//turnRightBox->addAtom(turnRightAngleR);
+		}
+		turnRightBox->start();
 
 	//	TKOAutonomous::inst()->initAutonomous();
 	//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
@@ -110,7 +115,8 @@ void MarkXI::OperatorControl() {
 	Timer loopTimer;
 	loopTimer.Start();
 
-	TKOLogger::inst()->addMessage("--------------Teleoperated started-------------");
+	TKOLogger::inst()->addMessage(
+			"--------------Teleoperated started-------------");
 
 	while (IsOperatorControl() && IsEnabled()) {
 		loopTimer.Reset();
@@ -118,8 +124,11 @@ void MarkXI::OperatorControl() {
 
 		MarkXI::Operator();
 		if (loopTimer.Get() > 0.1) {
-			TKOLogger::inst()->addMessage("!!!CRITICAL Operator loop very long, length", loopTimer.Get());
-			printf("!!!CRITICAL Operator loop very long, %f%s\n", loopTimer.Get(), " seconds.");
+			TKOLogger::inst()->addMessage(
+					"!!!CRITICAL Operator loop very long, length",
+					loopTimer.Get());
+			printf("!!!CRITICAL Operator loop very long, %f%s\n",
+					loopTimer.Get(), " seconds.");
 		}
 		DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
 		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);

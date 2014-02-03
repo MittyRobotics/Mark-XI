@@ -127,6 +127,8 @@ void TKODrive::TankDrive()
 		drive4.Set(stick2.GetY() * 0.8);
 	}
 }
+
+
 bool TKODrive::VerifyJags() //if returns false, jag problems
 {
 	if (drive1.IsAlive() and not drive1.StatusIsFatal())
