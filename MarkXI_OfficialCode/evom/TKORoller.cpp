@@ -6,6 +6,8 @@
  *  \parm int port 2- roller 2 Jaguar ID
  */
 
+//roller is here ya
+
 TKORoller::TKORoller(int rollerPort1,int rollerPort2):
 _roller1(rollerPort1, CANJaguar::kPercentVbus),
 _roller2(rollerPort2, CANJaguar::kPercentVbus),
