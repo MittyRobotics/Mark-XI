@@ -18,16 +18,20 @@ class RobotDemo : public SimpleRobot
 
 public:
 	RobotDemo():
-		l_f(DRIVE_L1_ID, CANJaguar::kSpeed), l_b(DRIVE_L2_ID, CANJaguar::kSpeed), r_f(DRIVE_R1_ID, CANJaguar::kSpeed), r_b(DRIVE_R2_ID, CANJaguar::kSpeed),
+		l_f(DRIVE_L1_ID, CANJaguar::kSpeed), l_b(DRIVE_L2_ID, CANJaguar::kPercentVbus), r_f(DRIVE_R1_ID, CANJaguar::kSpeed), r_b(DRIVE_R2_ID, CANJaguar::kPercentVbus),
 		stick1(STICK_1_PORT), stick2(STICK_2_PORT), stick3(STICK_3_PORT), ds()		// as they are declared above.
 	{
+		l_f.EnableControl(0);
+		r_f.EnableControl(0);
+		l_b.EnableControl(0);
+		r_b.EnableControl(0);
 		ds = DriverStationLCD::GetInstance();
 		SetPID();
 		DisableSafety();
 		SetSpeedReference();
 		usePID = true;
-		kP = 0.2;
-		kI = 0.0015;
+		kP = 0.32;
+		kI = 0.0005;
 		kD = 0.0;
 	}
 
@@ -54,16 +58,16 @@ public:
 			if (stick1.GetRawButton(3))
 				usePID = !usePID;
 				*/
-			while(stick2.GetRawButton(3)) {
-				kP = fabs(stick2.GetY()*0.5);
+			while(stick3.GetRawButton(3)) {
+				kP = fabs(stick3.GetY()*0.5);
 				PID_Station();
 			}
-			while(stick2.GetTrigger()) {
-				kI = fabs(stick2.GetY()*0.004);
+			while(stick3.GetTrigger()) {
+				kI = fabs(stick3.GetY()*0.004);
 				PID_Station();
 			}
-			while(stick2.GetRawButton(2)) {
-				kD = fabs(stick2.GetY()*0.002);
+			while(stick3.GetRawButton(2)) {
+				kD = fabs(stick3.GetY()*0.002);
 				PID_Station();
 			}
 			TankDrive();
@@ -76,21 +80,40 @@ public:
 			if (l_f.GetControlMode() == CANJaguar::kPercentVbus)
 				l_f.ChangeControlMode(CANJaguar::kSpeed);
 			
+			/*
 			if (l_b.GetControlMode() == CANJaguar::kPercentVbus)
 				l_b.ChangeControlMode(CANJaguar::kSpeed);
+				*/
 			
 			if (r_f.GetControlMode() == CANJaguar::kPercentVbus)
 				r_f.ChangeControlMode(CANJaguar::kSpeed);
 			
+			/*
 			if (r_b.GetControlMode() == CANJaguar::kPercentVbus)
 				r_b.ChangeControlMode(CANJaguar::kSpeed);
+				*/
 			
 			//EnablePIDControl();
 			
 			l_f.Set(-stick1.GetY()*max_speed);
-			r_f.Set(stick1.GetY()*max_speed);
-			l_b.Set(l_f.GetSpeed());
-			r_b.Set(r_f.GetSpeed());
+			r_f.Set(stick2.GetY()*max_speed);
+			l_b.Set(-stick1.GetY());
+			r_b.Set(stick2.GetY());
+			l_f.EnableControl(0);
+			r_f.EnableControl(0);
+			l_b.EnableControl(0);
+			r_b.EnableControl(0);
+			ds->Clear();
+			char l1[50], l2[50], r1[50], r2[50];
+			sprintf(l1, "%f", l_f.GetSpeed());
+			sprintf(l2, "%f", l_b.GetSpeed());
+			sprintf(r1, "%f", r_f.GetSpeed());
+			sprintf(r2, "%f", r_b.GetSpeed());
+			ds->PrintfLine(DriverStationLCD::kUser_Line1, l1);
+			ds->PrintfLine(DriverStationLCD::kUser_Line2, l2);
+			ds->PrintfLine(DriverStationLCD::kUser_Line3, r1);
+			ds->PrintfLine(DriverStationLCD::kUser_Line4, r2);
+			ds->UpdateLCD();
 		}
 		/*
 		
@@ -139,8 +162,8 @@ public:
 		void SetSpeedReference() {
 			l_f.ConfigEncoderCodesPerRev(ENCODER_REVS);
 			r_f.ConfigEncoderCodesPerRev(ENCODER_REVS);
-			l_f.SetSpeedReference(JAG_SPEEDREF);
-			r_f.SetSpeedReference(JAG_SPEEDREF);
+			l_f.SetSpeedReference(l_f.kSpeedRef_QuadEncoder);
+			r_f.SetSpeedReference(l_f.kSpeedRef_QuadEncoder);
 		}
 	void EnablePIDControl() {
 		l_f.EnableControl();

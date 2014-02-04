@@ -11,12 +11,14 @@ class RobotDemo : public SimpleRobot
 {
 	CANJaguar l_f, l_b, r_f, r_b;
 	Joystick stick1, stick2; // only joystick
+	DriverStationLCD* ds;
 
 public:
 	RobotDemo():
 		l_f(DRIVE_L1_ID), l_b(DRIVE_L2_ID), r_f(DRIVE_R1_ID), r_b(DRIVE_R2_ID),
-		stick1(STICK_1_PORT), stick2(STICK_2_PORT)		// as they are declared above.
+		stick1(STICK_1_PORT), stick2(STICK_2_PORT), ds()		// as they are declared above.
 	{
+		ds = DriverStationLCD::GetInstance();
 	}
 
 	/**
@@ -43,12 +45,34 @@ public:
 				r_f.Set(stick2.GetY() * 0.8);
 				l_b.Set(-stick1.GetY() * 0.8);
 				r_b.Set(stick2.GetY() * 0.8);
+				char f1[50], f2[50], r1[50], r2[50];
+				sprintf(f1, "%f", l_f.Get());
+				sprintf(f2, "%f", l_b.Get());
+				sprintf(r1, "%f", r_f.Get());
+				sprintf(r2, "%f", r_b.Get());
+				ds->Clear();
+				ds->PrintfLine(DriverStationLCD::kUser_Line1, f1);
+				ds->PrintfLine(DriverStationLCD::kUser_Line2, f2);
+				ds->PrintfLine(DriverStationLCD::kUser_Line3, r1);
+				ds->PrintfLine(DriverStationLCD::kUser_Line4, r2);
+				ds->UpdateLCD();
 			}
 		else {
 				l_b.Set(-stick1.GetY() * 0.8);
 				r_b.Set(stick2.GetY() * 0.8);
 				l_f.Set(-stick1.GetY() * 0.8);
 				r_f.Set(stick2.GetY() * 0.8);
+				char f1[50], f2[50], r1[50], r2[50];
+				sprintf(f1, "%f", l_f.Get());
+				sprintf(f2, "%f", l_b.Get());
+				sprintf(r1, "%f", r_f.Get());
+				sprintf(r2, "%f", r_b.Get());
+				ds->Clear();
+				ds->PrintfLine(DriverStationLCD::kUser_Line1, f1);
+				ds->PrintfLine(DriverStationLCD::kUser_Line2, f2);
+				ds->PrintfLine(DriverStationLCD::kUser_Line3, r1);
+				ds->PrintfLine(DriverStationLCD::kUser_Line4, r2);
+				ds->UpdateLCD();
 		}
 	}
 	
