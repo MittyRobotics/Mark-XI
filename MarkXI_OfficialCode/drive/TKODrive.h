@@ -17,8 +17,16 @@ public:
 private:
 	CANJaguar drive1, drive2, drive3, drive4; // define motors
 	Joystick stick1, stick2, stick3, stick4; // define joysticks
+	DoubleSolenoid shifterDS;
 	Task *driveTask;
+	
+	long driveLogCounter;
+	float lastShift, lastDataLog;
+	double maxDrive1RPM, maxDrive3RPM;
+	
 	void TankDrive();
+	void LogData();
+	void ManualShift();
 	TKODrive();
 	~TKODrive();
 	static TKODrive* m_Instance;

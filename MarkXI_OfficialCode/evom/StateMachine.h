@@ -57,9 +57,10 @@ public:
 
     static bool isArmMovable();
     static bool armCanMove;
+    static float lastSensorStringPrint;
     
     state_t run_state(state_t, instance_data_t*);
-    state_t init(instance_data_t *data);
+    state_t init(instance_data_t *data, Joystick *stick3);
     static string state_to_string(instance_data_t *data);
     static void sensors_to_string(instance_data_t *data);
 private:

@@ -9,7 +9,7 @@
 #include "WPILib.h"
 #include "Vision/RGBImage.h"
 #include "Vision/BinaryImage.h"
-#include "Math.h"
+#include "math.h"
 #include "stdlib.h"
 #include <cstring>
 
@@ -42,10 +42,10 @@ const int STICK_3_PORT = 3;
 const int STICK_4_PORT = 4;
 
 //Jaguar ports
-const int DRIVE_L1_ID = 2;
-const int DRIVE_L2_ID = 3;
-const int DRIVE_R1_ID = 4;
-const int DRIVE_R2_ID = 5;
+const int DRIVE_L1_ID = 1;
+const int DRIVE_L2_ID = 4;
+const int DRIVE_R1_ID = 2;
+const int DRIVE_R2_ID = 3;
 
 // Spinner constants
 const float RADIUS_WHEELS = 4;

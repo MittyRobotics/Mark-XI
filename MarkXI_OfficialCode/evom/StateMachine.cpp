@@ -3,7 +3,7 @@
 //
 //  Please don't run this on the main thread!!!
 //
-// Last edited by Matt Pleva 01/31/2014
+// Last edited by Vadim Korolik 02/03/2014
 //
 
 /*
@@ -25,11 +25,12 @@ DigitalInput* StateMachine::_piston_retract = new DigitalInput(PISTON_SWITCH_RET
 DigitalInput* StateMachine::_piston_extend = new DigitalInput(PISTON_SWITCH_EXTEND_CHANNEL);
 DigitalInput* StateMachine::_latch_lock = new DigitalInput(LATCH_PISTON_LOCK_CHANNEL);
 DigitalInput* StateMachine::_is_cocked = new DigitalInput(IS_COCKED_SWITCH_CHANNEL);
-Joystick* StateMachine::_triggerJoystick = new Joystick(1);
+Joystick* StateMachine::_triggerJoystick = NULL;
 
 // TODO nums are bs
-DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2,1,1);
-DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(2,1,1);
+DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2,3,4);
+DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(2,5,6);
+float StateMachine::lastSensorStringPrint = 0.;
 
 StateMachine::StateMachine()
 {
@@ -41,6 +42,7 @@ StateMachine::StateMachine()
     _state_table[STATE_ERR] = do_err_state;
     
     armCanMove = false;
+    lastSensorStringPrint = GetTime();
 }
 
 StateMachine::~StateMachine()
@@ -80,8 +82,9 @@ int StateMachine::createIntFromBoolArray(instance_data_t *data)
     return num;
 }
 
-state_t StateMachine::init(instance_data_t *data)
+state_t StateMachine::init(instance_data_t *data, Joystick *stick3)
 {
+	_triggerJoystick = stick3;
     int sensors = getSensorData(data);
     printf("Initializing state machine \n");
     sensors_to_string(data);
@@ -314,20 +317,29 @@ string StateMachine::state_to_string(instance_data_t *data)
 
 void StateMachine::sensors_to_string(instance_data_t *data)
 {
+	if (GetTime() - lastSensorStringPrint <= 1.) return;
+	
+	TKOLogger::inst()->addMessage("State: %s",state_to_string(data).c_str());
+	
     printf("0b (ic) (ll) (Pe) (Pr)\n0b");
     int sensors = createIntFromBoolArray(data);
     int i = NUM_STATES-2;
     for (; i > -1; i--) {
         printf("  %2d ",(sensors & (1 << i)));
     }
+    
+    lastSensorStringPrint = GetTime();
 }
 
 state_t StateMachine::do_err_state(instance_data_t *data)
 {
-	//getSensorData(data);
-    printf("%s\n",state_to_string(data).c_str());
-    TKOLogger::inst()->addMessage("STATE ERROR: %s ERROR!!! SENSORS: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
-    sensors_to_string(data);
+	//GetSensorData(data);
+	if (GetTime() - lastSensorStringPrint > 1.)
+	{
+		printf("%s\n",state_to_string(data).c_str());
+		TKOLogger::inst()->addMessage("STATE ERROR: %s ERROR!!! SENSORS: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
+	}
+	sensors_to_string(data);
     return STATE_ERR;
 }
 
@@ -336,32 +348,4 @@ bool StateMachine::isArmMovable() {
 		return true;
 	return false;
 }
-
-
-/*
-    instance_data_t data;
-    state_t cur_state;
-    StateMachine s;
-    cur_state = s.init(data);
-    bool errState = false;
-    while(1)
-    {
-        cur_state = s.run(cur_state,&data);
-        if (cur_state == STATE_ERR && ! errState)
-        {
-            s.timerStart();
-            errState = true;
-        }
-
-        if(errState && s.GetTimer() > 30.)
-        {
-            printf("Baked potato. ");
-        }
-        else if (errState && s.GetTimer() <= 30.)
-        {
-            printf("Potato. ");
-        }
-
-    }
-*/
 

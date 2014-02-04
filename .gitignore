@@ -29,10 +29,10 @@ Thumbs.db
 .DS_Store
 .metadata/
 PPC603gnu/
-#.cproject
-#.project
-#.wrmakefile
-#.wrproject
+.cproject
+.project
+.wrmakefile
+.wrproject
 *.cbp
 *.depend
 *.layout
