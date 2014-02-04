@@ -54,7 +54,7 @@ class MarkXI: public SimpleRobot
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT),
-			enc(1, 2, false, Encoder::k4X),
+			enc(1, 2, false, Encoder::k4X), //TODO Figure out what encoder we use...
 			compressor(6, 1),
 			canTest(7, CANJaguar::kPercentVbus)
 		{
