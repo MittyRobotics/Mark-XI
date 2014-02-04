@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 01/06/2014
+//on 02/04/2014
 #include "Definitions.h"
 #include "component/TKORelay.h"
 #include "log/TKOLogger.h"
@@ -137,6 +137,26 @@ void MarkXI::Disabled()
 void MarkXI::Autonomous(void)
 {
 	printf("Starting Autonomous \n");
+	Molecule* turnRightBox = new Molecule();
+		turnRightBox->MoleculeInit();
+	//	printf("Test start");
+	//	turnRightBox->Test();
+//	//	printf("Test done");
+//	DSLog(1, "Gyro Value: %f", TKOGyro::inst()->GetAngle());
+		for(int i = 0; i < 1; i++){
+			Atom* driveStraightTwoFeet = new DriveAtom(5.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+			//Atom* turnRightAngleR = new Turn_Atom(90.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4), TKOGyro::inst());
+			turnRightBox->addAtom(driveStraightTwoFeet);
+			//turnRightBox->addAtom(turnRightAngleR);
+		}
+		turnRightBox->start();
+
+	//	TKOAutonomous::inst()->initAutonomous();
+	//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
+	//	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
+	//	TKOAutonomous::inst()->startAutonomous();
+
+	TKOVision::inst()->StopProcessing();
 	//TKOVision::inst()->StartProcessing();
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->addMessage("--------------Autonomous started-------------");
@@ -169,18 +189,38 @@ void MarkXI::OperatorControl()
 	//TKOShooter::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
+	Timer loopTimer;
+	loopTimer.Start();
+
+	TKOLogger::inst()->addMessage(
+			"--------------Teleoperated started-------------");
+
+	while (IsOperatorControl() && IsEnabled()) {
+		loopTimer.Reset();
+		DSClear();
 	
 	TKOLogger::inst()->addMessage("--------------Teleoperated started-------------");
 	
 	while (IsOperatorControl() && IsEnabled())
 	{
 		MarkXI::Operator();
+		if (loopTimer.Get() > 0.1) {
+			TKOLogger::inst()->addMessage(
+					"!!!CRITICAL Operator loop very long, length",
+					loopTimer.Get());
+			printf("!!!CRITICAL Operator loop very long, %f%s\n",
+					loopTimer.Get(), " seconds.");
+		}
+		DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
+		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
+		DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		
 		/*DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
 		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);*/
 		//DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		DSLog(4, "Clock %f\n", GetClock());
-		Wait(LOOPTIME);
+		Wait(LOOPTIME - loopTimer.Get());
+		loopTimer.Reset();
 	}
 	printf("Ending OperatorControl \n");
 	TKODrive::inst()->Stop();
