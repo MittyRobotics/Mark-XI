@@ -8,32 +8,29 @@
 
 //roller is here ya
 
-TKORoller::TKORoller(int rollerPort1,int rollerPort2):
-_roller1(rollerPort1, CANJaguar::kPercentVbus),
-_roller2(rollerPort2, CANJaguar::kPercentVbus),
-stick3(3),
-limitSwitch1(4),
-limitSwitch2(5)
-{}
+TKORoller::TKORoller(int rollerPort1, int rollerPort2):
+	_roller1(rollerPort1, CANJaguar::kPercentVbus),
+	_roller2(rollerPort2, CANJaguar::kPercentVbus), stick3(3),
+	rollerTop(4), rollerBottom(5)	// currently dummy values
+{
+}
 
-TKORoller::~TKORoller() {}
+TKORoller::~TKORoller() {
+}
 
-void TKORoller::rollerManualMove()
-	{
-		if(stick3.GetRawButton(4))
-		{
-			_roller1.Set(stick3.GetY());
-			_roller1.Set(stick3.GetY());
-			_roller2.Set(-stick3.GetY());
-			_roller2.Set(-stick3.GetY());
-		}
-		if (limitSwitch1.Get == (0)) & (limitSwitch2.Get== (0));
-		{
-			_roller1.Set(0);
-			_roller1.Set(0);
-			_roller2.Set(0);
-			_roller2.Set(0);
-		}
-		printf("%f %f Current currents:", _roller1.GetOutputCurrent(), _roller2.GetOutputCurrent());
+void TKORoller::rollerManualMove() {
+	if (stick3.GetRawButton(4)) {
+		_roller1.Set(stick3.GetY());
+		_roller1.Set(stick3.GetY());
+		_roller2.Set(-stick3.GetY());
+		_roller2.Set(-stick3.GetY());
 	}
+	if (rollerTop.Get() == 0 && rollerBottom.Get() == 0) {	// both should detect the ball
+		_roller1.Set(0);
+		_roller1.Set(0);
+		_roller2.Set(0);
+		_roller2.Set(0);
+	}
+	printf("%f %f Current currents:", _roller1.GetOutputCurrent(), _roller2.GetOutputCurrent());
+}
 

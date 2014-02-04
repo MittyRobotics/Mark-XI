@@ -1,11 +1,11 @@
-//Last Edited by Arjun Biju, Murad Awad, and Ishan Shah, 
-// on 01/31/2014
+//Last Edited by Ben Kim
+// on 02/03/2014
 #ifndef __TKOINTAKE_H
 #define __TKOINTAKE_H
 
 #include "../Definitions.h"
 
-//Code for intake roller and arm movement
+// arm code
 
 class TKOIntake: public SensorBase {
 public:
@@ -25,7 +25,7 @@ private:
 	Task *intakeTask;
 
 	CANJaguar _roller1, _roller2, _arm1;
-	DigitalInput limitSwitchArm; 
+	DigitalInput armLimitSwitch; 
 	Joystick stick1, stick2, stick3, stick4;
 	Encoder armEncoder; 
 };

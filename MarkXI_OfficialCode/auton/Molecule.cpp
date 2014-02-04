@@ -8,9 +8,9 @@ Molecule::Molecule():
 	 * Initialization of motors, creating a list of atoms to form a molecule
 	 */
 	drive1(DRIVE_L1_ID, CANJaguar::kPosition),
-	drive2(DRIVE_L2_ID, CANJaguar::kVoltage),
+	drive2(DRIVE_L2_ID, CANJaguar::kPercentVbus),
 	drive3(DRIVE_R1_ID, CANJaguar::kPosition),
-	drive4(DRIVE_R2_ID, CANJaguar::kVoltage), _list()
+	drive4(DRIVE_R2_ID, CANJaguar::kPercentVbus), _list()
 
 {
 }
