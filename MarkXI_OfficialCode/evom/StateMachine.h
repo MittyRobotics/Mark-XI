@@ -55,6 +55,9 @@ public:
     StateMachine();
     ~StateMachine();
 
+    static bool isArmMovable();
+    static bool armCanMove;
+    
     state_t run_state(state_t, instance_data_t*);
     state_t init(instance_data_t *data);
     static string state_to_string(instance_data_t *data);

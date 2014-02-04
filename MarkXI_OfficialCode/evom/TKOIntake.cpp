@@ -13,8 +13,7 @@ TKOIntake::TKOIntake() :
 			//jaguar numbers undefined
 			_roller1(6, CANJaguar::kPercentVbus),
 			_roller2(7, CANJaguar::kPercentVbus),
-			_arm1(8, CANJaguar::kPercentVbus), 
-			limitSwitchArm(1), // Optical limit switch
+			_arm1(8, CANJaguar::kPercentVbus), limitSwitchArm(1), // Optical limit switch
 			stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
@@ -51,13 +50,13 @@ void TKOIntake::init() {
 		_arm1.Set(0);
 		encoderValueFront = armEncoder.Get();
 	}
-	encoderValueMid = (encoderValueBack + encoderValueFront) /2; //Sets middle limit switch value
-	
+	encoderValueMid = (encoderValueBack + encoderValueFront) / 2; //Sets middle limit switch value
+
 }
 
-
 void TKOIntake::armMoveFront() { // Arm move code to move it to the lowest position
-
+//	if (!StateMachine::isArmMovable())
+//		return;
 
 	_arm1.Set(-1); // The arm starts going in a downwards fashion. This can be changed if needed.
 	if (limitSwitchArm.Get() == 0) {
@@ -71,11 +70,11 @@ void TKOIntake::armMoveMiddle() {
 		_arm1.Set(1);
 	}
 	if (armEncoder.Get() > encoderValueMid) {//If it is above the middle position, set it 
-		_arm1.Set(-1); 
+		_arm1.Set(-1);
 	}
-	if (armEncoder.Get() == (encoderValueBack + encoderValueFront)/2) {
+	if (armEncoder.Get() == encoderValueMid) {
 		_arm1.Set(0);
-		printf("The arm is at the middle"); 
+		printf("The arm is at the middle");
 	}
 
 }
@@ -88,28 +87,19 @@ void TKOIntake::armMoveBack() {
 	}
 }
 void TKOIntake::armMoveManual() {
-	if(limitSwitchArm.Get() == 1)
-	{
-		if(armEncoder.Get() > encoderValueMid)
-		{
-			if(-stick3.GetY() < 0) 
-			{
+	if (limitSwitchArm.Get() == 1) {
+		if (armEncoder.Get() > encoderValueMid) {
+			if (-stick3.GetY() < 0) {
 				_arm1.Set(stick3.GetY());
 			}
-		}
-		else if(armEncoder.Get() < encoderValueMid) 
-		{
-			if(-stick3.GetY() > 0)
-			{
+		} else if (armEncoder.Get() < encoderValueMid) {
+			if (-stick3.GetY() > 0) {
 				_arm1.Set(stick3.GetY());
 			}
-		}
-		else
+		} else
 			_arm1.Set(0);
-	}
-	else{
+	} else {
 		_arm1.Set(-stick3.GetY());
 	}
 }
-
 
