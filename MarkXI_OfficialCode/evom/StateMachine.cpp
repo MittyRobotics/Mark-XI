@@ -28,7 +28,7 @@ Joystick* StateMachine::_triggerJoystick = NULL;
 // TODO nums are bs
 DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2,3,4);
 DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(2,5,6);
-float StateMachine::lastSensorStringPrint = GetTime();
+float StateMachine::lastSensorStringPrint = 0.;
 
 StateMachine::StateMachine()
 {
@@ -39,6 +39,7 @@ StateMachine::StateMachine()
     _state_table[STATE_LATCH_UNLOCK] = do_state_latch_unlock;
     _state_table[STATE_ERR] = do_err_state;
     //Joystick* StateMachine::_triggerJoystick = new Joystick(1);
+    lastSensorStringPrint = GetTime();
 }
 
 StateMachine::~StateMachine()
@@ -311,6 +312,8 @@ void StateMachine::sensors_to_string(instance_data_t *data)
 {
 	if (GetTime() - lastSensorStringPrint <= 1.) return;
 	
+	TKOLogger::inst()->addMessage("State: %s",state_to_string(data).c_str());
+	
     printf("0b (ic) (ll) (Pe) (Pr)\n0b");
     int sensors = createIntFromBoolArray(data);
     int i = NUM_STATES-2;
@@ -324,9 +327,12 @@ void StateMachine::sensors_to_string(instance_data_t *data)
 state_t StateMachine::do_err_state(instance_data_t *data)
 {
 	//GetSensorData(data);
-    printf("%s\n",state_to_string(data).c_str());
-    TKOLogger::inst()->addMessage("STATE ERROR: %s ERROR!!! SENSORS: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
-    sensors_to_string(data);
+	if (GetTime() - lastSensorStringPrint > 1.)
+	{
+		printf("%s\n",state_to_string(data).c_str());
+		TKOLogger::inst()->addMessage("STATE ERROR: %s ERROR!!! SENSORS: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
+	}
+	sensors_to_string(data);
     return STATE_ERR;
 }
 

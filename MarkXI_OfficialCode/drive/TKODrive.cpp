@@ -17,10 +17,10 @@ TKODrive::TKODrive() :
 {	
 	printf("Initializing drive\n");
 	driveTask = new Task("Driving", (FUNCPTR) DriveRunner);
-	if (driveTask->SetPriority(0))
+	/*if (driveTask->SetPriority(0))
 		printf("driving priority set to 0\n");
 	else
-		printf("driving priority not set\n");
+		printf("driving priority not set\n");*/
 
 	drive1.SetSafetyEnabled(false);
 	drive2.SetSafetyEnabled(false);

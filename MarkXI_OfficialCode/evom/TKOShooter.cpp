@@ -9,14 +9,14 @@ TKOShooter::TKOShooter ():
 {	
 	shooterTask = new Task("Shooter", (FUNCPTR) shooterTaskRunner);
 	stateMachineTask = new Task("StateMachine", (FUNCPTR) stateMachineTaskRunner);
-	if (shooterTask->SetPriority(4))
+	/*if (shooterTask->SetPriority(4))
 			printf("shooterTask priority set to 4\n");
 		else
 			printf("shooterTask priority not set\n");
 	if (stateMachineTask->SetPriority(5))
 			printf("stateMachineTask priority set to 5\n");
 		else
-			printf("stateMachineTask priority not set\n");
+			printf("stateMachineTask priority not set\n");*/
 	//shooterTask->SetPriority(Task::kDefaultPriority);
 	//stateMachineTask->SetPriority(Task::kDefaultPriority);
 }
@@ -68,7 +68,6 @@ int TKOShooter::runStateMachine()
 {
 	DSClear();
 	//logging here
-	TKOLogger::inst()->addMessage("%s",s.state_to_string(&data).c_str());
 	DSLog(6, "State: %s", s.state_to_string(&data).c_str());
 	cur_state = s.run_state(cur_state,&data);
 	return -1;

@@ -33,8 +33,8 @@ class MarkXI: public SimpleRobot
 		Joystick stick1, stick2, stick3, stick4; // define joysticks
 		DriverStation *ds; // define driver station object
 		Encoder enc;
-		Solenoid light;
-		DigitalInput lightVal;
+		Compressor compressor;
+		CANJaguar canTest;
 		void Disabled();
 		void Autonomous();
 		void RobotInit();
@@ -50,21 +50,32 @@ class MarkXI: public SimpleRobot
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT),
 			enc(1, 2, false, Encoder::k4X),
-			light(8),
-			lightVal(3)
+			compressor(6, 1),
+			canTest(7, CANJaguar::kPercentVbus)
 		{
 			printf("Robot boot\n");
+			canTest.SetSafetyEnabled(false);
+			canTest.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
+			canTest.SetVoltageRampRate(0.0);
+			canTest.ConfigFaultTime(0.1);
+			canTest.SetSpeedReference(CANJaguar::kSpeedRef_Encoder); 
+			canTest.SetSpeedReference(CANJaguar::kSpeedRef_Encoder);
+			canTest.ConfigEncoderCodesPerRev(250);
+			canTest.EnableControl();
 			TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------");
 		}
 };
 void MarkXI::Test()
 {
-	if (!IsEnabled()) return;
+	if (!IsEnabled())
+		return;
 	printf("Calling test function \n");
 	TKOLogger::inst()->addMessage("STARTING TEST MODE");
+	if (DriverStation::GetInstance()->GetDigitalIn(2))
+		compressor.Start();
+	else
+		compressor.Stop();
 	enc.Start();
-	enc.Reset();
-	light.Set(true);
 	if (DriverStation::GetInstance()->GetDigitalIn(1))
 	{
 		printf("----------------------\n");
@@ -72,13 +83,6 @@ void MarkXI::Test()
 		remove("logT.txt");
 		printf("Digital input 1 true\n");
 	}
-	/*while (IsEnabled()) //encoder testing
-	{
-		DSLog(1, "Lval: %f", lightVal.Get());
-		printf("Encoder 1: %f\n", (float)enc.Get());
-		printf("Encoder Rate 1: %f\n", enc.GetRate());
-		printf("Light: %f\n", lightVal.Get());
-	}*/
 	
 	printf("Starting tasks \n");
 	TKOLogger::inst()->Start();
@@ -87,11 +91,15 @@ void MarkXI::Test()
 	TKOLogger::inst()->addMessage("STARTED SHOOTER, LOGGER IN TEST");
 	while (IsEnabled())
 	{
-		DSClear();
+		DSLog(2, "Enc Val: %f", enc.Get());
+		DSLog(3, "Enc Raw: %f", enc.GetRaw());
+		DSLog(4, "Test: %f", canTest.GetSpeed())
+		printf("Test: %f\n", canTest.GetSpeed());
 	}
 	printf("Stopping shooter, logger \n");
 	TKOShooter::inst()->Stop();
-	light.Set(false);
+	compressor.Stop();
+	enc.Stop();
 	TKOLogger::inst()->Stop();
 	printf("Stopped testing \n");
 	TKOLogger::inst()->addMessage("ENDED TEST MODE");
@@ -167,6 +175,7 @@ void MarkXI::OperatorControl()
 		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);*/
 		//DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		DSLog(4, "Clock %f\n", GetClock());
+		Wait(LOOPTIME);
 	}
 	printf("Ending OperatorControl \n");
 	TKODrive::inst()->Stop();
