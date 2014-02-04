@@ -14,6 +14,7 @@ public:
 private:
 	CANJaguar _roller1, _roller2;
 	Joystick stick3;
+	DigitalInput limitSwitch1, limitSwitch2;
 };
 
 #endif
