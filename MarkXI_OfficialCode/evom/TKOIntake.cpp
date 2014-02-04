@@ -112,4 +112,11 @@ void TKOIntake::armMoveManual() {
 	}
 }
 
+void TKOIntake::IntakeRunner()
+{
+	while (true)
+	{
+		
+	}
+}
 
