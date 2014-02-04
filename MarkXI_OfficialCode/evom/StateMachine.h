@@ -1,20 +1,28 @@
 //
 //  StateMachine.h
 //
+// Last edited by Matt Pleva 01/31/2014 
+//
 
+//USEFUL LINK: http://stackoverflow.com/questions/133214/is-there-a-typical-state-machine-implementation-pattern
 
-#ifndef ____StateMachine__
-#define ____StateMachine__
+#ifndef ____STATEMACHINE__H
+#define ____STATEMACHINE__H
 
 #include "../Definitions.h"
 #include "../log/TKOLogger.h"
 
+/*
+ * 0b | IC | LL | PE | PR |
+ * 0b |  8 |  4 |  2 |  1 |
+ */
 
-#define DONE_FIRING 2
-#define PISTON_RETRACTED 1
-#define LATCH_LOCKED_PISTON_RETRACTED 5
-#define CONST_READY_TO_FIRE 14
+#define DONE_FIRING 2	// PE
+#define PISTON_RETRACTED 1	// PR
+#define LATCH_LOCKED_PISTON_RETRACTED 5	// LL and PR
+#define CONST_READY_TO_FIRE 14	// IC and LL and PE
 
+// refer to switchboard mockup
 #define PISTON_SWITCH_RETRACT_CHANNEL 4
 #define PISTON_SWITCH_EXTEND_CHANNEL 7
 #define LATCH_PISTON_LOCK_CHANNEL 6
@@ -47,8 +55,11 @@ public:
     StateMachine();
     ~StateMachine();
 
+    static bool isArmMovable();
+    static bool armCanMove;
+    
     state_t run_state(state_t, instance_data_t*);
-    state_t init(instance_data_t *data, Joystick *stick3);
+    state_t init(instance_data_t *data);
     static string state_to_string(instance_data_t *data);
     static void sensors_to_string(instance_data_t *data);
 private:
@@ -59,11 +70,8 @@ private:
     static state_t do_state_ready_to_fire(instance_data_t *data);
     static state_t do_err_state(instance_data_t *data);
 
-    static int GetSensorData(instance_data_t *data);
+    static int getSensorData(instance_data_t *data);
     static int createIntFromBoolArray(instance_data_t *data);
-
-    static float lastSensorStringPrint;
-    
 
     state_func_t*  _state_table[NUM_STATES + 1];
 

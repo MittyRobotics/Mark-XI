@@ -225,6 +225,8 @@ void TKODrive::ManualShift()
 		lastShift = GetTime();
 	}
 }
+
+
 bool TKODrive::VerifyJags() //if returns false, jag problems
 {
 	if (drive1.IsAlive() and not drive1.StatusIsFatal())
