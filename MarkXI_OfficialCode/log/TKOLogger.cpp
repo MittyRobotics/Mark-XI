@@ -55,10 +55,10 @@ void TKOLogger::Start()
 	if (!_logTask) {
 		_logTask = new Task("Logging", (FUNCPTR) LogRunner); // create a new task called Logging which runs LogRunner
 		printf("Created logger task\n");
-		if (_logTask->SetPriority(254))
-			printf("log task priority set to 254\n");
+		/*if (_logTask->SetPriority(254))
+			printf("logging task priority set to 254\n");
 		else
-			printf("log task priority not set\n");
+			printf("logging task priority not set\n");*/
 	}
 	if (not _logFile.is_open())
 		_logFile.open("logT.txt", ios::app); // open logT.txt in append mode
