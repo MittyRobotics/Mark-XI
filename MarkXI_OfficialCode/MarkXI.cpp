@@ -6,9 +6,14 @@
 #include "drive/TKODrive.h"
 //#include "drive/TKOGDrive.h"
 #include "component/TKOGyro.h"
+#include "component/TKORelay.h"
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
 #include "evom/StateMachine.h"
+#include "auton/Atom.h"
+#include "auton/DriveAtom.h"
+#include "auton/Molecule.h"
+#include "auton/TurnAtom.h"
 
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
  * Auton, vision tests

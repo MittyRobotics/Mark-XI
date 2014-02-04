@@ -25,7 +25,6 @@ DigitalInput* StateMachine::_piston_retract = new DigitalInput(PISTON_SWITCH_RET
 DigitalInput* StateMachine::_piston_extend = new DigitalInput(PISTON_SWITCH_EXTEND_CHANNEL);
 DigitalInput* StateMachine::_latch_lock = new DigitalInput(LATCH_PISTON_LOCK_CHANNEL);
 DigitalInput* StateMachine::_is_cocked = new DigitalInput(IS_COCKED_SWITCH_CHANNEL);
-Joystick* StateMachine::_triggerJoystick = new Joystick(1);
 
 // TODO nums are bs
 DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2,1,1);
@@ -80,8 +79,9 @@ int StateMachine::createIntFromBoolArray(instance_data_t *data)
     return num;
 }
 
-state_t StateMachine::init(instance_data_t *data)
+state_t StateMachine::init(instance_data_t *data, Joystick *stick3)
 {
+	_triggerJoystick = stick3;
     int sensors = getSensorData(data);
     printf("Initializing state machine \n");
     sensors_to_string(data);
