@@ -82,11 +82,20 @@ void MarkXI::Disabled() {
 
 void MarkXI::Autonomous(void) {
 
-	while (IsAutonomous() && IsEnabled()) {
-		DSLog(1, "Gyro value: %f", TKOGyro::inst()->GetAngle());
-
-		Wait(0.2);
+	Molecule* turnRightBox = new Molecule();
+	turnRightBox->MoleculeInit();
+//	printf("Test start");
+//	turnRightBox->Test();
+//	printf("Test done");
+	for(int i = 0; i < 1; i++){
+		Atom* driveStraightTwoFeet = new DriveAtom(5.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+		//Atom* turnRightAngleR = new Turn_Atom(90.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4), TKOGyro::inst());
+		turnRightBox->addAtom(driveStraightTwoFeet);
+		//turnRightBox->addAtom(turnRightAngleR);
+		Atom* turnRightAngleR = new TurnAtom(90.0f,&(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+		turnRightBox->addAtom(turnRightAngleR); 
 	}
+	turnRightBox->start();
 
 }
 
