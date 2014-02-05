@@ -47,11 +47,7 @@ public:
 	 * Runs the motors with arcade steering. 
 	 */
 	void OperatorControl(){
-		
 		EnablePIDControl();
-		ds->PrintfLine(DriverStationLCD::kUser_Line1,"HI");
-		ds->UpdateLCD();
-		
 		while (IsOperatorControl()&&IsEnabled())
 		{
 			/*
@@ -60,14 +56,17 @@ public:
 				*/
 			while(stick3.GetRawButton(3)) {
 				kP = fabs(stick3.GetY()*0.5);
+				SetPID();
 				PID_Station();
 			}
 			while(stick3.GetTrigger()) {
 				kI = fabs(stick3.GetY()*0.004);
+				SetPID();
 				PID_Station();
 			}
 			while(stick3.GetRawButton(2)) {
 				kD = fabs(stick3.GetY()*0.002);
+				SetPID();
 				PID_Station();
 			}
 			TankDrive();
@@ -76,7 +75,6 @@ public:
 	
 	void TankDrive() {
 		if (usePID == true) {
-			SetPID();
 			if (l_f.GetControlMode() == CANJaguar::kPercentVbus)
 				l_f.ChangeControlMode(CANJaguar::kSpeed);
 			
@@ -84,7 +82,6 @@ public:
 			if (l_b.GetControlMode() == CANJaguar::kPercentVbus)
 				l_b.ChangeControlMode(CANJaguar::kSpeed);
 				*/
-			
 			if (r_f.GetControlMode() == CANJaguar::kPercentVbus)
 				r_f.ChangeControlMode(CANJaguar::kSpeed);
 			
@@ -94,25 +91,17 @@ public:
 				*/
 			
 			//EnablePIDControl();
-			
+
 			l_f.Set(-stick1.GetY()*max_speed);
 			r_f.Set(stick2.GetY()*max_speed);
-			l_b.Set(-stick1.GetY());
+			l_b.Set();
 			r_b.Set(stick2.GetY());
-			l_f.EnableControl(0);
-			r_f.EnableControl(0);
-			l_b.EnableControl(0);
-			r_b.EnableControl(0);
+			char l1[50], r1[50];
+			sprintf(l1, "%f", l_b.GetSpeed());
+			sprintf(r1, "%f", r_b.GetSpeed());
 			ds->Clear();
-			char l1[50], l2[50], r1[50], r2[50];
-			sprintf(l1, "%f", l_f.GetSpeed());
-			sprintf(l2, "%f", l_b.GetSpeed());
-			sprintf(r1, "%f", r_f.GetSpeed());
-			sprintf(r2, "%f", r_b.GetSpeed());
 			ds->PrintfLine(DriverStationLCD::kUser_Line1, l1);
-			ds->PrintfLine(DriverStationLCD::kUser_Line2, l2);
 			ds->PrintfLine(DriverStationLCD::kUser_Line3, r1);
-			ds->PrintfLine(DriverStationLCD::kUser_Line4, r2);
 			ds->UpdateLCD();
 		}
 		/*
