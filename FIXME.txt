@@ -1,35 +1,50 @@
-In File MarkXI_OfficialCode\evom\TKOShooter.h : 
+In File MarkXI_OfficialCode/MarkXI.cpp : 
+line #: 18 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
+        19  * FOR 2014 OffSeason: Possibly add different log files for different tasks?
+        20  * 
+        21  * Figure out which solenoid corresponds with which id. (forward vs reverse)
+        22  * 		Latch lock
+        23  * 			Forward:
+        24  * 			Reverse:
+        25  * 		Catapult piston
+        26  * 			Forward:
+        27  * 			Reverse:
+        28  * 		Drive shifter
+        29  * 			Forward:
+        30  * 			Reverse:
+        31  * -----------------------------LAST DONE-------------------------------*
+        32  * 02/05
+        33  * 		A lot....... integrated all branches, ready for testing on robot.
+        34  * 		Follow git commits.
+        35  */
 
-line #: 28 typedef struct instance_data  //TODO figure out what data we need
+line #: 60 			enc(1, 2, false, Encoder::k4X), //TODO Figure out what encoder we use...
 
+In File MarkXI_OfficialCode/evom/StateMachine.cpp : 
+line #: 9 /*
+        10  * TODO 6
+        11  * function to check the state for arm DONE
+        12  * what do if err? state err do nothing aka freeze DONE
+        13  * arm must be in fire pos or shouldn't fire (btn for that)???
+        14  * also arm doesnt move unless this is in ready to fire state
+        15  * change the timings for that while loops
+        16  * check state in ready to fire
+        17  * */
 
-In File MarkXI_OfficialCode\evom\state_machine_impl\StateMachine.cpp : 
+line #: 23 //TODO define teh stuff, currently set to switchboard values
 
-line #: 20 //TODO define teh stuff
-line #: 26 // TODO nums are bs
-line #: 65     // TODO fix the values and flip the logic only return true in one case
-line #: 112     //TODO add in code to make pistons reteact
-line #: 145     // TODO add in code to make piston lock
-line #: 178     // TODO add in code to make piston extend
-line #: 224     // TODO add in code to make piston unlock
+line #: 30 // TODO nums are bs
 
+line #: 60     // TODO what is off or on in terms of numbers?
 
-In File MarkXI_OfficialCode\evom\state_machine_impl\StateMachine.h : 
+line #: 187 	//TODO DOES NOT LEAVE EXTEND WHEN 1110
 
-line #: 64     // TODO Fix the solenoids to something more useful
+In File MarkXI_OfficialCode/log/TKOLogger.cpp : 
+line #: 140 void TKOLogger::addMessage(const char *format, ...) //TODO Figure out why code crashes on cRio
 
+In File MarkXI_OfficialCode/vision/TKOVision.cpp : 
+line #: 6 //TODO
+        7 //Add logging
 
-In File MarkXI_OfficialCode\log\TKOLogger.cpp : 
-
-line #: 43 	Stop();        // TODO: is this necessary?
-line #: 70 		this->printMessage("LOG FILE FAILED WHILE WRITING\n"); // TODO: is it okay to take 2 semaphores at the same time?
-line #: 133 		Synchronized sem(_bufSem);     // TODO: make other uses of _messBuffer thread-safe with _bufSem
-
-
-In File MarkXI_OfficialCode\vision\TKOVision.cpp : 
-
-line #: 5 //TODO
-        6 //Add logging
-line #: 86 	if (AxisCamera::GetInstance().GetImage(rawImage) == false) //TODO Check that camera is set to proper res in browser
-
+line #: 96 	if (AxisCamera::GetInstance().GetImage(rawImage) == false) //TODO Check that camera is set to proper res in browser
 
