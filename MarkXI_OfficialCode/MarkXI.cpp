@@ -40,6 +40,7 @@ class MarkXI: public SimpleRobot
 		Encoder enc;
 		Compressor compressor;
 		CANJaguar canTest;
+		Solenoid s1, s2, s3, s4, s5, s6;
 		void Disabled();
 		void Autonomous();
 		void RobotInit();
@@ -55,8 +56,9 @@ class MarkXI: public SimpleRobot
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT),
 			enc(1, 2, false, Encoder::k4X), //TODO Figure out what encoder we use...
-			compressor(6, 1),
-			canTest(7, CANJaguar::kPercentVbus)
+			compressor(3, 1),
+			canTest(7, CANJaguar::kPercentVbus),
+			s1(1), s2(2), s3(3), s4(4), s5(5), s6(6)
 		{
 			printf("Robot boot\n");
 			canTest.SetSafetyEnabled(false);
@@ -72,6 +74,7 @@ class MarkXI: public SimpleRobot
 };
 void MarkXI::Test()
 {
+	float lastSTog = GetTime();
 	if (!IsEnabled())
 		return;
 	printf("Calling test function \n");
@@ -91,23 +94,61 @@ void MarkXI::Test()
 	
 	printf("Starting tasks \n");
 	TKOLogger::inst()->Start();
-	TKOShooter::inst()->Start();
+	//TKOShooter::inst()->Start();
 	printf("Started shooter, logger \n");
 	TKOLogger::inst()->addMessage("STARTED SHOOTER, LOGGER IN TEST");
 	while (IsEnabled())
 	{
+		DriverStation::GetInstance()->SetDigitalOut(1, s1.Get());
+		DriverStation::GetInstance()->SetDigitalOut(2, s2.Get());
+		DriverStation::GetInstance()->SetDigitalOut(3, s3.Get());
+		DriverStation::GetInstance()->SetDigitalOut(4, s4.Get());
+		DriverStation::GetInstance()->SetDigitalOut(5, s5.Get());
+		DriverStation::GetInstance()->SetDigitalOut(6, s6.Get());
 		DSLog(2, "Enc Val: %f", enc.Get());
 		DSLog(3, "Enc Raw: %f", enc.GetRaw());
 		DSLog(4, "Test: %f", canTest.GetSpeed())
 		printf("Test: %f\n", canTest.GetSpeed());
+		if (GetTime() - lastSTog < 1.) //1. is the constant for min delay between shifts
+			return; 
+		if (stick4.GetTrigger())
+		{
+			s1.Set(!s1.Get());
+			lastSTog = GetTime();
+		}
+		if (stick4.GetRawButton(4))
+		{
+			s2.Set(!s2.Get());
+			lastSTog = GetTime();
+		}
+		if (stick4.GetRawButton(3))
+		{
+			s3.Set(!s3.Get());
+			lastSTog = GetTime();
+		}
+		if (stick4.GetRawButton(5))
+		{
+			s4.Set(!s4.Get());
+			lastSTog = GetTime();
+		}
+		if (stick4.GetRawButton(8))
+		{
+			s5.Set(!s5.Get());
+			lastSTog = GetTime();
+		}
+		if (stick4.GetRawButton(9))
+		{
+			s6.Set(!s6.Get());
+			lastSTog = GetTime();
+		}
 	}
 	printf("Stopping shooter, logger \n");
-	TKOShooter::inst()->Stop();
+	//TKOShooter::inst()->Stop();
 	compressor.Stop();
 	enc.Stop();
-	TKOLogger::inst()->Stop();
 	printf("Stopped testing \n");
 	TKOLogger::inst()->addMessage("ENDED TEST MODE");
+	TKOLogger::inst()->Stop();
 }
 
 void MarkXI::RobotInit()
@@ -121,6 +162,7 @@ void MarkXI::RobotInit()
 void MarkXI::Disabled()
 {
 	printf("Robot Dying!\n");
+	compressor.Stop();
 	TKOLogger::inst()->addMessage("Robot disabled.");
 	TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
@@ -186,6 +228,7 @@ void MarkXI::OperatorControl()
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->Start();
 	TKOGyro::inst()->reset();
+	compressor.Start();
 	//TKOShooter::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
@@ -204,8 +247,8 @@ void MarkXI::OperatorControl()
 			printf("!!!CRITICAL Operator loop very long, %f%s\n",
 					loopTimer.Get(), " seconds.");
 		}
-		DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
-		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
+		//DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
+		//DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
 		DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		DSLog(4, "Clock %f\n", GetClock());
 		Wait(LOOPTIME - loopTimer.Get());

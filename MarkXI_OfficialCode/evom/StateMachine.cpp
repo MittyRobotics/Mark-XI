@@ -31,6 +31,7 @@ Joystick* StateMachine::_triggerJoystick = NULL;
 DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2,3,4);
 DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(2,5,6);
 float StateMachine::lastSensorStringPrint = 0.;
+bool StateMachine::armCanMove = false;
 
 StateMachine::StateMachine()
 {
@@ -344,8 +345,10 @@ state_t StateMachine::do_err_state(instance_data_t *data)
 }
 
 bool StateMachine::isArmMovable() {
-	if (armCanMove)
-		return true;
-	return false;
+	if (!armCanMove) {
+		printf("Arm can't move!\n");
+		return false;
+	}
+	return true;
 }
 

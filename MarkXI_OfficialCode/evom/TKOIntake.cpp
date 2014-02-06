@@ -1,6 +1,7 @@
 //Last Edited by Arjun Biju, Murad Awad, and Ishan Shah
 // on 01/31/2014
 #include "TKOIntake.h"
+#include "StateMachine.h"
 TKOIntake* TKOIntake::m_Instance = NULL;
 
 /*
@@ -38,6 +39,10 @@ TKOIntake* TKOIntake::inst() {
 	}
 	return m_Instance;
 }
+void TKOIntake::IntakeRunner()
+{
+	
+}
 void TKOIntake::init() {
 	armEncoder.Reset();
 	_arm1.Set(-1);
@@ -55,8 +60,8 @@ void TKOIntake::init() {
 }
 
 void TKOIntake::armMoveFront() { // Arm move code to move it to the lowest position
-//	if (!StateMachine::isArmMovable())
-//		return;
+	if (!StateMachine::isArmMovable())
+		return;
 
 	_arm1.Set(-1); // The arm starts going in a downwards fashion. This can be changed if needed.
 	if (limitSwitchArm.Get() == 0) {
@@ -66,6 +71,8 @@ void TKOIntake::armMoveFront() { // Arm move code to move it to the lowest posit
 }
 
 void TKOIntake::armMoveMiddle() {
+	if (!StateMachine::isArmMovable())
+		return;
 	if (armEncoder.Get() < encoderValueMid) {//If it is under the middle position set it to go up
 		_arm1.Set(1);
 	}
@@ -80,6 +87,8 @@ void TKOIntake::armMoveMiddle() {
 }
 
 void TKOIntake::armMoveBack() {
+	if (!StateMachine::isArmMovable())
+		return;
 	_arm1.Set(1);
 	if (limitSwitchArm.Get() == 0) {//The highest limit switch is triggered, and the arm is off.
 		_arm1.Set(0);
@@ -87,6 +96,8 @@ void TKOIntake::armMoveBack() {
 	}
 }
 void TKOIntake::armMoveManual() {
+	if (!StateMachine::isArmMovable())
+		return;
 	if (limitSwitchArm.Get() == 1) {
 		if (armEncoder.Get() > encoderValueMid) {
 			if (-stick3.GetY() < 0) {
