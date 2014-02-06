@@ -43,7 +43,6 @@ void TurnAtom::run() {
 void TurnAtom::turn(double target) {
 	//Counterclockwise is positive, clockwise is negative
 		//inches/tic = .333134485
-		//float currAngle = _encoderRight->Get() * 0.333134485;
 		float _target = target * .0178989085;
 		
 		_drive1->Set(_target); 
