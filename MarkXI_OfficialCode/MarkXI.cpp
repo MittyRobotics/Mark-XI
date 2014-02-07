@@ -61,18 +61,31 @@ class MarkXI: public SimpleRobot
 			canTest(7, CANJaguar::kPercentVbus),
 			_piston_retract_extend(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B),
 			_latch_lock_unlock(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B)
-		{
-			printf("Robot boot\n");
-			canTest.SetSafetyEnabled(false);
-			canTest.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
-			canTest.SetVoltageRampRate(0.0);
-			canTest.ConfigFaultTime(0.1); 
-			canTest.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
-			canTest.ConfigEncoderCodesPerRev(250);
-			canTest.EnableControl();
-			TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------");
-		}
+		{/*DO NOT USE THIS!!! USE RobotInit()*/}
 };
+void MarkXI::RobotInit()
+{
+	printf("Initializing MarkXI class \n");
+	canTest.SetSafetyEnabled(false);
+	canTest.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
+	canTest.SetVoltageRampRate(0.0);
+	canTest.ConfigFaultTime(0.1); 
+	canTest.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
+	canTest.ConfigEncoderCodesPerRev(250);
+	canTest.EnableControl();
+	if (DriverStation::GetInstance()->GetDigitalIn(1))
+	{
+		printf("----------------------\n");
+		printf("Deleting log...\n");
+		remove("logT.txt");
+		printf("Digital input 1 true\n");
+	}
+	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------");
+	TKOGyro::inst()->reset();
+//	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
+	printf("Initialized the MarkXI class \n");
+}
+
 void MarkXI::Test()
 {
 	float lastSTog = GetTime();
@@ -86,13 +99,6 @@ void MarkXI::Test()
 		compressor.Start();
 	else
 		compressor.Stop();
-	if (DriverStation::GetInstance()->GetDigitalIn(1))
-	{
-		printf("----------------------\n");
-		printf("Deleting log...\n");
-		remove("logT.txt");
-		printf("Digital input 1 true\n");
-	}
 	
 	printf("Starting tasks \n");
 	TKOLogger::inst()->Start();
@@ -137,14 +143,6 @@ void MarkXI::Test()
 	printf("Stopped testing \n");
 	TKOLogger::inst()->addMessage("ENDED TEST MODE");
 	TKOLogger::inst()->Stop();
-}
-
-void MarkXI::RobotInit()
-{
-	printf("Initializing MarkXI class \n");
-	TKOGyro::inst()->reset();
-//	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
-	printf("Initialized the MarkXI class \n");
 }
 
 void MarkXI::Disabled()
@@ -227,11 +225,7 @@ void MarkXI::OperatorControl()
 	{
 		MarkXI::Operator();
 		if (loopTimer.Get() > 0.1) {
-			TKOLogger::inst()->addMessage(
-					"!!!CRITICAL Operator loop very long, length",
-					loopTimer.Get());
-			printf("!!!CRITICAL Operator loop very long, %f%s\n",
-					loopTimer.Get(), " seconds.");
+			TKOLogger::inst()->addMessage("!!!CRITICAL Operator loop very long, %f%s\n",loopTimer.Get(), " seconds.");
 		}
 		//DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
 		//DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);

@@ -84,8 +84,10 @@ state_t StateMachine::init(instance_data_t *data, Joystick *stick3)
 	_triggerJoystick = stick3;
     int sensors = getSensorData(data);
     printf("Initializing state machine \n");
-    sensors_to_string(data);
+    TKOLogger::inst()->addMessage("Initializing state machine");
+    //sensors_to_string(data);
     printf("\n %d \n", sensors);
+    TKOLogger::inst()->addMessage("\n Sensors at initialization: %d \n", sensors);
     
     switch (sensors) {
       case DONE_FIRING:
@@ -108,23 +110,27 @@ state_t StateMachine::init(instance_data_t *data, Joystick *stick3)
 
 state_t StateMachine::do_state_piston_retract(instance_data_t *data)
 {
+	TKOLogger::inst()->addMessage("STATE ENTER Piston retract; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
 	armCanMove = false;
     // reason is that 0b0010 = 2 is piston extended
     if (createIntFromBoolArray(data) != DONE_FIRING) {
+    	TKOLogger::inst()->addMessage("STATE ERROR ENTER Piston retract; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }
     data->curState = STATE_PISTON_RETRACT;
     _timer->Start();
 
     _piston_retract_extend->Set(DoubleSolenoid::kReverse);
+    TKOLogger::inst()->addMessage("STATE ACTION Piston retract; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
 
     int sensors = 0;
     // reason for 8 is that piston is retracted then
     while (sensors = getSensorData(data), sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING) ) {
     	printf("Piston Retract running: %d\n", sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING));
-        if (_timer->Get() > 25.) {
+        if (_timer->Get() > PISTON_RETRACT_TIMEOUT) {
             _timer->Stop();
             _timer->Reset();
+            TKOLogger::inst()->addMessage("STATE ERROR TIMEOUT Piston retract; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
             return STATE_ERR;
         }
     }
@@ -134,24 +140,28 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
 
     if (sensors != PISTON_RETRACTED)
     {
+    	TKOLogger::inst()->addMessage("STATE ERROR EXIT Piston retract; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }
     
-    // move to next state
+    TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Piston retract; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     return STATE_LATCH_LOCK;
 }
 
 state_t StateMachine::do_state_latch_lock(instance_data_t * data)
 {
+	TKOLogger::inst()->addMessage("STATE ENTER Latch lock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
 	armCanMove = false;
     // reason is that 0b0100 = 4 is piston extended
     if (createIntFromBoolArray(data) != PISTON_RETRACTED) {
+    	TKOLogger::inst()->addMessage("STATE ERROR ENTER Latch lock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }
     data->curState = STATE_LATCH_LOCK;
     _timer->Start();
 
     _latch_lock_unlock->Set(DoubleSolenoid::kForward);
+    TKOLogger::inst()->addMessage("STATE ACTION Latch lock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
 
     int sensors = 0;
 
@@ -159,9 +169,10 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
     while (sensors = getSensorData(data), sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED)) {
     	printf("latch_lock running: %d\n", sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED));
     	      
-    	if (_timer->Get() > 25.) {
+    	if (_timer->Get() > LATCH_LOCK_FORWARD_TIMEOUT) {
             _timer->Stop();
             _timer->Reset();
+            TKOLogger::inst()->addMessage("STATE ERROR TIMEOUT Latch lock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
             return STATE_ERR;
         }
     }
@@ -170,26 +181,30 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
 
     if (sensors != LATCH_LOCKED_PISTON_RETRACTED)
     {
+    	TKOLogger::inst()->addMessage("STATE ERROR EXIT Latch lock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }
 
-    // go to next state
+    TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Latch lock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     return STATE_PISTON_EXTEND;
 }
 
 state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 {
+	TKOLogger::inst()->addMessage("STATE ENTER Piston extend; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
 	armCanMove = false;
 	//TODO DOES NOT LEAVE EXTEND WHEN 1110
 	
     // reason is that 0b0100 = 4 is piston extended
     if (createIntFromBoolArray(data) != LATCH_LOCKED_PISTON_RETRACTED) {
+    	TKOLogger::inst()->addMessage("STATE ERROR ENTER Piston extend; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }
     data->curState = STATE_PISTON_EXTEND;
     _timer->Start();
 
     _piston_retract_extend->Set(DoubleSolenoid::kForward);
+    TKOLogger::inst()->addMessage("STATE ACTION Piston extend; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
 
     int sensors = 0;
 
@@ -197,9 +212,10 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
     while (sensors = getSensorData(data), sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6)) {
     	printf("piston_extend running: %d\n", sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6));
     	    	 
-    	if (_timer->Get() > 25.) {
+    	if (_timer->Get() > PISTON_EXTEND_TIMEOUT) {
             _timer->Stop();
             _timer->Reset();
+            TKOLogger::inst()->addMessage("STATE ERROR TIMEOUT Piston extend; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
             return STATE_ERR;
         }
     }
@@ -208,20 +224,21 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 
     if (sensors != CONST_READY_TO_FIRE)
     {
+    	TKOLogger::inst()->addMessage("STATE ERROR EXIT Piston extend; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }
 
-    // go to next state
+    TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Piston extend; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     return STATE_READY_TO_FIRE;
 }
 
 state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 {
 	armCanMove = false;
-	TKOLogger::inst()->addMessage("STATE ENTER ready to fire entry; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
+	TKOLogger::inst()->addMessage("STATE ENTER Ready to Fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
     if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE) {
-    	TKOLogger::inst()->addMessage("STATE ERROR Ready to fire state entry setup; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
+    	TKOLogger::inst()->addMessage("STATE ERROR ENTER Ready to Fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }
     
@@ -232,17 +249,17 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
     // wait for the trigger then fire!
     while (!_triggerJoystick->GetTrigger() && getSensorData(data) == CONST_READY_TO_FIRE) {}
     // go to next state
-    TKOLogger::inst()->addMessage("STATE SUCCESS Exiting ready to fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
+    TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Ready to Fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     return STATE_LATCH_UNLOCK;
 }
 
 state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
 {
 	armCanMove = false;
-	TKOLogger::inst()->addMessage("STATE ENTER latch unlock entry; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
+	TKOLogger::inst()->addMessage("STATE ENTER Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
     if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE) {
-    	TKOLogger::inst()->addMessage("STATE ERROR latch unlock state entry setup; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
+    	TKOLogger::inst()->addMessage("STATE ERROR ENTER Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }
     
@@ -251,16 +268,17 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     _timer->Start();
 
     _latch_lock_unlock->Set(DoubleSolenoid::kReverse);
+    TKOLogger::inst()->addMessage("STATE ACTION Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
 
     int sensors = 0;
 
     // reason for 4 is that piston is extended after this step
     while (sensors = getSensorData(data), sensors != DONE_FIRING && (sensors == CONST_READY_TO_FIRE || sensors == 10))
     {
-        if (_timer->Get() > 5.) {
+        if (_timer->Get() > LATCH_UNLOCK_REVERSE_TIMEOUT) {
             _timer->Stop();
             _timer->Reset();
-            TKOLogger::inst()->addMessage("STATE ERROR latch unlock state exit; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
+            TKOLogger::inst()->addMessage("STATE ERROR TIMEOUT Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
             
             return STATE_ERR;
         }
@@ -270,12 +288,11 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
 
     if (sensors != DONE_FIRING)
     {
-    	TKOLogger::inst()->addMessage("STATE ERROR latch unlock state exit; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
-    	
+    	TKOLogger::inst()->addMessage("STATE ERROR EXIT Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }
-    // go to next state
-	TKOLogger::inst()->addMessage("STATE SUCCESS latch unlock state exit; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
+
+    TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     return STATE_PISTON_RETRACT;
 }
 

@@ -66,10 +66,9 @@ bool TKOShooter::stopStateMachine()
 }
 int TKOShooter::runStateMachine()
 {
-	DSClear();
-	//logging here
-	DSLog(6, "State: %s", s.state_to_string(&data).c_str());
 	cur_state = s.run_state(cur_state,&data);
+	DSLog(6, "State: %s", s.state_to_string(&data).c_str());
+	//logging here
 	return -1;
 }
 
@@ -95,7 +94,7 @@ void TKOShooter::shooterTaskRunner()
 }
 void TKOShooter::stateMachineTaskRunner()
 {
-	while (true)
+	while (DriverStation::GetInstance()->IsEnabled())
 	{
 		_instance->runStateMachine();
 	}

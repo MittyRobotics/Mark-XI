@@ -214,12 +214,12 @@ void TKODrive::ManualShift()
 		return; 
 
 	//printf("Manual shifting\n");
-	if (stick2.GetRawButton(4)) 
+	if (stick2.GetRawButton(2)) 
 	{
 		shifterDS.Set(shifterDS.kForward);
 		lastShift = GetTime();
 	}
-	if (stick2.GetRawButton(2)) 
+	if (stick2.GetRawButton(3)) 
 	{
 		shifterDS.Set(shifterDS.kReverse);
 		lastShift = GetTime();
