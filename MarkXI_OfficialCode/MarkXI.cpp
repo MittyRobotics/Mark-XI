@@ -3,14 +3,14 @@
 #include "Definitions.h"
 #include "component/TKORelay.h"
 #include "log/TKOLogger.h"
-#include "drive/TKODrive.h"
-#include "drive/TKOGDrive.h"
-#include "component/TKOGyro.h"
+//#include "drive/TKODrive.h"
+//#include "drive/TKOGDrive.h"
+//#include "component/TKOGyro.h"
 //#include "auton/TKOAutonomous.h"
-#include "vision/TKOVision.h"
-#include "evom/TKOShooter.h"
 //#include "vision/TKOVision.h"
-#include "evom/TKOIntake.h"
+//#include "evom/TKOShooter.h"
+//#include "vision/TKOVision.h"
+//#include "evom/TKOIntake.h"
 #include "auton/Molecule.h"
 #include "auton/Atom.h"
 #include "auton/TurnAtom.h"
@@ -70,8 +70,8 @@ void MarkXI::RobotInit() {
 void MarkXI::Disabled() {
 	printf("Robot Dying!\n");
 	//TKOShooter::inst()->Stop();
-	TKODrive::inst()->Stop();
-	TKOGDrive::inst()->Stop();
+//	TKODrive::inst()->Stop();
+	//TKOGDrive::inst()->Stop();
 	//	TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
@@ -89,8 +89,8 @@ void MarkXI::Autonomous(void) {
 //	printf("Test done");
 	
 	for(int i = 0; i < 1; i++){
-		Atom* driveStraightTwoFeet = new DriveAtom(5.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
-		turnRightBox->addAtom(driveStraightTwoFeet);
+		Atom* driveStraightTwentyFeet = new DriveAtom(50.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+		turnRightBox->addAtom(driveStraightTwentyFeet);
 //		Atom* turnRightAngleR = new TurnAtom(90.0f,&(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
 //		turnRightBox->addAtom(turnRightAngleR); 
 	}
@@ -103,7 +103,7 @@ void MarkXI::OperatorControl() {
 	printf("Starting OperatorControl \n");
 	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->Start();
-	TKOGyro::inst()->reset();
+	//TKOGyro::inst()->reset();
 	//TKOShooter::inst()->Start();
 	//	TKOVision::inst()->StartProcessing(); //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
@@ -127,7 +127,7 @@ void MarkXI::OperatorControl() {
 		}
 		//		DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
 		//		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
-		DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
+		//DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		DSLog(4, "Clock %f\n", GetClock());
 		DSLog(5, "")
 		Wait(LOOPTIME - loopTimer.Get());
@@ -139,7 +139,7 @@ void MarkXI::OperatorControl() {
 
 void MarkXI::Operator() {
 	if (stick1. GetRawButton(11))
-		TKOGyro::inst()->reset();
+		//TKOGyro::inst()->reset();
 	if (stick1.GetRawButton(8))
 		RegDrive();
 	if (stick1.GetRawButton(9))
@@ -152,12 +152,12 @@ void MarkXI::Operator() {
 }
 
 void MarkXI::RegDrive() {
-	TKOGDrive::inst()->Stop();
-	TKODrive::inst()->Start();
+	//TKOGDrive::inst()->Stop();
+//	TKODrive::inst()->Start();
 }
 void MarkXI::GyroDrive() {
-	TKODrive::inst()->Stop();
-	TKOGDrive::inst()->Start();
+//	TKODrive::inst()->Stop();
+	//TKOGDrive::inst()->Start();
 }
 
 START_ROBOT_CLASS(MarkXI)

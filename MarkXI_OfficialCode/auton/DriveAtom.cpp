@@ -30,7 +30,7 @@ void DriveAtom::run() {
 				_drive1->GetPosition(), _drive3->GetPosition(), _distance);
 		_drive1->Set(_distance);
 		_drive2->Set(-_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave			
-		_drive3->Set(-(_distance));
+		_drive3->Set(_distance);
 		_drive4->Set(-_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 	}
 
