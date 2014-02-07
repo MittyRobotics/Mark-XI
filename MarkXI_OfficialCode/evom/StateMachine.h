@@ -15,6 +15,17 @@
 /*
  * 0b | IC | LL | PE | PR |
  * 0b |  8 |  4 |  2 |  1 |
+ * 
+ * 		Latch lock
+ * 			Forward:2
+ * 			Reverse:5
+ * 		Catapult piston
+ * 			Forward:3
+ * 			Reverse:6
+ * 		Drive shifter
+ * 			Forward:7
+ * 			Reverse:4
+ *
  */
 
 #define DONE_FIRING 2	// PE

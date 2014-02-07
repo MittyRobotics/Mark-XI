@@ -13,7 +13,7 @@ TKODrive::TKODrive() :
 	stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 	stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 	stick4(STICK_4_PORT), // initialize joystick 4 < first EVOM joystick-m,	
-	shifterDS(1,2)
+	shifterDS(7,4)
 {	
 	printf("Initializing drive\n");
 	driveTask = new Task("Driving", (FUNCPTR) DriveRunner);

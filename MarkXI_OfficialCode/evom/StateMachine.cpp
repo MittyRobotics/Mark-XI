@@ -28,8 +28,8 @@ DigitalInput* StateMachine::_is_cocked = new DigitalInput(IS_COCKED_SWITCH_CHANN
 Joystick* StateMachine::_triggerJoystick = NULL;
 
 // TODO nums are bs
-DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2,3,4);
-DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(2,5,6);
+DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
+DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
 float StateMachine::lastSensorStringPrint = 0.;
 bool StateMachine::armCanMove = false;
 

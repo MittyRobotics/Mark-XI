@@ -20,14 +20,14 @@
  * 
  * Figure out which solenoid corresponds with which id. (forward vs reverse)
  * 		Latch lock
- * 			Forward:
- * 			Reverse:
+ * 			Forward:2
+ * 			Reverse:5
  * 		Catapult piston
- * 			Forward:
- * 			Reverse:
+ * 			Forward:3
+ * 			Reverse:6
  * 		Drive shifter
- * 			Forward:
- * 			Reverse:
+ * 			Forward:7
+ * 			Reverse:4
  * -----------------------------LAST DONE-------------------------------*
  * 02/05
  * 		A lot....... integrated all branches, ready for testing on robot.
@@ -39,10 +39,10 @@ class MarkXI: public SimpleRobot
 	public:
 		Joystick stick1, stick2, stick3, stick4; // define joysticks
 		DriverStation *ds; // define driver station object
-		Encoder enc;
 		Compressor compressor;
 		CANJaguar canTest;
-		Solenoid s1, s2, s3, s4, s5, s6;
+		DoubleSolenoid _piston_retract_extend;
+		DoubleSolenoid _latch_lock_unlock;
 		void Disabled();
 		void Autonomous();
 		void RobotInit();
@@ -57,18 +57,17 @@ class MarkXI: public SimpleRobot
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT),
-			enc(1, 2, false, Encoder::k4X), //TODO Figure out what encoder we use...
 			compressor(3, 1),
 			canTest(7, CANJaguar::kPercentVbus),
-			s1(1), s2(2), s3(3), s4(4), s5(5), s6(6)
+			_piston_retract_extend(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B),
+			_latch_lock_unlock(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B)
 		{
 			printf("Robot boot\n");
 			canTest.SetSafetyEnabled(false);
 			canTest.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
 			canTest.SetVoltageRampRate(0.0);
-			canTest.ConfigFaultTime(0.1);
-			canTest.SetSpeedReference(CANJaguar::kSpeedRef_Encoder); 
-			canTest.SetSpeedReference(CANJaguar::kSpeedRef_Encoder);
+			canTest.ConfigFaultTime(0.1); 
+			canTest.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 			canTest.ConfigEncoderCodesPerRev(250);
 			canTest.EnableControl();
 			TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------");
@@ -85,7 +84,6 @@ void MarkXI::Test()
 		compressor.Start();
 	else
 		compressor.Stop();
-	enc.Start();
 	if (DriverStation::GetInstance()->GetDigitalIn(1))
 	{
 		printf("----------------------\n");
@@ -101,53 +99,41 @@ void MarkXI::Test()
 	TKOLogger::inst()->addMessage("STARTED SHOOTER, LOGGER IN TEST");
 	while (IsEnabled())
 	{
-		DriverStation::GetInstance()->SetDigitalOut(1, s1.Get());
-		DriverStation::GetInstance()->SetDigitalOut(2, s2.Get());
-		DriverStation::GetInstance()->SetDigitalOut(3, s3.Get());
-		DriverStation::GetInstance()->SetDigitalOut(4, s4.Get());
-		DriverStation::GetInstance()->SetDigitalOut(5, s5.Get());
-		DriverStation::GetInstance()->SetDigitalOut(6, s6.Get());
-		DSLog(2, "Enc Val: %f", enc.Get());
-		DSLog(3, "Enc Raw: %f", enc.GetRaw());
-		DSLog(4, "Test: %f", canTest.GetSpeed())
-		printf("Test: %f\n", canTest.GetSpeed());
+		canTest.Set(stick4.GetY()*-0.5);
+		
+		DriverStation::GetInstance()->SetDigitalOut(1, _piston_retract_extend.Get());
+		DriverStation::GetInstance()->SetDigitalOut(2, _latch_lock_unlock.Get());
+		
+		DSLog(1, "Arm Pos: %f", canTest.GetPosition());
+		DSLog(2, "Arm Volt: %f", canTest.GetOutputVoltage());
+		DSLog(3, "Arm Curr %f", canTest.GetOutputCurrent());
+		printf("Arm Position: %f\n", canTest.GetPosition());
 		if (GetTime() - lastSTog < 1.) //1. is the constant for min delay between shifts
-			return; 
-		if (stick4.GetTrigger())
-		{
-			s1.Set(!s1.Get());
-			lastSTog = GetTime();
-		}
+			continue; 
 		if (stick4.GetRawButton(4))
 		{
-			s2.Set(!s2.Get());
-			lastSTog = GetTime();
-		}
-		if (stick4.GetRawButton(3))
-		{
-			s3.Set(!s3.Get());
+			_piston_retract_extend.Set(_piston_retract_extend.kForward);
 			lastSTog = GetTime();
 		}
 		if (stick4.GetRawButton(5))
 		{
-			s4.Set(!s4.Get());
+			_piston_retract_extend.Set(_piston_retract_extend.kReverse);
 			lastSTog = GetTime();
 		}
-		if (stick4.GetRawButton(8))
+		if (stick4.GetRawButton(3))
 		{
-			s5.Set(!s5.Get());
+			_latch_lock_unlock.Set(_latch_lock_unlock.kForward);
 			lastSTog = GetTime();
 		}
-		if (stick4.GetRawButton(9))
+		if (stick4.GetRawButton(2))
 		{
-			s6.Set(!s6.Get());
+			_latch_lock_unlock.Set(_latch_lock_unlock.kReverse);
 			lastSTog = GetTime();
 		}
 	}
 	printf("Stopping shooter, logger \n");
 	//TKOShooter::inst()->Stop();
 	compressor.Stop();
-	enc.Stop();
 	printf("Stopped testing \n");
 	TKOLogger::inst()->addMessage("ENDED TEST MODE");
 	TKOLogger::inst()->Stop();

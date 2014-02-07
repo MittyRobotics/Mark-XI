@@ -35,6 +35,13 @@
  *
  *  If you haven't already, please visit our <a href="http://www.amhsrobotics.com">website</a>.
  */
+
+
+#define PISTON_RETRACT_SOLENOID_A 3
+#define PISTON_RETRACT_SOLENOID_B 6
+#define LATCH_RETRACT_SOLENOID_A 2
+#define LATCH_RETRACT_SOLENOID_B 5
+
 //Joystick ports
 const int STICK_1_PORT = 1;
 const int STICK_2_PORT = 2;
