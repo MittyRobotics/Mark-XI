@@ -1,10 +1,6 @@
-//
-//  StateMachine.cpp
-//
-//  Please don't run this on the main thread!!!
-//
-// Last edited by Vadim Korolik 02/03/2014
-//
+//Last edited by Vadim Korolik
+//on 02/06/2014
+//@author Matthew Peva
 
 /*
  * TODO 6
@@ -345,8 +341,8 @@ state_t StateMachine::do_err_state(instance_data_t *data)
 }
 
 bool StateMachine::isArmMovable() {
-	if (!armCanMove) {
-		printf("Arm can't move!\n");
+	if (not armCanMove) {
+		//printf("Arm can't move!\n");
 		return false;
 	}
 	return true;

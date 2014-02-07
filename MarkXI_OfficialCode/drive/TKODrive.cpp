@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 11/27/2013
+//on 02/06/2014
 #include "TKODrive.h"
 
 TKODrive* TKODrive::m_Instance = NULL;
@@ -13,7 +13,7 @@ TKODrive::TKODrive() :
 	stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 	stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 	stick4(STICK_4_PORT), // initialize joystick 4 < first EVOM joystick-m,	
-	shifterDS(7,4)
+	shifterDS(DRIVE_SHIFTER_SOLENOID_A,DRIVE_SHIFTER_SOLENOID_B)
 {	
 	printf("Initializing drive\n");
 	driveTask = new Task("Driving", (FUNCPTR) DriveRunner);

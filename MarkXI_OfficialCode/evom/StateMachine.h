@@ -1,8 +1,6 @@
-//
-//  StateMachine.h
-//
-// Last edited by Matt Pleva 01/31/2014 
-//
+//Last edited by Vadim Korolik
+//on 02/06/2014
+//@author Matthew Peva
 
 //USEFUL LINK: http://stackoverflow.com/questions/133214/is-there-a-typical-state-machine-implementation-pattern
 

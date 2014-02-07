@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 02/04/2014
+//on 02/06/2014
 #include "Definitions.h"
 #include "component/TKORelay.h"
 #include "log/TKOLogger.h"
@@ -18,17 +18,18 @@
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
  * FOR 2014 OffSeason: Possibly add different log files for different tasks?
  * 
- * Figure out which solenoid corresponds with which id. (forward vs reverse)
+ * -----------------------------LAST DONE-------------------------------*
+ * 02/06
+ *  Figured out pneumatics
  * 		Latch lock
- * 			Forward:2
- * 			Reverse:5
+ * 			Forward:2 (latch forward, locked)
+ * 			Reverse:5 (latch backward, unlocked)
  * 		Catapult piston
  * 			Forward:3
  * 			Reverse:6
  * 		Drive shifter
  * 			Forward:7
  * 			Reverse:4
- * -----------------------------LAST DONE-------------------------------*
  * 02/05
  * 		A lot....... integrated all branches, ready for testing on robot.
  * 		Follow git commits.
@@ -38,7 +39,6 @@ class MarkXI: public SimpleRobot
 {
 	public:
 		Joystick stick1, stick2, stick3, stick4; // define joysticks
-		DriverStation *ds; // define driver station object
 		Compressor compressor;
 		CANJaguar canTest;
 		DoubleSolenoid _piston_retract_extend;
@@ -57,7 +57,7 @@ class MarkXI: public SimpleRobot
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT),
-			compressor(3, 1),
+			compressor(PRESSURE_SWITCH_PORT, COMPRESSOR_ID),
 			canTest(7, CANJaguar::kPercentVbus),
 			_piston_retract_extend(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B),
 			_latch_lock_unlock(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B)
@@ -80,6 +80,8 @@ void MarkXI::Test()
 		return;
 	printf("Calling test function \n");
 	TKOLogger::inst()->addMessage("STARTING TEST MODE");
+	if (DriverStation::GetInstance()->GetDigitalIn(3))
+		TKOShooter::inst()->Start();
 	if (DriverStation::GetInstance()->GetDigitalIn(2))
 		compressor.Start();
 	else
@@ -94,7 +96,6 @@ void MarkXI::Test()
 	
 	printf("Starting tasks \n");
 	TKOLogger::inst()->Start();
-	//TKOShooter::inst()->Start();
 	printf("Started shooter, logger \n");
 	TKOLogger::inst()->addMessage("STARTED SHOOTER, LOGGER IN TEST");
 	while (IsEnabled())
@@ -107,7 +108,6 @@ void MarkXI::Test()
 		DSLog(1, "Arm Pos: %f", canTest.GetPosition());
 		DSLog(2, "Arm Volt: %f", canTest.GetOutputVoltage());
 		DSLog(3, "Arm Curr %f", canTest.GetOutputCurrent());
-		printf("Arm Position: %f\n", canTest.GetPosition());
 		if (GetTime() - lastSTog < 1.) //1. is the constant for min delay between shifts
 			continue; 
 		if (stick4.GetRawButton(4))
@@ -127,12 +127,12 @@ void MarkXI::Test()
 		}
 		if (stick4.GetRawButton(2))
 		{
-			_latch_lock_unlock.Set(_latch_lock_unlock.kReverse);
+			_latch_lock_unlock.Set(_latch_lock_unlock.kReverse); //reverse if pulled back
 			lastSTog = GetTime();
 		}
 	}
 	printf("Stopping shooter, logger \n");
-	//TKOShooter::inst()->Stop();
+	TKOShooter::inst()->Stop();
 	compressor.Stop();
 	printf("Stopped testing \n");
 	TKOLogger::inst()->addMessage("ENDED TEST MODE");
@@ -188,15 +188,14 @@ void MarkXI::Autonomous(void)
 
 	TKOVision::inst()->StopProcessing();
 	//TKOVision::inst()->StartProcessing();
-	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->addMessage("--------------Autonomous started-------------");
-	if (ds->IsFMSAttached())
+	if (DriverStation::GetInstance()->IsFMSAttached())
 	{
 		TKOLogger::inst()->addMessage("-----------FMS DETECTED------------");
 		TKOLogger::inst()->addMessage("PROBABLY A SERIOUS MATCH");
-		if (ds->GetAlliance() == ds->kBlue);
+		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kBlue);
 			TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
-		if (ds->GetAlliance() == ds->kRed);
+		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kRed);
 			TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
 	Wait(.1);
@@ -213,7 +212,6 @@ void MarkXI::Autonomous(void)
 void MarkXI::OperatorControl()
 {	
 	printf("Starting OperatorControl \n");
-	ds = DriverStation::GetInstance();
 	TKOLogger::inst()->Start();
 	TKOGyro::inst()->reset();
 	compressor.Start();
@@ -256,13 +254,6 @@ void MarkXI::Operator()
 		RegDrive();
 	if (stick1.GetRawButton(9))
 		GyroDrive();
-	if (stick3.GetTrigger())
-	{
-		/*if ((GetFPGATime() - TKOVision::inst()->lastTimestamp) <= 1000)
-		{
-			//TKOShooter::inst()->shootDist(TKOVision::inst()->lastDist);
-		}*/
-	}
 }
 
 void MarkXI::RegDrive()

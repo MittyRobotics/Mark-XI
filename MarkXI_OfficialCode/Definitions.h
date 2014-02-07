@@ -1,5 +1,5 @@
-//Last edited by Ben Kim
-//on 01/14/2014
+//Last edited by Vadim Korolik
+//on 02/06/2014
 #ifndef __DEFINITIONS_H
 #define __DEFINITIONS_H
 
@@ -35,12 +35,6 @@
  *
  *  If you haven't already, please visit our <a href="http://www.amhsrobotics.com">website</a>.
  */
-
-
-#define PISTON_RETRACT_SOLENOID_A 3
-#define PISTON_RETRACT_SOLENOID_B 6
-#define LATCH_RETRACT_SOLENOID_A 2
-#define LATCH_RETRACT_SOLENOID_B 5
 
 //Joystick ports
 const int STICK_1_PORT = 1;
@@ -86,12 +80,19 @@ const int kBURNOUT_CYCLES = 100;
 
 //Miscelaneous
 const int GYRO_PORT = 1;
+const double LOOPTIME = .01;
 
 // Pneumatics constants
 //PN stands for pneumatics, R stands for relay, S stands for solenoid
 const int COMPRESSOR_ID = 1; //Compressor ID
-const int PRESSURE_SWITCH_PORT = 1;
+const int PRESSURE_SWITCH_PORT = 3;
 
+const int PISTON_RETRACT_SOLENOID_A = 3;
+const int PISTON_RETRACT_SOLENOID_B = 6;
+const int LATCH_RETRACT_SOLENOID_A = 2;
+const int LATCH_RETRACT_SOLENOID_B = 5;
+const int DRIVE_SHIFTER_SOLENOID_A = 7;
+const int DRIVE_SHIFTER_SOLENOID_B = 4;
 
 // Camera Constants
  
@@ -137,23 +138,6 @@ const int PRESSURE_SWITCH_PORT = 1;
 		double tapeWidthScore;
 		double verticalScore;
 	};
-
-//WINCH CONSTANTS
-const double SETPOINT_BEGINNING = 1000.;
-const double SETPOINT_ARM_BACK = 2000;
-const double SETPOINT_ARM_BACK_LVL2 = 1400; //USED TO BE 800
-const double SETPOINT_CLIP_BACK = 2200;
-const double TOLERANCE = 0.;
-const double MAXSPEED = .5;
-const double MANSPEED = 1.0;
-const double LOOPTIME = .01;
-const double TIME_BW_SP = 3;
-const double STICK_DEADZONE = .1;
-const double LIFT_INCREMENT = .5; //POTENTIALLY CHANGE TO .0001
-const double LIFT_INCREMENT_RATCHET = LIFT_INCREMENT / 20;
-const double STRNOCLIPMIN = -.4;
-const double STRYESCLIPMIN = -1.0;
-const double STRMAX = 1.0;
 
 //Autonomous Constants
 const float DRIVE_CURRENT_CUTOFF = 20.0;
