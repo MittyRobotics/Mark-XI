@@ -16,21 +16,20 @@
 
 Timer* StateMachine::_timer = new Timer();
 
-//TODO define teh stuff, currently set to switchboard values
 DigitalInput* StateMachine::_piston_retract = new DigitalInput(PISTON_SWITCH_RETRACT_CHANNEL);
 DigitalInput* StateMachine::_piston_extend = new DigitalInput(PISTON_SWITCH_EXTEND_CHANNEL);
 DigitalInput* StateMachine::_latch_lock = new DigitalInput(LATCH_PISTON_LOCK_CHANNEL);
 DigitalInput* StateMachine::_is_cocked = new DigitalInput(IS_COCKED_SWITCH_CHANNEL);
 Joystick* StateMachine::_triggerJoystick = NULL;
 
-// TODO nums are bs
-DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
-DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
+DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2, PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
+DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(2, LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
 float StateMachine::lastSensorStringPrint = 0.;
 bool StateMachine::armCanMove = false;
 
 StateMachine::StateMachine()
 {
+	printf("Initializing statemachine");
     _state_table[STATE_PISTON_RETRACT] = do_state_piston_retract;
     _state_table[STATE_LATCH_LOCK] = do_state_latch_lock;
     _state_table[STATE_PISTON_EXTEND] = do_state_piston_extend;
@@ -53,7 +52,6 @@ state_t StateMachine::run_state( state_t cur_state, instance_data_t *data ) {
 
 int StateMachine::getSensorData(instance_data_t *data)
 {
-    // TODO what is off or on in terms of numbers?
     data->state[0] = (_piston_retract->Get() == 0);
     data->state[1] = (_piston_extend->Get() == 0);
     data->state[2] = (_latch_lock->Get() == 0);

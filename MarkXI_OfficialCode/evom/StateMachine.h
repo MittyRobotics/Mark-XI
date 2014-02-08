@@ -23,7 +23,12 @@
  * 		Drive shifter
  * 			Forward:7
  * 			Reverse:4
- *
+ *		Pressure Switch: 3
+ *		Optical Limit Switch: 4
+ *		Ball physical limit switch: 5
+ *		Main magnetic sensor retract 6
+ *		Main magnetic sensor extend 7
+ *		Latch magnetic sensor 8
  */
 
 #define DONE_FIRING 2	// PE
@@ -32,10 +37,10 @@
 #define CONST_READY_TO_FIRE 14	// IC and LL and PE
 
 // refer to switchboard mockup
-#define PISTON_SWITCH_RETRACT_CHANNEL 4
+#define PISTON_SWITCH_RETRACT_CHANNEL 6
 #define PISTON_SWITCH_EXTEND_CHANNEL 7
-#define LATCH_PISTON_LOCK_CHANNEL 6
-#define IS_COCKED_SWITCH_CHANNEL 5
+#define LATCH_PISTON_LOCK_CHANNEL 8
+#define IS_COCKED_SWITCH_CHANNEL 9
 
 #define PISTON_RETRACT_TIMEOUT 25.
 #define LATCH_LOCK_FORWARD_TIMEOUT 25.

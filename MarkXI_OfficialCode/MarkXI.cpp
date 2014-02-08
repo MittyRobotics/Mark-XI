@@ -10,6 +10,7 @@
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
 #include "evom/StateMachine.h"
+#include "evom/TKORoller.h"
 #include "auton/Atom.h"
 #include "auton/DriveAtom.h"
 #include "auton/Molecule.h"
@@ -43,6 +44,7 @@ class MarkXI: public SimpleRobot
 		CANJaguar canTest;
 		DoubleSolenoid _piston_retract_extend;
 		DoubleSolenoid _latch_lock_unlock;
+		TKORoller roller;
 		void Disabled();
 		void Autonomous();
 		void RobotInit();
@@ -60,7 +62,8 @@ class MarkXI: public SimpleRobot
 			compressor(PRESSURE_SWITCH_PORT, COMPRESSOR_ID),
 			canTest(7, CANJaguar::kPercentVbus),
 			_piston_retract_extend(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B),
-			_latch_lock_unlock(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B)
+			_latch_lock_unlock(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B),
+			roller(5, 6)
 		{/*DO NOT USE THIS!!! USE RobotInit()*/}
 };
 void MarkXI::RobotInit()
@@ -107,6 +110,7 @@ void MarkXI::Test()
 	while (IsEnabled())
 	{
 		canTest.Set(stick4.GetY()*-0.5);
+		roller.rollerManualMove();
 		
 		DriverStation::GetInstance()->SetDigitalOut(1, _piston_retract_extend.Get());
 		DriverStation::GetInstance()->SetDigitalOut(2, _latch_lock_unlock.Get());

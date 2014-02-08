@@ -3,13 +3,14 @@
 //test
 #include "TKOVision.h"
 
-//TODO
-//Add logging
-//Debug, test
-//Add writing to cam settings resolution, fps, comp, wb, brightness etc
+/* 
+ *  TODO
+    Add logging
+    Debug, test
+    Add writing to cam settings resolution, fps, comp, wb, brightness etc
+*/
 
-
-//Throw custom exceptions?
+// Throw custom exceptions?
 
 
 TKOVision* TKOVision::m_Instance = NULL;
@@ -106,7 +107,7 @@ bool TKOVision::ProccessImageFromCamera()
 	
 	//validated image, up to here only raw image processing
 	
-	thresholdImage = rawImage->ThresholdHSV(greenThreshHSV);	//TODO: test distance with new green light
+	thresholdImage = rawImage->ThresholdHSV(greenThreshHSV);	//TODO test distance with new green light
 	//	thresholdImage->Write("/pics/processed/thresholdImage.bmp");
 	printf("Prosseced HSV Threshold\n");
 	convexHullImage = thresholdImage->ConvexHull(true); //check difference between true and false
