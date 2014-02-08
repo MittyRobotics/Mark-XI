@@ -47,7 +47,7 @@ public:
 				Wait(0.5);
 			}
 			
-			if (tank = false) {
+			if (tank == false) {
 				ArcadeDrive();
 			}
 			else {
@@ -71,16 +71,16 @@ public:
 	
 	void TankDrive() {
 			if(stick1.GetY()>0.0||stick2.GetY()>0.0) {	// use both drive stick to drive left/right motors respectively
-					l_f.Set(-stick1.GetY() * 0.8);
-					r_f.Set(stick2.GetY() * 0.8);
-					l_b.Set(-stick1.GetY() * 0.8);
-					r_b.Set(stick2.GetY() * 0.8);
+					l_f.Set(-stick2.GetY() * 0.8);
+					r_f.Set(stick1.GetY() * 0.8);
+					l_b.Set(-stick2.GetY() * 0.8);
+					r_b.Set(stick1.GetY() * 0.8);
 				}
 			else {
-					l_b.Set(-stick1.GetY() * 0.8);
-					r_b.Set(stick2.GetY() * 0.8);
-					l_f.Set(-stick1.GetY() * 0.8);
-					r_f.Set(stick2.GetY() * 0.8);
+					l_b.Set(-stick2.GetY() * 0.8);
+					r_b.Set(stick1.GetY() * 0.8);
+					l_f.Set(-stick2.GetY() * 0.8);
+					r_f.Set(stick1.GetY() * 0.8);
 			}
 		}
 };
