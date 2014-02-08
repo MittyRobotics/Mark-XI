@@ -20,7 +20,6 @@ TKOArm::TKOArm() :
 	maxArmPos(ARM_MAXIMUM_POSITION),
 	_arm(ARM_JAGUAR_ID, CANJaguar::kPercentVbus), 
 	limitSwitchArm(ARM_OPTICAL_SWITCH), // Optical limit switch
-	limitSwitchBall(BALL_LIMIT_SWITCH),
 	_roller(ROLLER_1_JAGUAR_ID, ROLLER_2_JAGUAR_ID),
 	stick3(STICK_3_PORT),
 	stick4(STICK_4_PORT)
@@ -84,7 +83,7 @@ bool TKOArm::Stop()
 void TKOArm::runManualArm()
 {	
 	_roller.rollerSimpleMove();
-	_roller.rollerManualMove();
+	//_roller.rollerManualMove();
 
 	if (not StateMachine::armCanMove or not armEnabled)
 	{

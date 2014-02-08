@@ -14,11 +14,12 @@ class TKORoller
 		void rollerSimpleMove();
 	private:
 		CANJaguar _roller1, _roller2;
+		DigitalInput limitSwitchBall;
 		Joystick stick3;
 };
 
 #endif
-
+//End of TKORoller .h^^^
 #ifndef __TKOARM_H
 #define __TKOARM_H
 
@@ -50,7 +51,7 @@ class TKOArm: public SensorBase
 		bool armEnabled;
 	
 		CANJaguar _arm;
-		DigitalInput limitSwitchArm, limitSwitchBall;
+		DigitalInput limitSwitchArm;
 		TKORoller _roller;
 		Joystick stick3, stick4;
 };

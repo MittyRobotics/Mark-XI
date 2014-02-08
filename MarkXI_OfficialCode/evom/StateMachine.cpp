@@ -52,7 +52,7 @@ bool StateMachine::canArmMove()
 {
 	bool tmp; 
 	{
-		Synchronized sem(_armSem); //TODO does this have to be different from setMoveable sem?
+		Synchronized sem(_armSem);
 		tmp = armCanMove;
 	}
 	return tmp;
