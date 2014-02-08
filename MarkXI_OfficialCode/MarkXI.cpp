@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 02/06/2014
+//on 02/07/2014
 #include "Definitions.h"
 #include "component/TKORelay.h"
 #include "log/TKOLogger.h"
@@ -18,10 +18,12 @@
 #define PNEUMATICS_TEST_MODE
 #define ARM_TEST_MODE
 
-/*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
+/*---------------MarkXI-Things-to-Do(TODO)---------------------* 
  * FOR 2014 OffSeason: take over scouting?
  * 
  * CRITICAL: StateMachine initialization conflicts with MarkXI solenoid initialization
+ * Maybe it doesn't work because of static object initialization, 
+ * or is it due to confict?
  * 
  * -----------------------------LAST DONE-------------------------------*
  * 02/07
