@@ -16,7 +16,7 @@
 #include "auton/TurnAtom.h"
 
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
- * FOR 2014 OffSeason: Possibly add different log files for different tasks?
+ * FOR 2014 OffSeason: take over scouting?
  * 
  * -----------------------------LAST DONE-------------------------------*
  * 02/06

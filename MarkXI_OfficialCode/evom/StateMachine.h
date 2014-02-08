@@ -1,6 +1,6 @@
 //Last edited by Vadim Korolik
 //on 02/06/2014
-//@author Matthew Peva
+//@author Matthew Pleva
 
 //USEFUL LINK: http://stackoverflow.com/questions/133214/is-there-a-typical-state-machine-implementation-pattern
 
@@ -68,8 +68,10 @@ public:
     StateMachine();
     ~StateMachine();
 
-    static bool isArmMovable();
     static bool armCanMove;
+    static bool canArmMove();
+    static void setArmMoveable(bool b);
+    
     static float lastSensorStringPrint;
     
     state_t run_state(state_t, instance_data_t*);
@@ -88,6 +90,8 @@ private:
     static int createIntFromBoolArray(instance_data_t *data);
 
     state_func_t*  _state_table[NUM_STATES + 1];
+    
+    static SEM_ID _armSem;
 
     static Timer* _timer;
 
