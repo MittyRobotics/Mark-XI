@@ -42,7 +42,12 @@ StateMachine::~StateMachine()
 {
 	semDelete(_armSem);
 }
-
+void StateMachine::initPneumatics()
+{
+	//Set pneumatics to default settings
+	_piston_retract_extend->Set(_piston_retract_extend->kReverse);
+	_latch_lock_unlock->Set(_latch_lock_unlock->kReverse);
+}
 bool StateMachine::canArmMove()
 {
 	bool tmp; 

@@ -69,6 +69,7 @@ public:
 
     static bool armCanMove;
     static bool canArmMove();
+    static void initPneumatics();
     static void setArmMoveable(bool b);
     
     static float lastSensorStringPrint;

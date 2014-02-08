@@ -15,8 +15,8 @@
 #include "auton/DriveAtom.h"
 #include "auton/Molecule.h"
 #include "auton/TurnAtom.h"
-#define PNEUMATICS_TEST_MODE
-#define ARM_TEST_MODE
+//#define PNEUMATICS_TEST_MODE
+//#define ARM_TEST_MODE
 
 /*---------------MarkXI-Things-to-Do(TODO)---------------------* 
  * FOR 2014 OffSeason: take over scouting?
@@ -25,10 +25,13 @@
  * Maybe it doesn't work because of static object initialization, 
  * or is it due to confict?
  * 
+ * Default pneumatic states on initialization?
+ * 
  * -----------------------------LAST DONE-------------------------------*
  * 02/07
+ *  StateMachine::initPneumatics() --> sets pneumatics to default positions
  * 	Creating duplicate static neumatics objects in statemachine and in markxi
- * 	breaks robot, causes kernel exception
+ * 	breaks robot, causes kernel exception? or maybe static objects?
  * 	Added more testing, added TKOArm, uses TKORoller
  * 	DriverStation Digital Inputs in Test mode:
  * 		1: If on, deletes log
@@ -100,6 +103,7 @@ void MarkXI::Test()
 	armTest->EnableControl();
 #endif
 	float lastSTog = GetTime();
+	StateMachine::initPneumatics(); //TODO make sure this works; sets pneumatics to default start positions
 	printf("Done with test initialization \n");
 
 	printf("Starting tasks \n");
