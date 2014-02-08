@@ -7,7 +7,7 @@
 //#include "drive/TKOGDrive.h"
 #include "component/TKOGyro.h"
 #include "component/TKORelay.h"
-#include "vision/TKOVision.h"
+//#include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
 #include "evom/StateMachine.h"
 #include "auton/Atom.h"
@@ -88,61 +88,32 @@ void MarkXI::RobotInit()
 
 void MarkXI::Test()
 {
-	float lastSTog = GetTime();
-	if (!IsEnabled())
-		return;
-	printf("Calling test function \n");
 	TKOLogger::inst()->addMessage("STARTING TEST MODE");
-	if (DriverStation::GetInstance()->GetDigitalIn(3))
-		TKOShooter::inst()->Start();
-	if (DriverStation::GetInstance()->GetDigitalIn(2))
-		compressor.Start();
-	else
-		compressor.Stop();
-	
+
+	if (DriverStation::GetInstance()->GetDigitalIn(1))
+	{
+		printf("----------------------\n");
+		printf("Deleting log...\n");
+		remove("logT.txt");
+		printf("Digital input 1 true\n");
+	}
+	printf("Calling test function \n");
 	printf("Starting tasks \n");
 	TKOLogger::inst()->Start();
+	TKOShooter::inst()->Start();
 	printf("Started shooter, logger \n");
 	TKOLogger::inst()->addMessage("STARTED SHOOTER, LOGGER IN TEST");
 	while (IsEnabled())
 	{
-		canTest.Set(stick4.GetY()*-0.5);
-		
-		DriverStation::GetInstance()->SetDigitalOut(1, _piston_retract_extend.Get());
-		DriverStation::GetInstance()->SetDigitalOut(2, _latch_lock_unlock.Get());
-		
-		DSLog(1, "Arm Pos: %f", canTest.GetPosition());
-		DSLog(2, "Arm Volt: %f", canTest.GetOutputVoltage());
-		DSLog(3, "Arm Curr %f", canTest.GetOutputCurrent());
-		if (GetTime() - lastSTog < 1.) //1. is the constant for min delay between shifts
-			continue; 
-		if (stick4.GetRawButton(4))
-		{
-			_piston_retract_extend.Set(_piston_retract_extend.kForward);
-			lastSTog = GetTime();
-		}
-		if (stick4.GetRawButton(5))
-		{
-			_piston_retract_extend.Set(_piston_retract_extend.kReverse);
-			lastSTog = GetTime();
-		}
-		if (stick4.GetRawButton(3))
-		{
-			_latch_lock_unlock.Set(_latch_lock_unlock.kForward);
-			lastSTog = GetTime();
-		}
-		if (stick4.GetRawButton(2))
-		{
-			_latch_lock_unlock.Set(_latch_lock_unlock.kReverse); //reverse if pulled back
-			lastSTog = GetTime();
-		}
+		DSClear();
+//		camera.Set(stick1.GetX());
+//		camera.EnableDeadbandElimination(true);
 	}
 	printf("Stopping shooter, logger \n");
 	TKOShooter::inst()->Stop();
-	compressor.Stop();
+	TKOLogger::inst()->Stop();
 	printf("Stopped testing \n");
 	TKOLogger::inst()->addMessage("ENDED TEST MODE");
-	TKOLogger::inst()->Stop();
 }
 
 void MarkXI::Disabled()
@@ -184,7 +155,7 @@ void MarkXI::Autonomous(void)
 	//	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
 	//	TKOAutonomous::inst()->startAutonomous();
 
-	TKOVision::inst()->StopProcessing();
+	//TKOVision::inst()->StopProcessing();
 	//TKOVision::inst()->StartProcessing();
 	TKOLogger::inst()->addMessage("--------------Autonomous started-------------");
 	if (DriverStation::GetInstance()->IsFMSAttached())

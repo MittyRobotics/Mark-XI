@@ -24,6 +24,7 @@ DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(PISTON
 DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
 float StateMachine::lastSensorStringPrint = 0.;
 bool StateMachine::armCanMove = false;
+SEM_ID StateMachine::_armSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
 
 StateMachine::StateMachine()
 {
@@ -33,7 +34,7 @@ StateMachine::StateMachine()
     _state_table[STATE_READY_TO_FIRE] = do_state_ready_to_fire;
     _state_table[STATE_LATCH_UNLOCK] = do_state_latch_unlock;
     _state_table[STATE_ERR] = do_err_state;
-    _armSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
+    
     lastSensorStringPrint = GetTime();
 }
 
@@ -261,7 +262,11 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 	setArmMoveable(true);
     
     // wait for the trigger then fire!
-    while (!_triggerJoystick->GetTrigger() && getSensorData(data) == CONST_READY_TO_FIRE) {}
+    while (!_triggerJoystick->GetTrigger() && getSensorData(data) == CONST_READY_TO_FIRE)
+    {
+    	printf("waiting for trigger\n");
+    }
+    printf("trigger pressed");
     // go to next state
     TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Ready to Fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     return STATE_LATCH_UNLOCK;
