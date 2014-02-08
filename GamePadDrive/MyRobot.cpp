@@ -1,5 +1,6 @@
 #include "WPILib.h"
 #include "Definitions.h"
+#include "Gamepad.h"
 
 /**
  * This is a demo program showing the use of the RobotBase class.
@@ -10,13 +11,13 @@
 class RobotDemo : public SimpleRobot
 {
 	CANJaguar l_f, l_b, r_f, r_b;
-	Joystick stick1; // only joystick
+	Gamepad pad1; // only joystick
 	DriverStationLCD* ds;
 
 public:
 	RobotDemo():
 		l_f(DRIVE_L1_ID), l_b(DRIVE_L2_ID), r_f(DRIVE_R1_ID), r_b(DRIVE_R2_ID),
-		stick1(STICK_1_PORT), ds()		// as they are declared above.
+		pad1(STICK_1_PORT), ds()		// as they are declared above.
 	{
 		ds = DriverStationLCD::GetInstance();
 	}
@@ -40,18 +41,18 @@ public:
 	}
 	
 	void TankDrive() {
-		if(stick1.GetY()<0.0||stick1.GetThrottle()<0.0) {
-				l_f.Set(-stick1.GetY() * 0.8);
-				r_f.Set(stick1.GetThrottle() * 0.8);
-				l_b.Set(-stick1.GetY() * 0.8);
-				r_b.Set(stick1.GetThrottle() * 0.8);
+		if(pad1.GetLeftY()<0.0||pad1.GetRightY()<0.0) {
+				l_f.Set(-pad1.GetLeftY() * 0.8);
+				r_f.Set(pad1.GetRightY() * 0.8);
+				l_b.Set(-pad1.GetLeftY() * 0.8);
+				r_b.Set(pad1.GetRightY() * 0.8);
 				UpdateJag_pV_Val();
 			}
 		else {
-				l_b.Set(-stick1.GetY() * 0.8);
-				r_b.Set(stick1.GetThrottle() * 0.8);
-				l_f.Set(-stick1.GetY() * 0.8);
-				r_f.Set(stick1.GetThrottle() * 0.8);
+				l_b.Set(-pad1.GetLeftY() * 0.8);
+				r_b.Set(pad1.GetRightY() * 0.8);
+				l_f.Set(-pad1.GetLeftY() * 0.8);
+				r_f.Set(pad1.GetRightY() * 0.8);
 				UpdateJag_pV_Val();
 		}
 	}
