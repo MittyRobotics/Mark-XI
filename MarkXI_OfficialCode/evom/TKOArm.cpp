@@ -85,22 +85,28 @@ void TKOArm::runManualArm()
 	_roller.rollerSimpleMove();
 	//_roller.rollerManualMove();
 
-	if (not StateMachine::armCanMove or not armEnabled)
+	if (DriverStation::GetInstance()->GetDigitalIn(3))//if shooter running
 	{
-		_arm.Set(0);
-		return;
+		if (not StateMachine::armCanMove or not armEnabled)
+		{
+			_arm.Set(0);
+			return;
+		}
 	}
+	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
+	DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
+	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
 	
-	if (_arm.GetPosition() <= minArmPos) //if we are farther back than we can be, only go forward
+	if (_arm.GetPosition() > minArmPos) //if we are farther back than we can be, only go forward
 	{
-		if (stick4.GetY() > 0)
+		if (stick4.GetY() < 0)
 			_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
 		else
 			_arm.Set(0);
 	}
-	else if (_arm.GetPosition() >= maxArmPos)
+	else if (_arm.GetPosition() < maxArmPos)
 	{
-		if (stick4.GetY() < 0)
+		if (stick4.GetY() > 0)
 			_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
 		else
 			_arm.Set(0);
@@ -129,7 +135,7 @@ bool TKOArm::armInFiringRange()
 {
 	if (not limitSwitchArm.Get())
 		return false;
-	if (_arm.GetPosition() < ARM_FIRING_LEFT_BOUND || _arm.GetPosition() > ARM_FIRING_RIGHT_BOUND)
+	if (_arm.GetPosition() <= ARM_FIRING_LEFT_BOUND and _arm.GetPosition() >= ARM_FIRING_RIGHT_BOUND)
 		return true;
 	return false;
 }

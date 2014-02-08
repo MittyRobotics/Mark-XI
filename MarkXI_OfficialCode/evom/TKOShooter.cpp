@@ -42,6 +42,12 @@ bool TKOShooter::Stop()
 			return true;
 	return false;
 }
+bool TKOShooter::stateMachineRunning()
+{
+	if (stateMachineTask->Verify())
+		return true;
+	return false;
+}
 
 void TKOShooter::initStateMachine()
 {

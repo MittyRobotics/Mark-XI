@@ -31,7 +31,7 @@ void TKORoller::rollerManualMove()
 
 void TKORoller::rollerSimpleMove() //TODO check negative signs, .Get sign, so that this works
 {
-	if (limitSwitchBall.Get()) //if ball hitting switch, we dont want operator to make it go more
+	if (!limitSwitchBall.Get()) //if ball hitting switch, we dont want operator to make it go more
 	{
 		if(stick3.GetRawButton(5)) //only allow going out
 		{

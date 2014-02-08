@@ -18,6 +18,7 @@ class TKOShooter
 		static TKOShooter* inst();
 		bool Start();
 		bool Stop();
+		bool stateMachineRunning();
 
 	private:
 		Task *shooterTask;

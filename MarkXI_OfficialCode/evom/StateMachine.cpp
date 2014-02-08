@@ -20,22 +20,27 @@ DigitalInput* StateMachine::_latch_lock = new DigitalInput(LATCH_PISTON_LOCK_SWI
 DigitalInput* StateMachine::_is_cocked = new DigitalInput(IS_COCKED_SWITCH_CHANNEL);
 Joystick* StateMachine::_triggerJoystick = NULL;
 
-DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
-DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
+DoubleSolenoid* StateMachine::_piston_retract_extend = NULL;//new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
+DoubleSolenoid* StateMachine::_latch_lock_unlock = NULL;//new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
 //TODO CRITICAL If this still doesn't work, ^^  set them to null here, initialize in constructor?
 float StateMachine::lastSensorStringPrint = 0.;
 bool StateMachine::armCanMove = false;
+bool StateMachine::hasSetPneumatics = false;
+SEM_ID StateMachine::_armSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
 
 StateMachine::StateMachine()
 {
+	printf("Statemachine constructor\n");
+	_piston_retract_extend = new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
+	_latch_lock_unlock = new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
     _state_table[STATE_PISTON_RETRACT] = do_state_piston_retract;
     _state_table[STATE_LATCH_LOCK] = do_state_latch_lock;
     _state_table[STATE_PISTON_EXTEND] = do_state_piston_extend;
     _state_table[STATE_READY_TO_FIRE] = do_state_ready_to_fire;
     _state_table[STATE_LATCH_UNLOCK] = do_state_latch_unlock;
     _state_table[STATE_ERR] = do_err_state;
-    _armSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
     lastSensorStringPrint = GetTime();
+    printf("Statemachine constructor done\n");
 }
 
 StateMachine::~StateMachine()
@@ -44,9 +49,14 @@ StateMachine::~StateMachine()
 }
 void StateMachine::initPneumatics()
 {
+	if (hasSetPneumatics)
+		return;
 	//Set pneumatics to default settings
-	_piston_retract_extend->Set(_piston_retract_extend->kReverse);
+	printf("Setting default pneumatics\n");
+	_piston_retract_extend->Set(_piston_retract_extend->kForward);
 	_latch_lock_unlock->Set(_latch_lock_unlock->kReverse);
+	Wait(1.);
+	hasSetPneumatics = true;
 }
 bool StateMachine::canArmMove()
 {
@@ -66,7 +76,16 @@ void StateMachine::setArmMoveable(bool tmp)
 	}
 }
 
+void StateMachine::updateDriverStationSwitchDisplay()
+{
+	DriverStation::GetInstance()->SetDigitalOut(4, !_is_cocked->Get()); //iscocked
+	DriverStation::GetInstance()->SetDigitalOut(5, !_latch_lock->Get()); //latch
+	DriverStation::GetInstance()->SetDigitalOut(6, !_piston_extend->Get()); //extend
+	DriverStation::GetInstance()->SetDigitalOut(7, !_piston_retract->Get()); //retract
+}
+
 state_t StateMachine::run_state( state_t cur_state, instance_data_t *data ) {
+	updateDriverStationSwitchDisplay();
     return _state_table[ cur_state ]( data );
 };
 
@@ -78,11 +97,6 @@ int StateMachine::getSensorData(instance_data_t *data)
     data->state[1] = (_piston_extend->Get() == 0);
     data->state[2] = (_latch_lock->Get() == 0);
     data->state[3] = (_is_cocked->Get() == 0);
-    
-    DriverStation::GetInstance()->SetDigitalOut(4, !_is_cocked->Get());
-    DriverStation::GetInstance()->SetDigitalOut(5, !_latch_lock->Get());
-    DriverStation::GetInstance()->SetDigitalOut(6, !_piston_extend->Get());
-    DriverStation::GetInstance()->SetDigitalOut(7, !_piston_retract->Get());
 
     return createIntFromBoolArray(data);
 }
@@ -107,7 +121,7 @@ state_t StateMachine::init(instance_data_t *data, Joystick *stick3)
     TKOLogger::inst()->addMessage("Initializing state machine");
     //sensors_to_string(data);
     printf("\n %d \n", sensors);
-    TKOLogger::inst()->addMessage("\n Sensors at initialization: %d \n", sensors);
+    TKOLogger::inst()->addMessage("Sensors at initialization: %d \n", sensors);
     
     switch (sensors) {
       case DONE_FIRING:
@@ -142,11 +156,11 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
 
     _piston_retract_extend->Set(DoubleSolenoid::kReverse);
     TKOLogger::inst()->addMessage("STATE ACTION Piston retract; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
-
+    
     int sensors = 0;
     // reason for 8 is that piston is retracted then
     while (sensors = getSensorData(data), sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING) ) {
-    	printf("Piston Retract running: %d\n", sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING));
+    	printf("Piston Retract running: %d  Sensors: %d\n", sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING), sensors);
         if (_timer->Get() > PISTON_RETRACT_TIMEOUT) {
             _timer->Stop();
             _timer->Reset();
@@ -266,7 +280,10 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 	setArmMoveable(true);
     
     // wait for the trigger then fire!
-    while (!_triggerJoystick->GetTrigger() and !_triggerJoystick->GetRawButton(8) and !TKOArm::inst()->armInFiringRange()) {}
+    while (!_triggerJoystick->GetTrigger() or !_triggerJoystick->GetRawButton(8) or !TKOArm::inst()->armInFiringRange()) 
+    {
+    	DSLog(4, "READY TO FIRE");
+    }
     // go to next state
     TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Ready to Fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     return STATE_LATCH_UNLOCK;
@@ -305,6 +322,8 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     _timer->Stop();
     _timer->Reset();
 
+    Wait(POST_SHOOT_WAIT_TIME); //TODO figure this out
+    
     if (sensors != DONE_FIRING)
     {
     	TKOLogger::inst()->addMessage("STATE ERROR EXIT Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
@@ -312,6 +331,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     }
 
     TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
+    TKOLogger::inst()->addMessage("!!!SUCCESSFUL SHOT!!!");
     return STATE_PISTON_RETRACT;
 }
 

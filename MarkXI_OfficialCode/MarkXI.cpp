@@ -90,6 +90,7 @@ void MarkXI::RobotInit()
 void MarkXI::Test()
 {	
 	printf("Calling test function \n");
+	TKOLogger::inst()->Start();
 #ifdef PNEUMATICS_TEST_MODE
 	DoubleSolenoid* _piston_retract_extend = new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
 	DoubleSolenoid* _latch_lock_unlock = new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
@@ -124,6 +125,7 @@ void MarkXI::Test()
 
 	while (IsEnabled())
 	{
+		DSLog(5, "Arm: %d", TKOArm::inst()->armInFiringRange());
 #ifdef ARM_TEST_MODE
 		armTest->Set(stick4.GetY()*-0.5);
 #endif
