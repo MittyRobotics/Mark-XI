@@ -4,6 +4,7 @@
 #define __TKOINTAKE_H
 
 #include "../Definitions.h"
+#include "StateMachine.h"
 
 //Code for intake roller and arm movement
 

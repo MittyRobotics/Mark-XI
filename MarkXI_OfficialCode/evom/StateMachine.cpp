@@ -1,11 +1,9 @@
 //Last edited by Vadim Korolik
 //on 02/06/2014
-//@author Matthew Peva
+//@author Matthew Pleva
 
 /*
  * TODO 6
- * function to check the state for arm DONE
- * what do if err? state err do nothing aka freeze DONE
  * arm must be in fire pos or shouldn't fire (btn for that)???
  * also arm doesnt move unless this is in ready to fire state
  * change the timings for that while loops
@@ -22,27 +20,44 @@ DigitalInput* StateMachine::_latch_lock = new DigitalInput(LATCH_PISTON_LOCK_CHA
 DigitalInput* StateMachine::_is_cocked = new DigitalInput(IS_COCKED_SWITCH_CHANNEL);
 Joystick* StateMachine::_triggerJoystick = NULL;
 
-DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(2, PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
-DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(2, LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
+DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
+DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
 float StateMachine::lastSensorStringPrint = 0.;
 bool StateMachine::armCanMove = false;
 
 StateMachine::StateMachine()
 {
-	printf("Initializing statemachine");
     _state_table[STATE_PISTON_RETRACT] = do_state_piston_retract;
     _state_table[STATE_LATCH_LOCK] = do_state_latch_lock;
     _state_table[STATE_PISTON_EXTEND] = do_state_piston_extend;
     _state_table[STATE_READY_TO_FIRE] = do_state_ready_to_fire;
     _state_table[STATE_LATCH_UNLOCK] = do_state_latch_unlock;
     _state_table[STATE_ERR] = do_err_state;
-    
-    armCanMove = false;
+    _armSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
     lastSensorStringPrint = GetTime();
 }
 
 StateMachine::~StateMachine()
 {
+	semDelete(_armSem);
+}
+
+bool StateMachine::canArmMove()
+{
+	bool tmp; 
+	{
+		Synchronized sem(_armSem);
+		tmp = armCanMove;
+	}
+	return tmp;
+}
+
+void StateMachine::setArmMoveable(bool tmp)
+{
+	{
+		Synchronized sem(_armSem);
+		armCanMove = tmp;
+	}
 }
 
 state_t StateMachine::run_state( state_t cur_state, instance_data_t *data ) {
@@ -52,6 +67,7 @@ state_t StateMachine::run_state( state_t cur_state, instance_data_t *data ) {
 
 int StateMachine::getSensorData(instance_data_t *data)
 {
+    // TODO what is off or on in terms of numbers?
     data->state[0] = (_piston_retract->Get() == 0);
     data->state[1] = (_piston_extend->Get() == 0);
     data->state[2] = (_latch_lock->Get() == 0);
@@ -108,8 +124,8 @@ state_t StateMachine::init(instance_data_t *data, Joystick *stick3)
 
 state_t StateMachine::do_state_piston_retract(instance_data_t *data)
 {
+	setArmMoveable(false);
 	TKOLogger::inst()->addMessage("STATE ENTER Piston retract; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
-	armCanMove = false;
     // reason is that 0b0010 = 2 is piston extended
     if (createIntFromBoolArray(data) != DONE_FIRING) {
     	TKOLogger::inst()->addMessage("STATE ERROR ENTER Piston retract; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
@@ -149,7 +165,7 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
 state_t StateMachine::do_state_latch_lock(instance_data_t * data)
 {
 	TKOLogger::inst()->addMessage("STATE ENTER Latch lock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
-	armCanMove = false;
+	setArmMoveable(false);
     // reason is that 0b0100 = 4 is piston extended
     if (createIntFromBoolArray(data) != PISTON_RETRACTED) {
     	TKOLogger::inst()->addMessage("STATE ERROR ENTER Latch lock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
@@ -190,7 +206,7 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
 state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 {
 	TKOLogger::inst()->addMessage("STATE ENTER Piston extend; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
-	armCanMove = false;
+	setArmMoveable(false);
 	//TODO DOES NOT LEAVE EXTEND WHEN 1110
 	
     // reason is that 0b0100 = 4 is piston extended
@@ -232,7 +248,7 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 
 state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 {
-	armCanMove = false;
+	setArmMoveable(false);
 	TKOLogger::inst()->addMessage("STATE ENTER Ready to Fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
     if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE) {
@@ -242,7 +258,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
     
     data->curState = STATE_READY_TO_FIRE;
 
-    armCanMove = true;
+	setArmMoveable(true);
     
     // wait for the trigger then fire!
     while (!_triggerJoystick->GetTrigger() && getSensorData(data) == CONST_READY_TO_FIRE) {}
@@ -253,7 +269,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 
 state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
 {
-	armCanMove = false;
+	setArmMoveable(false);
 	TKOLogger::inst()->addMessage("STATE ENTER Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
     if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE) {
@@ -353,13 +369,5 @@ state_t StateMachine::do_err_state(instance_data_t *data)
 	}
 	sensors_to_string(data);
     return STATE_ERR;
-}
-
-bool StateMachine::isArmMovable() {
-	if (not armCanMove) {
-		//printf("Arm can't move!\n");
-		return false;
-	}
-	return true;
 }
 
