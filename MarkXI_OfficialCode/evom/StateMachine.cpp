@@ -52,7 +52,7 @@ bool StateMachine::canArmMove()
 {
 	bool tmp; 
 	{
-		Synchronized sem(_armSem);
+		Synchronized sem(_armSem); //TODO does this have to be different from setMoveable sem?
 		tmp = armCanMove;
 	}
 	return tmp;
@@ -213,7 +213,6 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 {
 	TKOLogger::inst()->addMessage("STATE ENTER Piston extend; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
 	setArmMoveable(false);
-	//TODO DOES NOT LEAVE EXTEND WHEN 1110
 	
     // reason is that 0b0100 = 4 is piston extended
     if (createIntFromBoolArray(data) != LATCH_LOCKED_PISTON_RETRACTED) {
