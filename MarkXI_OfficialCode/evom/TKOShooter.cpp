@@ -87,7 +87,7 @@ bool TKOShooter::shooterDoAction(int action)
 
 void TKOShooter::shooterTaskRunner()
 {
-	while (true)
+	while (DriverStation::GetInstance()->IsEnabled())
 	{
 		
 	}

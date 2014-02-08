@@ -11,6 +11,7 @@ class TKORoller
 		TKORoller(int rollerPort1, int rollerPort2);
 		~TKORoller();
 		void rollerManualMove();
+		void rollerSimpleMove();
 	private:
 		CANJaguar _roller1, _roller2;
 		Joystick stick3;
@@ -32,10 +33,18 @@ class TKOArm: public SensorBase
 		TKOArm();
 		~TKOArm();
 		static TKOArm* inst();
+		bool Start();
+		bool Stop();
+		void switchToPositionMode();
+		void moveToFront();
+		void moveToMid();
+		void moveToBack();
 	private:
 		DISALLOW_COPY_AND_ASSIGN(TKOArm);
 		static TKOArm* m_Instance;
 		static void ArmRunner();
+		const float minArmPos, maxArmPos;
+		void runManualArm();
 		Task *armTask;
 	
 		CANJaguar _arm;

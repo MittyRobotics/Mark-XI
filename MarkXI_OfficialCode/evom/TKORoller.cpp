@@ -16,13 +16,24 @@ TKORoller::~TKORoller() {}
 
 void TKORoller::rollerManualMove()
 {
-	if(stick3.GetRawButton(3)) 
+	if(stick3.GetTrigger()) 
 	{
 		_roller1.Set(stick3.GetY());
-		_roller1.Set(stick3.GetY());
-		_roller2.Set(-stick3.GetY());
 		_roller2.Set(-stick3.GetY());
 	}
-	//printf("%f %f Current currents:", _roller1.GetOutputCurrent(), _roller2.GetOutputCurrent());
+}
+
+void TKORoller::rollerSimpleMove()
+{
+	if(stick3.GetRawButton(4)) 
+	{
+		_roller1.Set(-1.);
+		_roller2.Set(1.);
+	}
+	if(stick3.GetRawButton(5)) 
+	{
+		_roller1.Set(1.);
+		_roller2.Set(-1.);
+	}
 }
 

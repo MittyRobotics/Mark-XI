@@ -51,6 +51,11 @@ const int ROLLER_1_JAGUAR_ID = 5;
 const int ROLLER_2_JAGUAR_ID = 6;
 const int ARM_JAGUAR_ID = 7;
 
+//Arm constants
+const float ARM_MINIMUM_POSITION = -1.;
+const float ARM_MAXIMUM_POSITION = 1.;
+const float ARM_SPEED_MULTIPLIER = 1;
+
 // Spinner constants
 const float RADIUS_WHEELS = 4;
 const float TAN_SPINNER_THETA = tan(57.5);
