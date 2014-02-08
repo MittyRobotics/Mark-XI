@@ -30,7 +30,7 @@ public:
 		DisableSafety();
 		SetSpeedReference();
 		usePID = true;
-		kP = 0.32;
+		kP = 0.5;
 		kI = 0.0005;
 		kD = 0.0;
 	}
@@ -54,18 +54,18 @@ public:
 			if (stick1.GetRawButton(3))
 				usePID = !usePID;
 				*/
-			while(stick3.GetRawButton(3)) {
-				kP = fabs(stick3.GetY()*0.5);
+			while(stick1.GetRawButton(3)) {
+				kP = fabs(stick1.GetAxis(4));
 				SetPID();
 				PID_Station();
 			}
-			while(stick3.GetTrigger()) {
-				kI = fabs(stick3.GetY()*0.004);
+			while(stick1.GetTrigger()) {
+				kI = fabs(stick1.GetY()*0.004);
 				SetPID();
 				PID_Station();
 			}
-			while(stick3.GetRawButton(2)) {
-				kD = fabs(stick3.GetY()*0.002);
+			while(stick1.GetRawButton(2)) {
+				kD = fabs(stick1.GetY()*0.002);
 				SetPID();
 				PID_Station();
 			}
@@ -92,10 +92,10 @@ public:
 			
 			//EnablePIDControl();
 
-			l_f.Set(-stick1.GetY()*max_speed);
-			r_f.Set(stick2.GetY()*max_speed);
-			l_b.Set();
-			r_b.Set(stick2.GetY());
+			l_f.Set(-stick1.GetRawAxis(3)*max_speed);
+			r_f.Set(stick1.GetY()*max_speed);
+			//l_b.Set(l_f.Get());
+			//r_b.Set(r_f.Get());
 			char l1[50], r1[50];
 			sprintf(l1, "%f", l_b.GetSpeed());
 			sprintf(r1, "%f", r_b.GetSpeed());
@@ -143,9 +143,9 @@ public:
 	
 	void SetPID() {
 			l_f.SetPID(kP, kI, kD);
-			//l_b.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+			l_b.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
 			r_f.SetPID(kP, kI, kD);
-			//r_b.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+			r_b.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
 		}
 		
 		void SetSpeedReference() {
