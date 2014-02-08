@@ -308,7 +308,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
 
     int sensors = 0;
 
-    // reason for 4 is that piston is extended after this step
+    // reason for 4 is that piston is extended after this step 
     while (sensors = getSensorData(data), sensors != DONE_FIRING && (sensors == CONST_READY_TO_FIRE || sensors == 10))
     {
         if (_timer->Get() > LATCH_UNLOCK_REVERSE_TIMEOUT) {
