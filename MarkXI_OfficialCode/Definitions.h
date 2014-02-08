@@ -47,6 +47,16 @@ const int DRIVE_L1_ID = 1;
 const int DRIVE_L2_ID = 4;
 const int DRIVE_R1_ID = 2;
 const int DRIVE_R2_ID = 3;
+const int ROLLER_1_JAGUAR_ID = 5;
+const int ROLLER_2_JAGUAR_ID = 6;
+const int ARM_JAGUAR_ID = 7;
+
+//Arm constants
+const float ARM_MINIMUM_POSITION = 0.07;
+const float ARM_MAXIMUM_POSITION = -0.09;
+const float ARM_SPEED_MULTIPLIER = -.75;
+const float ARM_FIRING_LEFT_BOUND = -0.015; //must be less than this to fire
+const float ARM_FIRING_RIGHT_BOUND = -0.025; //or must be greater than this to fire
 
 // Spinner constants
 const float RADIUS_WHEELS = 4;
@@ -87,12 +97,19 @@ const double LOOPTIME = .01;
 const int COMPRESSOR_ID = 1; //Compressor ID
 const int PRESSURE_SWITCH_PORT = 3;
 
-const int PISTON_RETRACT_SOLENOID_A = 3;
-const int PISTON_RETRACT_SOLENOID_B = 6;
+const int PISTON_RETRACT_SOLENOID_A = 6;
+const int PISTON_RETRACT_SOLENOID_B = 3;
 const int LATCH_RETRACT_SOLENOID_A = 2;
 const int LATCH_RETRACT_SOLENOID_B = 5;
 const int DRIVE_SHIFTER_SOLENOID_A = 7;
 const int DRIVE_SHIFTER_SOLENOID_B = 4;
+
+const int PISTON_SWITCH_RETRACT_CHANNEL = 7;
+const int PISTON_SWITCH_EXTEND_CHANNEL = 6;
+const int LATCH_PISTON_LOCK_SWITCH_CHANNEL = 8;
+const int IS_COCKED_SWITCH_CHANNEL = 9;
+const int BALL_LIMIT_SWITCH = 5;
+const int ARM_OPTICAL_SWITCH = 4;
 
 // Camera Constants
  

@@ -137,7 +137,7 @@ int TKOLogger::getBufferLength()
 	return _messBuffer.size();
 }
 
-void TKOLogger::addMessage(const char *format, ...) //TODO Figure out why code crashes on cRio
+void TKOLogger::addMessage(const char *format, ...)
 {
 	int nBytes;
 	char s[_MAX_BUF_LENGTH + 1];        // Allocate extra character for '\0'

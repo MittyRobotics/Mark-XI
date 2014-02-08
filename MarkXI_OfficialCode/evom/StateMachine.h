@@ -9,6 +9,7 @@
 
 #include "../Definitions.h"
 #include "../log/TKOLogger.h"
+#include "TKOArm.h"
 
 /*
  * 0b | IC | LL | PE | PR |
@@ -36,16 +37,11 @@
 #define LATCH_LOCKED_PISTON_RETRACTED 5	// LL and PR
 #define CONST_READY_TO_FIRE 14	// IC and LL and PE
 
-// refer to switchboard mockup
-#define PISTON_SWITCH_RETRACT_CHANNEL 6
-#define PISTON_SWITCH_EXTEND_CHANNEL 7
-#define LATCH_PISTON_LOCK_CHANNEL 8
-#define IS_COCKED_SWITCH_CHANNEL 9
-
-#define PISTON_RETRACT_TIMEOUT 25.
-#define LATCH_LOCK_FORWARD_TIMEOUT 25.
-#define PISTON_EXTEND_TIMEOUT 25.
-#define LATCH_UNLOCK_REVERSE_TIMEOUT 5.
+#define PISTON_RETRACT_TIMEOUT 3.
+#define LATCH_LOCK_FORWARD_TIMEOUT 2.
+#define PISTON_EXTEND_TIMEOUT 3.
+#define LATCH_UNLOCK_REVERSE_TIMEOUT 2.
+#define POST_SHOOT_WAIT_TIME .5
 
 // Define the states
 typedef enum {
@@ -75,6 +71,8 @@ public:
 
     static bool armCanMove;
     static bool canArmMove();
+    static bool hasSetPneumatics;
+    static void initPneumatics();
     static void setArmMoveable(bool b);
     
     static float lastSensorStringPrint;
@@ -83,6 +81,7 @@ public:
     state_t init(instance_data_t *data, Joystick *stick3);
     static string state_to_string(instance_data_t *data);
     static void sensors_to_string(instance_data_t *data);
+    static void updateDriverStationSwitchDisplay();
 private:
     static state_t do_state_piston_retract(instance_data_t *data);
     static state_t do_state_piston_extend(instance_data_t *data);

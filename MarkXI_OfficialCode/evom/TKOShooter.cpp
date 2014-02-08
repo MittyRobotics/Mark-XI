@@ -42,6 +42,12 @@ bool TKOShooter::Stop()
 			return true;
 	return false;
 }
+bool TKOShooter::stateMachineRunning()
+{
+	if (stateMachineTask->Verify())
+		return true;
+	return false;
+}
 
 void TKOShooter::initStateMachine()
 {
@@ -87,7 +93,7 @@ bool TKOShooter::shooterDoAction(int action)
 
 void TKOShooter::shooterTaskRunner()
 {
-	while (true)
+	while (DriverStation::GetInstance()->IsEnabled())
 	{
 		
 	}

@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 02/06/2014
+//on 02/07/2014
 #include "Definitions.h"
 #include "component/TKORelay.h"
 #include "log/TKOLogger.h"
@@ -10,29 +10,40 @@
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
 #include "evom/StateMachine.h"
-#include "evom/TKORoller.h"
+#include "evom/TKOArm.h"
 #include "auton/Atom.h"
 #include "auton/DriveAtom.h"
 #include "auton/Molecule.h"
 #include "auton/TurnAtom.h"
+//#define PNEUMATICS_TEST_MODE
+//#define ARM_TEST_MODE
 
-/*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
+/*---------------MarkXI-Things-to-Do(TODO)---------------------* 
  * FOR 2014 OffSeason: take over scouting?
  * 
  * CRITICAL: StateMachine initialization conflicts with MarkXI solenoid initialization
+ * Maybe it doesn't work because of static object initialization, 
+ * or is it due to confict?
+ * 
+ * Default pneumatic states on initialization?
  * 
  * -----------------------------LAST DONE-------------------------------*
+ * 02/07
+ *  StateMachine::initPneumatics() --> sets pneumatics to default positions
+ * 	Creating duplicate static neumatics objects in statemachine and in markxi
+ * 	breaks robot, causes kernel exception? or maybe static objects?
+ * 	Added more testing, added TKOArm, uses TKORoller
+ * 	DriverStation Digital Inputs in Test mode:
+ * 		1: If on, deletes log
+ * 		2: If on, turns on compressor
+ * 		3: If on, starts TKOShooter
+ * 		4: If on, starts TKOArm
+ * 	Use #define PNEUMATICS_TEST_MODE and #define ARM_TEST_MODE to control test function actions
+ * 	
+ * 	Set ALL task priorities
+ * 	
  * 02/06
- *  Figured out pneumatics
- * 		Latch lock
- * 			Forward:2 (latch forward, locked)
- * 			Reverse:5 (latch backward, unlocked)
- * 		Catapult piston
- * 			Forward:3
- * 			Reverse:6
- * 		Drive shifter
- * 			Forward:7
- * 			Reverse:4
+ *  Figured out pneumatics, refer to Definitions.h
  * 02/05
  * 		A lot....... integrated all branches, ready for testing on robot.
  * 		Follow git commits.
@@ -40,44 +51,29 @@
 
 class MarkXI: public SimpleRobot
 {
-	public:
-		Joystick stick1, stick2, stick3, stick4; // define joysticks
-		Compressor compressor;
-		CANJaguar canTest;
-		DoubleSolenoid _piston_retract_extend;
-		DoubleSolenoid _latch_lock_unlock;
-		TKORoller roller;
-		void Disabled();
-		void Autonomous();
-		void RobotInit();
-		void OperatorControl();
-		void Operator();
-		void Test();
-		void RegDrive();
-		void GyroDrive();
-		
-		MarkXI::MarkXI() :
-			stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
-			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
-			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
-			stick4(STICK_4_PORT),
-			compressor(PRESSURE_SWITCH_PORT, COMPRESSOR_ID),
-			canTest(7, CANJaguar::kPercentVbus),
-			_piston_retract_extend(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B),
-			_latch_lock_unlock(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B),
-			roller(5, 6)
-		{/*DO NOT USE THIS!!! USE RobotInit()*/}
+public:
+	Joystick stick1, stick2, stick3, stick4; // define joysticks
+	Compressor compressor;
+	void Disabled();
+	void Autonomous();
+	void RobotInit();
+	void OperatorControl();
+	void Operator();
+	void Test();
+	void RegDrive();
+	void GyroDrive();
+
+	MarkXI::MarkXI() :
+							stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
+							stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
+							stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
+							stick4(STICK_4_PORT),
+							compressor(PRESSURE_SWITCH_PORT, COMPRESSOR_ID)
+	{/*DO NOT USE THIS!!! USE RobotInit()*/}
 };
 void MarkXI::RobotInit()
 {
 	printf("Initializing MarkXI class \n");
-	canTest.SetSafetyEnabled(false);
-	canTest.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
-	canTest.SetVoltageRampRate(0.0);
-	canTest.ConfigFaultTime(0.1); 
-	canTest.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
-	canTest.ConfigEncoderCodesPerRev(250);
-	canTest.EnableControl();
 	if (DriverStation::GetInstance()->GetDigitalIn(1))
 	{
 		printf("----------------------\n");
@@ -87,64 +83,89 @@ void MarkXI::RobotInit()
 	}
 	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------");
 	TKOGyro::inst()->reset();
-//	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
+	//	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
 
 void MarkXI::Test()
-{
-	float lastSTog = GetTime();
-	if (!IsEnabled())
-		return;
+{	
 	printf("Calling test function \n");
+	TKOLogger::inst()->Start();
+#ifdef PNEUMATICS_TEST_MODE
+	DoubleSolenoid* _piston_retract_extend = new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
+	DoubleSolenoid* _latch_lock_unlock = new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
+#endif
+#ifdef ARM_TEST_MODE
+	CANJaguar* armTest = new CANJaguar(7, CANJaguar::kPercentVbus);
+	armTest->SetSafetyEnabled(false);
+	armTest->ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
+	armTest->SetVoltageRampRate(0.0);
+	armTest->ConfigFaultTime(0.1); 
+	armTest->SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
+	armTest->ConfigEncoderCodesPerRev(250);
+	armTest->EnableControl();
+#endif
+	float lastSTog = GetTime();
+	StateMachine::initPneumatics(); //TODO make sure this works; sets pneumatics to default start positions
+	printf("Done with test initialization \n");
+
+	printf("Starting tasks \n");
 	TKOLogger::inst()->addMessage("STARTING TEST MODE");
-	if (DriverStation::GetInstance()->GetDigitalIn(3))
-		TKOShooter::inst()->Start();
 	if (DriverStation::GetInstance()->GetDigitalIn(2))
 		compressor.Start();
 	else
 		compressor.Stop();
-	
-	printf("Starting tasks \n");
-	TKOLogger::inst()->Start();
-	printf("Started shooter, logger \n");
-	TKOLogger::inst()->addMessage("STARTED SHOOTER, LOGGER IN TEST");
+	if (DriverStation::GetInstance()->GetDigitalIn(3))
+		TKOShooter::inst()->Start();
+	if (DriverStation::GetInstance()->GetDigitalIn(4)) //TODO Before running this, remove armTest initialization
+		TKOArm::inst()->Start();
+	printf("Driver station depended actions completed\n");
+
+	TKOLogger::inst()->addMessage("ENTERING TEST LOOP");
+
 	while (IsEnabled())
 	{
-		canTest.Set(stick4.GetY()*-0.5);
-		roller.rollerManualMove();
-		
-		DriverStation::GetInstance()->SetDigitalOut(1, _piston_retract_extend.Get());
-		DriverStation::GetInstance()->SetDigitalOut(2, _latch_lock_unlock.Get());
-		
-		DSLog(1, "Arm Pos: %f", canTest.GetPosition());
-		DSLog(2, "Arm Volt: %f", canTest.GetOutputVoltage());
-		DSLog(3, "Arm Curr %f", canTest.GetOutputCurrent());
+		DSLog(5, "Arm: %d", TKOArm::inst()->armInFiringRange());
+#ifdef ARM_TEST_MODE
+		armTest->Set(stick4.GetY()*-0.5);
+#endif
+#ifdef PNEUMATICS_TEST_MODE
+		DriverStation::GetInstance()->SetDigitalOut(1, _piston_retract_extend->Get());
+		DriverStation::GetInstance()->SetDigitalOut(2, _latch_lock_unlock->Get());
+#endif
+#ifdef ARM_TEST_MODE
+		DSLog(1, "Arm Pos: %f", armTest->GetPosition());
+		DSLog(2, "Arm Volt: %f", armTest->GetOutputVoltage());
+		DSLog(3, "Arm Curr %f", armTest->GetOutputCurrent());
+#endif
 		if (GetTime() - lastSTog < 1.) //1. is the constant for min delay between shifts
 			continue; 
+#ifdef PNEUMATICS_TEST_MODE
 		if (stick4.GetRawButton(4))
 		{
-			_piston_retract_extend.Set(_piston_retract_extend.kForward);
+			_piston_retract_extend->Set(_piston_retract_extend->kForward);
 			lastSTog = GetTime();
 		}
 		if (stick4.GetRawButton(5))
 		{
-			_piston_retract_extend.Set(_piston_retract_extend.kReverse);
+			_piston_retract_extend->Set(_piston_retract_extend->kReverse);
 			lastSTog = GetTime();
 		}
 		if (stick4.GetRawButton(3))
 		{
-			_latch_lock_unlock.Set(_latch_lock_unlock.kForward);
+			_latch_lock_unlock->Set(_latch_lock_unlock->kForward);
 			lastSTog = GetTime();
 		}
 		if (stick4.GetRawButton(2))
 		{
-			_latch_lock_unlock.Set(_latch_lock_unlock.kReverse); //reverse if pulled back
+			_latch_lock_unlock->Set(_latch_lock_unlock->kReverse); //reverse if pulled back
 			lastSTog = GetTime();
 		}
+#endif
 	}
 	printf("Stopping shooter, logger \n");
 	TKOShooter::inst()->Stop();
+	TKOArm::inst()->Stop();
 	compressor.Stop();
 	printf("Stopped testing \n");
 	TKOLogger::inst()->addMessage("ENDED TEST MODE");
@@ -164,53 +185,37 @@ void MarkXI::Disabled()
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
 	{
-		
+
 	}
 }
 
 void MarkXI::Autonomous(void)
 {
 	printf("Starting Autonomous \n");
-	Molecule* turnRightBox = new Molecule();
-		turnRightBox->MoleculeInit();
-	//	printf("Test start");
-	//	turnRightBox->Test();
-//	//	printf("Test done");
-//	DSLog(1, "Gyro Value: %f", TKOGyro::inst()->GetAngle());
-		for(int i = 0; i < 1; i++){
-			Atom* driveStraightTwoFeet = new DriveAtom(5.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
-			//Atom* turnRightAngleR = new Turn_Atom(90.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4), TKOGyro::inst());
-			turnRightBox->addAtom(driveStraightTwoFeet);
-			//turnRightBox->addAtom(turnRightAngleR);
-		}
-		turnRightBox->start();
-
-	//	TKOAutonomous::inst()->initAutonomous();
-	//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
-	//	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
-	//	TKOAutonomous::inst()->startAutonomous();
-
-	TKOVision::inst()->StopProcessing();
-	//TKOVision::inst()->StartProcessing();
 	TKOLogger::inst()->addMessage("--------------Autonomous started-------------");
 	if (DriverStation::GetInstance()->IsFMSAttached())
 	{
 		TKOLogger::inst()->addMessage("-----------FMS DETECTED------------");
 		TKOLogger::inst()->addMessage("PROBABLY A SERIOUS MATCH");
 		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kBlue);
-			TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
+		TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
 		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kRed);
-			TKOLogger::inst()->addMessage("RED ALLIANCE!");
+		TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
-	Wait(.1);
-	
-//	TKOAutonomous::inst()->initAutonomous();
-//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
-//	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
-//	TKOAutonomous::inst()->startAutonomous();
-	
+
+	Molecule* turnRightBox = new Molecule();
+	turnRightBox->MoleculeInit();
+	for(int i = 0; i < 1; i++){
+		Atom* driveStraightTwoFeet = new DriveAtom(5.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+		//Atom* turnRightAngleR = new Turn_Atom(90.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4), TKOGyro::inst());
+		turnRightBox->addAtom(driveStraightTwoFeet);
+		//turnRightBox->addAtom(turnRightAngleR);
+	}
+	turnRightBox->start();
+
 	//TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
+	TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
 }
 
 void MarkXI::OperatorControl()
@@ -219,14 +224,14 @@ void MarkXI::OperatorControl()
 	TKOLogger::inst()->Start();
 	TKOGyro::inst()->reset();
 	compressor.Start();
-	//TKOShooter::inst()->Start();
+	TKOShooter::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;
 	loopTimer.Start();
 
 	TKOLogger::inst()->addMessage("--------------Teleoperated started-------------");
-	
+
 	while (IsOperatorControl() && IsEnabled())
 	{
 		MarkXI::Operator();
@@ -240,7 +245,7 @@ void MarkXI::OperatorControl()
 		Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}
-	
+
 	loopTimer.Stop();
 	printf("Ending OperatorControl \n");
 	TKOLogger::inst()->addMessage("Ending OperatorControl");
