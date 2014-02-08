@@ -9,6 +9,7 @@
 
 #include "../Definitions.h"
 #include "../log/TKOLogger.h"
+#include "TKOArm.h"
 
 /*
  * 0b | IC | LL | PE | PR |

@@ -26,7 +26,7 @@ TKOArm::TKOArm() :
 	stick4(STICK_4_PORT)
 {
 	printf("Initializing intake\n");
-	_arm.SetSafetyEnabled(false);
+	_arm.SetSafetyEnabled(true);
 	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
 	_arm.SetVoltageRampRate(0.0);
 	_arm.ConfigFaultTime(0.1); 
@@ -34,11 +34,15 @@ TKOArm::TKOArm() :
 	_arm.ConfigEncoderCodesPerRev(250);
 	_arm.EnableControl();
 	armTask = new Task("TKOArm", (FUNCPTR) ArmRunner);
-	AddToSingletonList();
+	armEnabled = true;
 	if (limitSwitchArm.Get())
 	{
 		//kill the arm? because init position not in center
+		//TODO Maybe remove this for testing
+		/*armEnabled = false;
+		_arm.StopMotor();*/
 	}
+	AddToSingletonList();
 }
 
 TKOArm::~TKOArm() 
@@ -82,8 +86,11 @@ void TKOArm::runManualArm()
 	_roller.rollerSimpleMove();
 	_roller.rollerManualMove();
 
-	if (not StateMachine::armCanMove)
+	if (not StateMachine::armCanMove or not armEnabled)
+	{
+		_arm.Set(0);
 		return;
+	}
 	
 	if (_arm.GetPosition() <= minArmPos) //if we are farther back than we can be, only go forward
 	{
@@ -118,6 +125,14 @@ void TKOArm::moveToBack()
 {
 	TKOArm::switchToPositionMode();
 	_arm.Set(minArmPos);
+}
+bool TKOArm::armInFiringRange()
+{
+	if (not limitSwitchArm.Get())
+		return false;
+	if (_arm.GetPosition() < ARM_FIRING_LEFT_BOUND || _arm.GetPosition() > ARM_FIRING_RIGHT_BOUND)
+		return true;
+	return false;
 }
 void TKOArm::switchToPositionMode()
 {

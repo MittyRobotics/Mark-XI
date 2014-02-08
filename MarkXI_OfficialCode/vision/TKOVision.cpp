@@ -3,15 +3,7 @@
 //test
 #include "TKOVision.h"
 
-/* 
- *  TODO
-    Add logging
-    Debug, test
-    Add writing to cam settings resolution, fps, comp, wb, brightness etc
-*/
-
-// Throw custom exceptions?
-
+//TODO Add Logging
 
 TKOVision* TKOVision::m_Instance = NULL;
 
@@ -23,9 +15,9 @@ TKOVision::TKOVision():
 {
 	printf("Initializing vision\n");
 	picProcessT = new Task("TKOVisProc", (FUNCPTR) ProcessRunner);
-//	if (picProcessT->SetPriority(200)) //lowest priority, lower than driving etc.
-//		printf("vision priority set to 200\n");
-//	else
+	if (picProcessT->SetPriority(200)) //lowest priority, lower than driving etc.
+		printf("vision priority set to 200\n");
+	else
 		printf("vision priority not set\n");
 	lastDist = 0.;
 	lastProcessingTime = 0.;

@@ -6,7 +6,7 @@
  * TODO 6
  * arm must be in fire pos or shouldn't fire (btn for that)???
  * also arm doesnt move unless this is in ready to fire state
- * change the timings for that while loops
+ * adjust timeout values
  * check state in ready to fire
  * */
 
@@ -266,7 +266,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 	setArmMoveable(true);
     
     // wait for the trigger then fire!
-    while (!_triggerJoystick->GetTrigger() && getSensorData(data) == CONST_READY_TO_FIRE) {}
+    while (!_triggerJoystick->GetTrigger() and !_triggerJoystick->GetRawButton(8) and !TKOArm::inst()->armInFiringRange()) {}
     // go to next state
     TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Ready to Fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     return STATE_LATCH_UNLOCK;
@@ -277,7 +277,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
 	setArmMoveable(false);
 	TKOLogger::inst()->addMessage("STATE ENTER Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
-    if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE) {
+    if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE or !TKOArm::inst()->armInFiringRange()) {
     	TKOLogger::inst()->addMessage("STATE ERROR ENTER Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }

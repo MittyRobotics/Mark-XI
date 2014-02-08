@@ -40,6 +40,8 @@
  * 		4: If on, starts TKOArm
  * 	Use #define PNEUMATICS_TEST_MODE and #define ARM_TEST_MODE to control test function actions
  * 	
+ * 	Set ALL task priorities
+ * 	
  * 02/06
  *  Figured out pneumatics, refer to Definitions.h
  * 02/05

@@ -55,6 +55,8 @@ const int ARM_JAGUAR_ID = 7;
 const float ARM_MINIMUM_POSITION = -1.;
 const float ARM_MAXIMUM_POSITION = 1.;
 const float ARM_SPEED_MULTIPLIER = 1;
+const float ARM_FIRING_LEFT_BOUND = -.3; //must be less than this to fire
+const float ARM_FIRING_RIGHT_BOUND = 0.7; //or must be greater than this to fire
 
 // Spinner constants
 const float RADIUS_WHEELS = 4;

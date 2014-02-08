@@ -16,7 +16,7 @@ TKORoller::~TKORoller() {}
 
 void TKORoller::rollerManualMove()
 {
-	if(stick3.GetTrigger()) 
+	if(stick3.GetRawButton(2)) 
 	{
 		_roller1.Set(stick3.GetY());
 		_roller2.Set(-stick3.GetY());

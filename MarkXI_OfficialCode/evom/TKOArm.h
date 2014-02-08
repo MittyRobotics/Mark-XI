@@ -39,6 +39,7 @@ class TKOArm: public SensorBase
 		void moveToFront();
 		void moveToMid();
 		void moveToBack();
+		bool armInFiringRange();
 	private:
 		DISALLOW_COPY_AND_ASSIGN(TKOArm);
 		static TKOArm* m_Instance;
@@ -46,6 +47,7 @@ class TKOArm: public SensorBase
 		const float minArmPos, maxArmPos;
 		void runManualArm();
 		Task *armTask;
+		bool armEnabled;
 	
 		CANJaguar _arm;
 		DigitalInput limitSwitchArm, limitSwitchBall;
