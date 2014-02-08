@@ -47,6 +47,9 @@ const int DRIVE_L1_ID = 1;
 const int DRIVE_L2_ID = 4;
 const int DRIVE_R1_ID = 2;
 const int DRIVE_R2_ID = 3;
+const int ROLLER_1_JAGUAR_ID = 5;
+const int ROLLER_2_JAGUAR_ID = 6;
+const int ARM_JAGUAR_ID = 7;
 
 // Spinner constants
 const float RADIUS_WHEELS = 4;
@@ -93,6 +96,13 @@ const int LATCH_RETRACT_SOLENOID_A = 2;
 const int LATCH_RETRACT_SOLENOID_B = 5;
 const int DRIVE_SHIFTER_SOLENOID_A = 7;
 const int DRIVE_SHIFTER_SOLENOID_B = 4;
+
+const int PISTON_SWITCH_RETRACT_CHANNEL = 6;
+const int PISTON_SWITCH_EXTEND_CHANNEL = 7;
+const int LATCH_PISTON_LOCK_SWITCH_CHANNEL = 8;
+const int IS_COCKED_SWITCH_CHANNEL = 9;
+const int BALL_LIMIT_SWITCH = 5;
+const int ARM_OPTICAL_SWITCH = 4;
 
 // Camera Constants
  

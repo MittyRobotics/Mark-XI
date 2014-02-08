@@ -10,7 +10,7 @@
 #include "vision/TKOVision.h"
 #include "evom/TKOShooter.h"
 #include "evom/StateMachine.h"
-#include "evom/TKORoller.h"
+#include "evom/TKOArm.h"
 #include "auton/Atom.h"
 #include "auton/DriveAtom.h"
 #include "auton/Molecule.h"
@@ -43,10 +43,6 @@ class MarkXI: public SimpleRobot
 	public:
 		Joystick stick1, stick2, stick3, stick4; // define joysticks
 		Compressor compressor;
-		CANJaguar canTest;
-		DoubleSolenoid _piston_retract_extend;
-		DoubleSolenoid _latch_lock_unlock;
-		TKORoller roller;
 		void Disabled();
 		void Autonomous();
 		void RobotInit();
@@ -61,23 +57,12 @@ class MarkXI: public SimpleRobot
 			stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 			stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 			stick4(STICK_4_PORT),
-			compressor(PRESSURE_SWITCH_PORT, COMPRESSOR_ID),
-			canTest(7, CANJaguar::kPercentVbus),
-			_piston_retract_extend(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B),
-			_latch_lock_unlock(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B),
-			roller(5, 6)
+			compressor(PRESSURE_SWITCH_PORT, COMPRESSOR_ID)
 		{/*DO NOT USE THIS!!! USE RobotInit()*/}
 };
 void MarkXI::RobotInit()
 {
 	printf("Initializing MarkXI class \n");
-	canTest.SetSafetyEnabled(false);
-	canTest.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
-	canTest.SetVoltageRampRate(0.0);
-	canTest.ConfigFaultTime(0.1); 
-	canTest.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
-	canTest.ConfigEncoderCodesPerRev(250);
-	canTest.EnableControl();
 	if (DriverStation::GetInstance()->GetDigitalIn(1))
 	{
 		printf("----------------------\n");
@@ -92,7 +77,18 @@ void MarkXI::RobotInit()
 }
 
 void MarkXI::Test()
-{
+{	
+	DoubleSolenoid* _piston_retract_extend = new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
+	DoubleSolenoid* _latch_lock_unlock = new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
+	CANJaguar* armTest = new CANJaguar(7, CANJaguar::kPercentVbus);
+	armTest->SetSafetyEnabled(false);
+	armTest->ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
+	armTest->SetVoltageRampRate(0.0);
+	armTest->ConfigFaultTime(0.1); 
+	armTest->SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
+	armTest->ConfigEncoderCodesPerRev(250);
+	armTest->EnableControl();
+		
 	float lastSTog = GetTime();
 	if (!IsEnabled())
 		return;
@@ -111,35 +107,34 @@ void MarkXI::Test()
 	TKOLogger::inst()->addMessage("STARTED SHOOTER, LOGGER IN TEST");
 	while (IsEnabled())
 	{
-		canTest.Set(stick4.GetY()*-0.5);
-		roller.rollerManualMove();
+		armTest->Set(stick4.GetY()*-0.5);
 		
-		DriverStation::GetInstance()->SetDigitalOut(1, _piston_retract_extend.Get());
-		DriverStation::GetInstance()->SetDigitalOut(2, _latch_lock_unlock.Get());
+		DriverStation::GetInstance()->SetDigitalOut(1, _piston_retract_extend->Get());
+		DriverStation::GetInstance()->SetDigitalOut(2, _latch_lock_unlock->Get());
 		
-		DSLog(1, "Arm Pos: %f", canTest.GetPosition());
-		DSLog(2, "Arm Volt: %f", canTest.GetOutputVoltage());
-		DSLog(3, "Arm Curr %f", canTest.GetOutputCurrent());
+		DSLog(1, "Arm Pos: %f", armTest->GetPosition());
+		DSLog(2, "Arm Volt: %f", armTest->GetOutputVoltage());
+		DSLog(3, "Arm Curr %f", armTest->GetOutputCurrent());
 		if (GetTime() - lastSTog < 1.) //1. is the constant for min delay between shifts
 			continue; 
 		if (stick4.GetRawButton(4))
 		{
-			_piston_retract_extend.Set(_piston_retract_extend.kForward);
+			_piston_retract_extend->Set(_piston_retract_extend->kForward);
 			lastSTog = GetTime();
 		}
 		if (stick4.GetRawButton(5))
 		{
-			_piston_retract_extend.Set(_piston_retract_extend.kReverse);
+			_piston_retract_extend->Set(_piston_retract_extend->kReverse);
 			lastSTog = GetTime();
 		}
 		if (stick4.GetRawButton(3))
 		{
-			_latch_lock_unlock.Set(_latch_lock_unlock.kForward);
+			_latch_lock_unlock->Set(_latch_lock_unlock->kForward);
 			lastSTog = GetTime();
 		}
 		if (stick4.GetRawButton(2))
 		{
-			_latch_lock_unlock.Set(_latch_lock_unlock.kReverse); //reverse if pulled back
+			_latch_lock_unlock->Set(_latch_lock_unlock->kReverse); //reverse if pulled back
 			lastSTog = GetTime();
 		}
 	}
@@ -171,27 +166,6 @@ void MarkXI::Disabled()
 void MarkXI::Autonomous(void)
 {
 	printf("Starting Autonomous \n");
-	Molecule* turnRightBox = new Molecule();
-		turnRightBox->MoleculeInit();
-	//	printf("Test start");
-	//	turnRightBox->Test();
-//	//	printf("Test done");
-//	DSLog(1, "Gyro Value: %f", TKOGyro::inst()->GetAngle());
-		for(int i = 0; i < 1; i++){
-			Atom* driveStraightTwoFeet = new DriveAtom(5.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
-			//Atom* turnRightAngleR = new Turn_Atom(90.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4), TKOGyro::inst());
-			turnRightBox->addAtom(driveStraightTwoFeet);
-			//turnRightBox->addAtom(turnRightAngleR);
-		}
-		turnRightBox->start();
-
-	//	TKOAutonomous::inst()->initAutonomous();
-	//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
-	//	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
-	//	TKOAutonomous::inst()->startAutonomous();
-
-	TKOVision::inst()->StopProcessing();
-	//TKOVision::inst()->StartProcessing();
 	TKOLogger::inst()->addMessage("--------------Autonomous started-------------");
 	if (DriverStation::GetInstance()->IsFMSAttached())
 	{
@@ -202,15 +176,20 @@ void MarkXI::Autonomous(void)
 		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kRed);
 			TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
-	Wait(.1);
 	
-//	TKOAutonomous::inst()->initAutonomous();
-//	TKOAutonomous::inst()->setDrivePID(DRIVE_kP, DRIVE_kP, DRIVE_kI);
-//	TKOAutonomous::inst()->setDriveTargetStraight(ds->GetAnalogIn(1) * 10 * REVS_PER_METER);
-//	TKOAutonomous::inst()->startAutonomous();
+	Molecule* turnRightBox = new Molecule();
+	turnRightBox->MoleculeInit();
+	for(int i = 0; i < 1; i++){
+		Atom* driveStraightTwoFeet = new DriveAtom(5.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+		//Atom* turnRightAngleR = new Turn_Atom(90.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4), TKOGyro::inst());
+		turnRightBox->addAtom(driveStraightTwoFeet);
+		//turnRightBox->addAtom(turnRightAngleR);
+	}
+	turnRightBox->start();
 	
 	//TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
+	TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
 }
 
 void MarkXI::OperatorControl()
@@ -219,7 +198,7 @@ void MarkXI::OperatorControl()
 	TKOLogger::inst()->Start();
 	TKOGyro::inst()->reset();
 	compressor.Start();
-	//TKOShooter::inst()->Start();
+	TKOShooter::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;

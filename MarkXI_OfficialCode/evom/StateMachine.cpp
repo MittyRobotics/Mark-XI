@@ -16,12 +16,13 @@ Timer* StateMachine::_timer = new Timer();
 
 DigitalInput* StateMachine::_piston_retract = new DigitalInput(PISTON_SWITCH_RETRACT_CHANNEL);
 DigitalInput* StateMachine::_piston_extend = new DigitalInput(PISTON_SWITCH_EXTEND_CHANNEL);
-DigitalInput* StateMachine::_latch_lock = new DigitalInput(LATCH_PISTON_LOCK_CHANNEL);
+DigitalInput* StateMachine::_latch_lock = new DigitalInput(LATCH_PISTON_LOCK_SWITCH_CHANNEL);
 DigitalInput* StateMachine::_is_cocked = new DigitalInput(IS_COCKED_SWITCH_CHANNEL);
 Joystick* StateMachine::_triggerJoystick = NULL;
 
 DoubleSolenoid* StateMachine::_piston_retract_extend = new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
 DoubleSolenoid* StateMachine::_latch_lock_unlock = new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
+//TODO CRITICAL If this still doesn't work, ^^  set them to null here, initialize in constructor?
 float StateMachine::lastSensorStringPrint = 0.;
 bool StateMachine::armCanMove = false;
 
