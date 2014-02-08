@@ -19,6 +19,8 @@
 /*---------------MarkXI-Thing-to-Do(TODO)---------------------* 
  * FOR 2014 OffSeason: take over scouting?
  * 
+ * CRITICAL: StateMachine initialization conflicts with MarkXI solenoid initialization
+ * 
  * -----------------------------LAST DONE-------------------------------*
  * 02/06
  *  Figured out pneumatics
