@@ -11,6 +11,7 @@
 class RobotDemo : public SimpleRobot
 {
 	CANJaguar l_f, l_b, r_f, r_b;
+	RobotDrive Arcade;
 	Joystick stick1, stick2, stick3; // only joystick
 	DriverStationLCD* dsl;
 	DriverStation* ds;
@@ -20,6 +21,7 @@ class RobotDemo : public SimpleRobot
 public:
 	RobotDemo():
 		l_f(DRIVE_L1_ID, CANJaguar::kSpeed), l_b(DRIVE_L2_ID, CANJaguar::kPercentVbus), r_f(DRIVE_R1_ID, CANJaguar::kSpeed), r_b(DRIVE_R2_ID, CANJaguar::kPercentVbus),
+		Arcade(&l_f, &l_b, &r_f, &r_b),
 		stick1(STICK_1_PORT), stick2(STICK_2_PORT), stick3(STICK_3_PORT), dsl(), ds()		// as they are declared above.
 	{
 		l_f.EnableControl(0);
@@ -30,12 +32,10 @@ public:
 		DisableSafety();
 		SetSpeedReference();
 		usePID = true;
-		kP = 0.1;
-		kI = 0.002;
+		kP = 0.5;
+		kI = 0.0;
 		kD = 0.0;
-	}
-
-	/**
+	}/**
 	 * Drive left & right motors for 2 secondsl then stop
 	 */
 	void Autonomous()
@@ -50,6 +50,7 @@ public:
 		
 		dsl->PrintfLine(DriverStationLCD::kUser_Line1,"HI");
 		dsl->UpdateLCD();
+		SetPID();
 		
 		while (IsOperatorControl()&&IsEnabled())
 		{
@@ -58,27 +59,32 @@ public:
 			if (stick1.GetRawButton(3))
 				usePID = !usePID;
 				*/
-			while(kP != ds->GetAnalogIn(1)*0.1) {
-				kP = ds->GetAnalogIn(1)*0.1;
-				//PID_Station();
-				TankDrive();
+			while(stick1.GetRawButton(1)) {
+				kP = fabs(stick1.GetY());
+				PID_Station();
+				l_f.EnableControl(0);
+				r_f.EnableControl(0);
+				SetPID();
 			}
-			while(kI != ds->GetAnalogIn(2)*0.0008) {
-				kI = ds->GetAnalogIn(2)*0.0008;
-				//PID_Station();
-				TankDrive();
+			while(stick1.GetRawButton(2)) {
+				kI = fabs(stick1.GetY())*0.0008;
+				PID_Station();
+				l_f.EnableControl(0);
+				r_f.EnableControl(0);
+				SetPID();
 			}
-			while(kD != ds->GetAnalogIn(3)*0.0004) {
-				kD = ds->GetAnalogIn(3)*0.0004;
-				//PID_Station();
-				TankDrive();
+			while(stick1.GetRawButton(3)) {
+				kD = fabs(stick1.GetY())*0.0004;
+				PID_Station();
+				l_f.EnableControl(0);
+				r_f.EnableControl(0);
+				SetPID();
 			}
-			TankDrive();
+			Arcade.ArcadeDrive(stick2);
 		}
 	}
 	
 	void TankDrive() {
-			SetPID();
 			if (l_f.GetControlMode() == CANJaguar::kPercentVbus)
 				l_f.ChangeControlMode(CANJaguar::kSpeed);
 			
@@ -110,8 +116,6 @@ public:
 			dsl->PrintfLine(DriverStationLCD::kUser_Line2, v1);
 			dsl->PrintfLine(DriverStationLCD::kUser_Line3, "Right Speed:");
 			dsl->PrintfLine(DriverStationLCD::kUser_Line4, v2);
-			l_f.EnableControl(0);
-			r_f.EnableControl(0);
 		/*
 		
 		else {
@@ -159,8 +163,8 @@ public:
 		void SetSpeedReference() {
 			l_f.ConfigEncoderCodesPerRev(ENCODER_REVS);
 			r_f.ConfigEncoderCodesPerRev(ENCODER_REVS);
-			l_f.SetSpeedReference(JAG_SPEEDREF);
-			r_f.SetSpeedReference(JAG_SPEEDREF);
+			l_f.SetSpeedReference(l_f.kSpeedRef_QuadEncoder);
+			r_f.SetSpeedReference(r_f.kSpeedRef_QuadEncoder);
 		}
 	void EnablePIDControl() {
 		l_f.EnableControl();
