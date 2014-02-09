@@ -12,7 +12,7 @@ class RobotDemo : public SimpleRobot
 {
 	CANJaguar l_f, l_b, r_f, r_b; 
 	RobotDrive myRobot; // robot drive system
-	Joystick stick1, stick2, p1; // only joystick1
+	Joystick stick1, stick2, p1;
 	Gamepad pad1;
 	bool tank;
 	bool pad;

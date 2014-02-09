@@ -83,14 +83,12 @@ public:
 	}
 	
 	void UpdateJag_pV_Val() {
-						char f1[50], f2[50], r1[50], r2[50];
+						char f1[50], f2[50];
 						sprintf(f1, "%f", drive1.GetSpeed());
-						sprintf(r1, "%f", drive3.GetSpeed());
+						sprintf(f2, "%f", drive3.GetSpeed());
 						ds->Clear();
 						ds->PrintfLine(DriverStationLCD::kUser_Line1, f1);
 						ds->PrintfLine(DriverStationLCD::kUser_Line2, f2);
-						ds->PrintfLine(DriverStationLCD::kUser_Line3, r1);
-						ds->PrintfLine(DriverStationLCD::kUser_Line4, r2);
 						ds->UpdateLCD();
 					}
 	
