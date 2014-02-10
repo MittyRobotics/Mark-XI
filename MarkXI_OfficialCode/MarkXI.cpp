@@ -179,6 +179,7 @@ void MarkXI::Disabled()
 	TKOLogger::inst()->addMessage("Robot disabled.");
 	TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
+	TKOArm::inst()->Stop();
 	//TKOGDrive::inst()->Stop();
 	//TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
@@ -224,7 +225,9 @@ void MarkXI::OperatorControl()
 	TKOLogger::inst()->Start();
 	TKOGyro::inst()->reset();
 	compressor.Start();
+	//StateMachine::initPneumatics();
 	TKOShooter::inst()->Start();
+	TKOArm::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;
@@ -240,13 +243,14 @@ void MarkXI::OperatorControl()
 		}
 		//DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
 		//DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
-		DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
-		DSLog(4, "Clock %f\n", GetClock());
+		//DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
+		//DSLog(4, "Clock %f\n", GetClock());
 		Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}
 
 	loopTimer.Stop();
+	compressor.Stop();
 	printf("Ending OperatorControl \n");
 	TKOLogger::inst()->addMessage("Ending OperatorControl");
 }

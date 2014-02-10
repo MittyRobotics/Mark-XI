@@ -97,7 +97,7 @@ void TKOArm::runManualArm()
 	DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
 	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
 	
-	if (_arm.GetPosition() > minArmPos) //if we are farther back than we can be, only go forward
+	/*if (_arm.GetPosition() > minArmPos) //if we are farther back than we can be, only go forward
 	{
 		if (stick4.GetY() < 0)
 			_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
@@ -111,7 +111,7 @@ void TKOArm::runManualArm()
 		else
 			_arm.Set(0);
 	}
-	else
+	else*/
 	{
 		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
 	}
