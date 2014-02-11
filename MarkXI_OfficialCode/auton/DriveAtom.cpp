@@ -9,9 +9,9 @@ DriveAtom::DriveAtom(float feet, CANJaguar* drive1, CANJaguar* drive2, CANJaguar
 	_drive2 = drive2;
 	_drive3 = drive3;
 	_drive4 = drive4;
-	kP = 0.72;
-	kI = 0.0004;
-	kD = 0.0;
+//	kP = 0.7;
+//	kI = 0.00;//23;
+//	kD = 0.0;
 	ds = DriverStation::GetInstance();
 }
 
@@ -24,20 +24,20 @@ void DriveAtom::run() {
 	//don't forget to divide number of rotations by REVS_PER_FOOT in order to get feet traveled
 	_drive1->EnableControl(0);
 	_drive3->EnableControl(0);
-	_drive1->SetPID(kP, kI, kD);
-	_drive3->SetPID(kP, kI, kD);
+//	_drive1->SetPID(kP, kI, kD);
+//	_drive3->SetPID(kP, kI, kD);
 	while (ds->IsEnabled()) {
 		//need a +difference for distance
-		while(kP != ds->GetAnalogIn(1)*0.2) {
-			kP = ds->GetAnalogIn(1)*0.2;
-			_drive1->SetPID(kP, kI, kD);
-			_drive3->SetPID(kP, kI, kD);
-		}
-		while(kI != ds->GetAnalogIn(2)*0.0008) {
-			kI = ds->GetAnalogIn(2)*0.0008;
-			_drive1->SetPID(kP, kI, kD);
-			_drive3->SetPID(kP, kI, kD);
-		}
+//		while(kP != ds->GetAnalogIn(1)*0.2) {
+			//kP = ds->GetAnalogIn(1)*0.2;
+//			_drive1->SetPID(kP, kI, kD);
+//			_drive3->SetPID(kP, kI, kD);
+//		}
+//		while(kI != ds->GetAnalogIn(2)*0.0008) {
+//			kI = ds->GetAnalogIn(2)*0.0008;
+//			_drive1->SetPID(kP, kI, kD);
+//			_drive3->SetPID(kP, kI, kD);
+//		}
 		printf("drive 1: %f, drive 3: %f, distance: %f\n",
 				_drive1->GetPosition(), _drive3->GetPosition(), _distance);
 		_drive1->Set(_distance);

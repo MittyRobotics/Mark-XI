@@ -90,7 +90,7 @@ void MarkXI::Autonomous(void) {
 //	printf("Test done");
 	
 //	for(int i = 0; i < 1; i++){
-		Atom* driveStraightTwentyFeet = new DriveAtom(50.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+		Atom* driveStraightTwentyFeet = new DriveAtom(10.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
 		turnRightBox->addAtom(driveStraightTwentyFeet);
 		
 //		Atom* turnRightAngleR = new TurnAtom(90.0f,&(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));

@@ -17,6 +17,7 @@ Molecule::Molecule():
 }
 
 void Molecule::MoleculeInit() {
+	
 	//putting the Encoders as 250 tick Encoders, setting the second and fourth motors as slaves 
 	drive1.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 	drive1.ConfigEncoderCodesPerRev(250);
@@ -81,3 +82,9 @@ void Molecule::start() //runs through atoms of molecule, then deletes that membe
 		delete a;
 	}
 }
+
+
+
+
+
+

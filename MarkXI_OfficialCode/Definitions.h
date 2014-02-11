@@ -56,11 +56,11 @@ const float MID_FENDER = 0.425;
 const float TOP_FENDER = 0.585;
 
 //PID constants
-const float SPINNER_kP = 0.2; //working P: 0.20, working I: .0034
+const float SPINNER_kP = 0.2; //don't know if working P: 0.20, working I: .0034
 const float SPINNER_kI = 0.004;
 const float SPINNER_kD = 0.0;
-const float DRIVE_kP = 0.2; //working P: 0.20, working I: .0034
-const float DRIVE_kI = 0.0034;
+const float DRIVE_kP = 25.0; //not working P: 0.20, working I: .0034
+const float DRIVE_kI = 0.00; //A good P is 25.0
 const float DRIVE_kD = 0.00;
 const float WINCH_kP = .0075;
 const float WINCH_kI = 0.000001;
