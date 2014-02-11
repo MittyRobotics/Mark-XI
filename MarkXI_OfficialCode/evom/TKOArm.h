@@ -8,14 +8,17 @@
 class TKORoller 
 {
 	public: 
-		TKORoller(int rollerPort1, int rollerPort2);
 		~TKORoller();
 		void rollerManualMove();
 		void rollerSimpleMove();
-	private:
+		static TKORoller* inst();
 		CANJaguar _roller1, _roller2;
+		bool override;
+	private:
+		TKORoller(int rollerPort1, int rollerPort2);
 		DigitalInput limitSwitchBall;
 		Joystick stick3;
+		static TKORoller*  _instance;
 };
 
 #endif
@@ -31,7 +34,6 @@ class TKORoller
 class TKOArm: public SensorBase
 {
 	public:
-		TKOArm();
 		~TKOArm();
 		static TKOArm* inst();
 		bool Start();
@@ -42,6 +44,7 @@ class TKOArm: public SensorBase
 		void moveToBack();
 		bool armInFiringRange();
 	private:
+		TKOArm();
 		DISALLOW_COPY_AND_ASSIGN(TKOArm);
 		static TKOArm* m_Instance;
 		static void ArmRunner();
@@ -52,7 +55,6 @@ class TKOArm: public SensorBase
 	
 		CANJaguar _arm;
 		DigitalInput limitSwitchArm;
-		TKORoller _roller;
 		Joystick stick3, stick4;
 };
 #endif

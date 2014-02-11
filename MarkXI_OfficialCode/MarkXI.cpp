@@ -248,7 +248,7 @@ void MarkXI::OperatorControl()
 		Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}
-
+	TKODrive::inst()->Stop();
 	loopTimer.Stop();
 	compressor.Stop();
 	printf("Ending OperatorControl \n");

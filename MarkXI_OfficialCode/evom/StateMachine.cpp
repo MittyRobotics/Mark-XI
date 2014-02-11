@@ -97,7 +97,7 @@ int StateMachine::getSensorData(instance_data_t *data)
     data->state[1] = (_piston_extend->Get() == 0);
     data->state[2] = (_latch_lock->Get() == 0);
     data->state[3] = (_is_cocked->Get() == 0);
-
+    updateDriverStationSwitchDisplay();
     return createIntFromBoolArray(data);
 }
 
@@ -302,10 +302,14 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     data->curState = STATE_LATCH_UNLOCK;
     
     _timer->Start();
-
+    
+    TKORoller::inst()->override = true;
+    TKORoller::inst()->_roller1.Set(1.);
+    TKORoller::inst()->_roller2.Set(-1.);
+    Wait(0.1);
+    
     _latch_lock_unlock->Set(DoubleSolenoid::kReverse);
     TKOLogger::inst()->addMessage("STATE ACTION Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
-
     int sensors = 0;
 
     // reason for 4 is that piston is extended after this step 
@@ -323,6 +327,10 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     _timer->Reset();
 
     Wait(POST_SHOOT_WAIT_TIME); //TODO figure this out
+    
+	TKORoller::inst()->_roller1.Set(0.);
+	TKORoller::inst()->_roller2.Set(0.);
+    TKORoller::inst()->override = false;
     
     if (sensors != DONE_FIRING)
     {

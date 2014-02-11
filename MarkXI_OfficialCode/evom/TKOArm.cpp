@@ -20,12 +20,11 @@ TKOArm::TKOArm() :
 	maxArmPos(ARM_MAXIMUM_POSITION),
 	_arm(ARM_JAGUAR_ID, CANJaguar::kPercentVbus), 
 	limitSwitchArm(ARM_OPTICAL_SWITCH), // Optical limit switch
-	_roller(ROLLER_1_JAGUAR_ID, ROLLER_2_JAGUAR_ID),
 	stick3(STICK_3_PORT),
 	stick4(STICK_4_PORT)
 {
 	printf("Initializing intake\n");
-	_arm.SetSafetyEnabled(true);
+	_arm.SetSafetyEnabled(false);
 	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
 	_arm.SetVoltageRampRate(0.0);
 	_arm.ConfigFaultTime(0.1); 
@@ -33,6 +32,7 @@ TKOArm::TKOArm() :
 	_arm.ConfigEncoderCodesPerRev(250);
 	_arm.EnableControl();
 	armTask = new Task("TKOArm", (FUNCPTR) ArmRunner);
+	armTask->SetPriority(2);
 	armEnabled = true;
 	if (limitSwitchArm.Get())
 	{
@@ -82,8 +82,12 @@ bool TKOArm::Stop()
 }
 void TKOArm::runManualArm()
 {	
-	_roller.rollerSimpleMove();
-	//_roller.rollerManualMove();
+	if (DriverStation::GetInstance()->GetDigitalIn(5))//if shooter running
+	{
+		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
+	}
+	TKORoller::inst()->rollerSimpleMove();
+	//TKORoller::inst()->rollerManualMove();
 
 	if (DriverStation::GetInstance()->GetDigitalIn(3))//if shooter running
 	{
@@ -97,7 +101,7 @@ void TKOArm::runManualArm()
 	DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
 	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
 	
-	/*if (_arm.GetPosition() > minArmPos) //if we are farther back than we can be, only go forward
+	if (_arm.GetPosition() > minArmPos) //if we are farther back than we can be, only go forward
 	{
 		if (stick4.GetY() < 0)
 			_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
@@ -111,7 +115,7 @@ void TKOArm::runManualArm()
 		else
 			_arm.Set(0);
 	}
-	else*/
+	else
 	{
 		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
 	}
@@ -142,6 +146,7 @@ bool TKOArm::armInFiringRange()
 void TKOArm::switchToPositionMode()
 {
 	_arm.ChangeControlMode(_arm.kPosition);
+	_arm.SetPID(10., 0.001, 0.);
 	_arm.SetVoltageRampRate(3.); //TODO maybe don't need ramping voltage with pid
 	_arm.ConfigSoftPositionLimits(maxArmPos, minArmPos);
 }

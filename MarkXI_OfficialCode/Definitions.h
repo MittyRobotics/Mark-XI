@@ -54,7 +54,7 @@ const int ARM_JAGUAR_ID = 7;
 //Arm constants
 const float ARM_MINIMUM_POSITION = 0.07;
 const float ARM_MAXIMUM_POSITION = -0.09;
-const float ARM_SPEED_MULTIPLIER = -.75;
+const float ARM_SPEED_MULTIPLIER = -.9;
 const float ARM_FIRING_LEFT_BOUND = -1;//-0.015;
 const float ARM_FIRING_RIGHT_BOUND = 1;// -0.025;
 
