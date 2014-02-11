@@ -280,7 +280,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 	setArmMoveable(true);
     
     // wait for the trigger then fire!
-    while (!_triggerJoystick->GetTrigger() /*or !_triggerJoystick->GetRawButton(8) or !TKOArm::inst()->armInFiringRange()*/) 
+    while (!_triggerJoystick->GetTrigger() or !_triggerJoystick->GetRawButton(8) /*or !TKOArm::inst()->armInFiringRange()*/) 
     {
     	DSLog(4, "READY TO FIRE");
     }
@@ -306,7 +306,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     TKORoller::inst()->override = true;
     TKORoller::inst()->_roller1.Set(1.);
     TKORoller::inst()->_roller2.Set(-1.);
-    Wait(0.1);
+    Wait(SHOOT_ROLLER_PRERUN_TIME); //timing for roller prerun
     
     _latch_lock_unlock->Set(DoubleSolenoid::kReverse);
     TKOLogger::inst()->addMessage("STATE ACTION Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));

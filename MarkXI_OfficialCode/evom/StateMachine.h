@@ -42,6 +42,7 @@
 #define PISTON_EXTEND_TIMEOUT 25.//3.
 #define LATCH_UNLOCK_REVERSE_TIMEOUT 25.//2.
 #define POST_SHOOT_WAIT_TIME .5
+#define SHOOT_ROLLER_PRERUN_TIME .1
 
 // Define the states
 typedef enum {

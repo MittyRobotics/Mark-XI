@@ -26,7 +26,7 @@ TKOArm::TKOArm() :
 	printf("Initializing intake\n");
 	_arm.SetSafetyEnabled(false);
 	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
-	_arm.SetVoltageRampRate(0.0);
+	_arm.SetVoltageRampRate(1.0);
 	_arm.ConfigFaultTime(0.1); 
 	_arm.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 	_arm.ConfigEncoderCodesPerRev(250);
@@ -82,6 +82,7 @@ bool TKOArm::Stop()
 }
 void TKOArm::runManualArm()
 {	
+	switchToVBusMode();
 	if (DriverStation::GetInstance()->GetDigitalIn(5))//if shooter running
 	{
 		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
@@ -150,4 +151,10 @@ void TKOArm::switchToPositionMode()
 	_arm.SetVoltageRampRate(3.); //TODO maybe don't need ramping voltage with pid
 	_arm.ConfigSoftPositionLimits(maxArmPos, minArmPos);
 }
-
+void TKOArm::switchToVBusMode()
+{
+	_arm.ChangeControlMode(_arm.kPercentVbus);
+	_arm.SetVoltageRampRate(1.);
+	_arm.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
+	_arm.ConfigEncoderCodesPerRev(250);
+}
