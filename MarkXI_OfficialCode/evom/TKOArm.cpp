@@ -83,6 +83,10 @@ bool TKOArm::Stop()
 void TKOArm::runManualArm()
 {	
 	switchToVBusMode();
+	
+	if (stick4.GetRawButton(8))
+		_arm.EnableControl(0.);
+	
 	if (DriverStation::GetInstance()->GetDigitalIn(5))//if shooter running
 	{
 		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
@@ -101,7 +105,6 @@ void TKOArm::runManualArm()
 	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
 	DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
 	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
-	
 	if (_arm.GetPosition() > minArmPos) //if we are farther back than we can be, only go forward
 	{
 		if (stick4.GetY() < 0)
@@ -138,6 +141,7 @@ void TKOArm::moveToBack()
 }
 bool TKOArm::armInFiringRange()
 {
+	return true;
 	if (not limitSwitchArm.Get())
 		return false;
 	if (_arm.GetPosition() <= ARM_FIRING_LEFT_BOUND and _arm.GetPosition() >= ARM_FIRING_RIGHT_BOUND)

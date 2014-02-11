@@ -126,6 +126,10 @@ void MarkXI::Test()
 	while (IsEnabled())
 	{
 		DSLog(5, "Arm: %d", TKOArm::inst()->armInFiringRange());
+		if (stick4.GetRawButton(2))
+			TKOArm::inst()->moveToBack();
+		if (stick4.GetRawButton(3))
+			TKOArm::inst()->moveToFront();
 #ifdef ARM_TEST_MODE
 		armTest->Set(stick4.GetY()*-0.5);
 #endif
@@ -204,15 +208,7 @@ void MarkXI::Autonomous(void)
 		TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
 
-	Molecule* turnRightBox = new Molecule();
-	turnRightBox->MoleculeInit();
-	for(int i = 0; i < 1; i++){
-		Atom* driveStraightTwoFeet = new DriveAtom(5.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
-		//Atom* turnRightAngleR = new Turn_Atom(90.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4), TKOGyro::inst());
-		turnRightBox->addAtom(driveStraightTwoFeet);
-		//turnRightBox->addAtom(turnRightAngleR);
-	}
-	turnRightBox->start();
+	//INSERT AUTON CODE HERE
 
 	//TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
