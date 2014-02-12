@@ -1,6 +1,6 @@
 //Last edited by Vadim Korolik
 //on 01/08/2014
-//test
+
 #include "TKOVision.h"
 
 //TODO Add Logging
@@ -8,10 +8,7 @@
 TKOVision* TKOVision::m_Instance = NULL;
 
 TKOVision::TKOVision():
-		stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
-		stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
-		stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
-		stick4(STICK_4_PORT) // initialize joystick 4 < first EVOM joystick-m,
+	stick4(STICK_4_PORT) // initialize joystick 4 < second EVOM joystick
 {
 	printf("Initializing vision\n");
 	picProcessT = new Task("TKOVisProc", (FUNCPTR) ProcessRunner);
@@ -22,7 +19,7 @@ TKOVision::TKOVision():
 	lastDist = 0.;
 	lastProcessingTime = 0.;
 	lastTimestamp = 0.;
-	AxisCamera::GetInstance().WriteBrightness(30); //add setting writing
+	AxisCamera::GetInstance().WriteBrightness(30); //TODO add setting writing
 	AxisCamera::GetInstance().WriteMaxFPS(30);
 	AxisCamera::GetInstance().WriteCompression(30);
 	
@@ -30,11 +27,6 @@ TKOVision::TKOVision():
 	lastDist = 0.;
 	
 	AddToSingletonList();
-	
-//	rawImage = new RGBImage();
-//	thresholdImage = new BinaryImage(); // get just the green target pixels
-//	convexHullImage = new BinaryImage();
-//	filteredImage = new BinaryImage();
 }
 TKOVision::~TKOVision()
 {
@@ -52,10 +44,6 @@ TKOVision* TKOVision::inst()
 bool TKOVision::ProccessImageFromCamera()
 {
 	double timeStart = GetClock();
-	/////////////////////////////
-	/*if (not stick3.GetTrigger()) //if we want to run whenever press trigger
-		return false;*/
-	///////////^^^^^////////////// remove
 	if (not picProcessT->IsReady())
 	{
 		printf("Pic task not ready...\n");
@@ -68,11 +56,10 @@ bool TKOVision::ProccessImageFromCamera()
 
 	printf("Starting proccessing actually\n");
 	
-	Threshold redThreshRGB(60,140,70,140,70,140); //USED IN RGB Threshold
-	Threshold redThreshHSV(220,255,76,255,100,255);
-	//Threshold redThreshHSV2(220,255,20,255,140,255);
-	//Threshold redThreshHSV(84,255,64,255,93,255);
-	
+//	Threshold redThreshRGB(60,140,70,140,70,140);
+//	Threshold redThreshHSV(220,255,76,255,100,255);
+//	Threshold redThreshHSV2(220,255,20,255,140,255);
+//	Threshold redThreshHSV(84,255,64,255,93,255);
 	Threshold greenThreshHSV(60,255,58,255,130,255);	//HSV threshold criteria, ranges are in that order ie. Hue is 60-100
 	
 	ParticleFilterCriteria2 criteria[] = 
@@ -95,41 +82,43 @@ bool TKOVision::ProccessImageFromCamera()
 		return false;
 	}
 	printf("Camera recived a valid image.\n");
-		
+
+	// until this point, image has not been processed
 	
-	//validated image, up to here only raw image processing
-	
-	thresholdImage = rawImage->ThresholdHSV(greenThreshHSV);	//TODO test distance with new green light
-	//	thresholdImage->Write("/pics/processed/thresholdImage.bmp");
-	printf("Prosseced HSV Threshold\n");
-	convexHullImage = thresholdImage->ConvexHull(true); //check difference between true and false
-	//	convexHullImage->Write("/pics/processed/hullImage.bmp");
-	printf("Prosseced Convex Hull\n");
-	filteredImage = convexHullImage->ParticleFilter(criteria, 1);	//Remove small particles
-	
+	thresholdImage = rawImage->ThresholdHSV(greenThreshHSV);
+	printf("Processed HSV Threshold\n");
+	convexHullImage = thresholdImage->ConvexHull(true);
+	printf("Processed Convex Hull\n");
+	filteredImage = convexHullImage->ParticleFilter(criteria, 1);
 	//filteredImage->RemoveSmallObjects(true, 20);
 	printf("Convex Hull success!\n");
-	if (stick3.GetTrigger())
+	
+	if (stick4.GetRawButton(10))	// TODO figure out why writing images to file fails
 	{
 		Wait(1.);
+		thresholdImage->Write("/pics/thresholdImage.bmp");
+		convexHullImage->Write("/pics/hullImage.bmp");
 		filteredImage->Write("/pics/filteredImage.bmp");
-		rawImage->Write("/pics/rawImage.bmp"); //stack some num pics back?
+		rawImage->Write("/pics/rawImage.bmp");
 		printf("Wrote files.\n");
 		Wait(5.);
 	}
 	
-	printf("Prosseced Particle Filter\n");
-	printf("Done Prossecing\n");
+	printf("Processed Particle Filter\n");
+	printf("Done Processing\n");
 	
-	Scores *scores;
 	int verticalTargets[MAX_PARTICLES];
 	int horizontalTargets[MAX_PARTICLES];
 	int verticalTargetCount, horizontalTargetCount;
 
-	vector<ParticleAnalysisReport> *reports = filteredImage->GetOrderedParticleAnalysisReports();  //get a particle analysis report for each particle
+	//get a particle analysis report for each particle
+	vector<ParticleAnalysisReport> *reports = filteredImage->GetOrderedParticleAnalysisReports();
 
-	verticalTargetCount = horizontalTargetCount = 0;
-	//Iterate through each particle, scoring it and determining whether it is a target or not
+	verticalTargetCount = 0;
+	horizontalTargetCount = 0;
+	
+	/* score each particle and determine if it is a valid target
+	 */
 	if(reports->size() > 0)
 	{
 		scores = new Scores[reports->size()];
@@ -141,7 +130,7 @@ bool TKOVision::ProccessImageFromCamera()
 			scores[i].aspectRatioVertical = VisionFunc::inst()->scoreAspectRatio(filteredImage, report, true);
 			scores[i].aspectRatioHorizontal = VisionFunc::inst()->scoreAspectRatio(filteredImage, report, false);			
 			
-			//Check if the particle is a horizontal target, if not, check if it's a vertical target
+			//Check if the particle is a horizontal target or a vertical target
 			if(VisionFunc::inst()->scoreCompare(scores[i], false))
 			{
 				printf("particle: %d  is a Horizontal Target centerX: %d  centerY: %d \n", i, report->center_mass_x, report->center_mass_y);
@@ -202,9 +191,10 @@ bool TKOVision::ProccessImageFromCamera()
 		
 		if(verticalTargetCount > 0)
 		{
-			//Information about the target is contained in the "target" structure
-			//To get measurement information such as sizes or locations use the
-			//horizontal or vertical index to get the particle report as shown below
+			/* Information about the target is contained in the "target" structure.
+			 * To get measurement information such as sizes or locations,
+			 * use the horizontal or vertical index to get the particle report as shown below.
+			 */
 			ParticleAnalysisReport *distanceReport = &(reports->at(lastTarget.verticalIndex));
 			double distance = VisionFunc::inst()->computeDistance(filteredImage, distanceReport);
 			lastDist = distance;
@@ -236,17 +226,16 @@ bool TKOVision::ProccessImageFromCamera()
 	delete thresholdImage;
 	delete rawImage;
 	delete convexHullImage;
+	// good practice to set pointers to null
 	filteredImage = NULL;
 	thresholdImage = NULL;
 	rawImage = NULL;
 	convexHullImage = NULL;
-	
 	//delete allocated reports and Scores objects also
 	delete scores;
 	delete reports;
 	scores = NULL;
 	reports = NULL;
-	
 
 	return true;
 }
@@ -283,7 +272,7 @@ vector<ParticleAnalysisReport> * TKOVision::getLastParticleReport()
 void TKOVision::ProcessRunner()
 {
 	Timer processingTime;
-	while (true) //add task isReady check somewhere
+	while (true)
 	{
 		if (not AxisCamera::GetInstance().IsFreshImage())
 		{
