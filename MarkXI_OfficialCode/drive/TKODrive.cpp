@@ -13,14 +13,11 @@ TKODrive::TKODrive() :
 					stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 					stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
 					stick4(STICK_4_PORT), // initialize joystick 4 < first EVOM joystick-m,	
-					shifterDS(DRIVE_SHIFTER_SOLENOID_A,DRIVE_SHIFTER_SOLENOID_B)
+					shifterDS(DRIVE_SHIFTER_SOLENOID_A,DRIVE_SHIFTER_SOLENOID_B),
+					speedShiftRPM(165.)
 {	
 	printf("Initializing drive\n");
-	driveTask = new Task("TKODrive", (FUNCPTR) DriveRunner);
-	if (driveTask->SetPriority(0))
-		printf("driving priority set to 0\n");
-	else
-		printf("driving priority not set\n");
+	driveTask = new Task("TKODrive", (FUNCPTR) DriveRunner, 1);
 
 	drive1.SetSafetyEnabled(false);
 	drive2.SetSafetyEnabled(false);
@@ -68,7 +65,7 @@ TKODrive* TKODrive::inst()
 }
 void TKODrive::DriveRunner()
 {
-	while (DriverStation::GetInstance()->IsEnabled())
+	while (true)
 	{
 		m_Instance->TankDrive();
 		m_Instance->LogData();
@@ -89,6 +86,9 @@ void TKODrive::Stop()
 
 	TKOLogger::inst()->addMessage("Drive 1 Max Speed: %f", maxDrive1RPM);
 	TKOLogger::inst()->addMessage("Drive 3 Max Speed: %f", maxDrive3RPM);
+	
+	maxDrive1RPM = 0.;
+	maxDrive3RPM = 0.;
 }
 
 void TKODrive::LogData()
@@ -121,7 +121,7 @@ void TKODrive::LogData()
 	TKOLogger::inst()->addMessage("Drive 1 Speed: %f", drive1.GetSpeed());
 	TKOLogger::inst()->addMessage("Drive 3 Speed: %f\n", drive3.GetSpeed());
 
-	printf("-----DRIVE DATA------\n");
+	/*printf("-----DRIVE DATA------\n");
 
 	printf("Drive 1 Vbus Percent Output: %f\n", drive1.Get());
 	printf("Drive 2 Vbus Percent Output: %f\n", drive2.Get());
@@ -139,7 +139,7 @@ void TKODrive::LogData()
 	printf("Drive 4 Current Output: %f\n\n", drive4.GetOutputCurrent());
 
 	printf("Drive 1 Speed: %f\n", drive1.GetSpeed());
-	printf("Drive 3 Speed: %f\n\n", drive3.GetSpeed());
+	printf("Drive 3 Speed: %f\n\n", drive3.GetSpeed());*/
 
 	driveLogCounter++;
 	lastDataLog = GetTime();
@@ -191,6 +191,7 @@ void TKODrive::TankDrive()
 		drive4.Set(-stick2.GetY() * 0.8);
 	}
 	TKODrive::ManualShift();
+	TKODrive::AutoShift();
 }
 void TKODrive::ManualShift()
 {
@@ -201,13 +202,30 @@ void TKODrive::ManualShift()
 	{
 		shifterDS.Set(shifterDS.kForward);
 		lastShift = GetTime();
-		printf("Manually shifted forward (low gear)\n");
+		printf("Manually shifted backwards (high gear)\n");
 	}
 	if (stick2.GetRawButton(3)) 
 	{
 		shifterDS.Set(shifterDS.kReverse);
 		lastShift = GetTime();
-		printf("Manually shifted backwards (high gear)\n");
+		printf("Manually shifted forward (low gear)\n");
+	}
+}
+void TKODrive::AutoShift()
+{
+	if (GetTime() - lastShift < 1.) //1. is the constant for min delay between shifts
+		return; 
+	if (drive1.GetSpeed() > speedShiftRPM and drive3.GetSpeed() > speedShiftRPM and shifterDS.Get() != shifterDS.kForward)
+	{
+		shifterDS.Set(shifterDS.kForward);
+		lastShift = GetTime();
+		printf("Auto shifted backwards (high gear)\n");
+	}
+	else if (drive1.GetSpeed() < speedShiftRPM and drive3.GetSpeed() < speedShiftRPM and shifterDS.Get() != shifterDS.kReverse)
+	{
+		shifterDS.Set(shifterDS.kReverse);
+		lastShift = GetTime();
+		printf("Auto shifted forward (low gear)\n");
 	}
 }
 

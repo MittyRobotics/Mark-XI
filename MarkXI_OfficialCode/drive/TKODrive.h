@@ -14,6 +14,7 @@ public:
 	void Start();
 	void Stop();
 	bool VerifyJags();
+	double maxDrive1RPM, maxDrive3RPM;
 private:
 	CANJaguar drive1, drive2, drive3, drive4; // define motors
 	Joystick stick1, stick2, stick3, stick4; // define joysticks
@@ -22,11 +23,12 @@ private:
 	
 	long driveLogCounter;
 	float lastShift, lastDataLog;
-	double maxDrive1RPM, maxDrive3RPM;
+	const float speedShiftRPM;
 	
 	void TankDrive();
 	void LogData();
 	void ManualShift();
+	void AutoShift();
 	TKODrive();
 	~TKODrive();
 	static TKODrive* m_Instance;

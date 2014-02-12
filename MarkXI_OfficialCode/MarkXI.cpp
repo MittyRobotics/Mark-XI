@@ -21,11 +21,12 @@
 /*---------------MarkXI-Things-to-Do(TODO)---------------------* 
  * FOR 2014 OffSeason: take over scouting?
  * 
- * CRITICAL: StateMachine initialization conflicts with MarkXI solenoid initialization
- * Maybe it doesn't work because of static object initialization, 
- * or is it due to confict?
+ * Test the wait time for how long the roller spins before the shooter fires
  * 
- * Default pneumatic states on initialization?
+ * CRITICAL: StateMachine initialization conflicts with MarkXI solenoid initialization
+ * Does it fail because of static object initialization, or is it due to conflict?
+ * 
+ * Determine default pneumatic states on initialization
  * 
  * -----------------------------LAST DONE-------------------------------*
  * 02/07
@@ -64,11 +65,11 @@ public:
 	void GyroDrive();
 
 	MarkXI::MarkXI() :
-							stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
-							stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
-							stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
-							stick4(STICK_4_PORT),
-							compressor(PRESSURE_SWITCH_PORT, COMPRESSOR_ID)
+		stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
+		stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
+		stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
+		stick4(STICK_4_PORT),
+		compressor(PRESSURE_SWITCH_PORT, COMPRESSOR_ID)
 	{/*DO NOT USE THIS!!! USE RobotInit()*/}
 };
 void MarkXI::RobotInit()
@@ -126,6 +127,10 @@ void MarkXI::Test()
 	while (IsEnabled())
 	{
 		DSLog(5, "Arm: %d", TKOArm::inst()->armInFiringRange());
+		if (stick4.GetRawButton(2))
+			TKOArm::inst()->moveToBack();
+		if (stick4.GetRawButton(3))
+			TKOArm::inst()->moveToFront();
 #ifdef ARM_TEST_MODE
 		armTest->Set(stick4.GetY()*-0.5);
 #endif
@@ -179,14 +184,13 @@ void MarkXI::Disabled()
 	TKOLogger::inst()->addMessage("Robot disabled.");
 	TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
+	TKOArm::inst()->Stop();
 	//TKOGDrive::inst()->Stop();
 	//TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
-	{
-
-	}
+	{}
 }
 
 void MarkXI::Autonomous(void)
@@ -203,15 +207,10 @@ void MarkXI::Autonomous(void)
 		TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
 
-	Molecule* turnRightBox = new Molecule();
-	turnRightBox->MoleculeInit();
-	for(int i = 0; i < 1; i++){
-		Atom* driveStraightTwoFeet = new DriveAtom(5.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
-		//Atom* turnRightAngleR = new Turn_Atom(90.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4), TKOGyro::inst());
-		turnRightBox->addAtom(driveStraightTwoFeet);
-		//turnRightBox->addAtom(turnRightAngleR);
-	}
-	turnRightBox->start();
+	/* ---TODO for auton---
+	 * insert new PID values
+	 * during auton: shoot & drive forward, calibrate arm?
+	 */
 
 	//TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
@@ -224,7 +223,9 @@ void MarkXI::OperatorControl()
 	TKOLogger::inst()->Start();
 	TKOGyro::inst()->reset();
 	compressor.Start();
+	//StateMachine::initPneumatics();
 	TKOShooter::inst()->Start();
+	TKOArm::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;
@@ -240,13 +241,14 @@ void MarkXI::OperatorControl()
 		}
 		//DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
 		//DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
-		DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
-		DSLog(4, "Clock %f\n", GetClock());
-		Wait(LOOPTIME - loopTimer.Get());
+		//DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
+		//DSLog(4, "Clock %f\n", GetClock());
+		//Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}
-
+	TKODrive::inst()->Stop();
 	loopTimer.Stop();
+	compressor.Stop();
 	printf("Ending OperatorControl \n");
 	TKOLogger::inst()->addMessage("Ending OperatorControl");
 }
@@ -259,6 +261,10 @@ void MarkXI::Operator()
 		RegDrive();
 	if (stick1.GetRawButton(9))
 		GyroDrive();
+	if (stick4.GetRawButton(3))
+		TKOArm::inst()->moveToFront();
+	if (stick4.GetRawButton(3))
+		TKOArm::inst()->moveToBack();
 }
 
 void MarkXI::RegDrive()

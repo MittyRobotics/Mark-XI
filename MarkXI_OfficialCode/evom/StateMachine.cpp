@@ -97,7 +97,7 @@ int StateMachine::getSensorData(instance_data_t *data)
     data->state[1] = (_piston_extend->Get() == 0);
     data->state[2] = (_latch_lock->Get() == 0);
     data->state[3] = (_is_cocked->Get() == 0);
-
+    updateDriverStationSwitchDisplay();
     return createIntFromBoolArray(data);
 }
 
@@ -283,6 +283,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
     while (!_triggerJoystick->GetTrigger() or !_triggerJoystick->GetRawButton(8) or !TKOArm::inst()->armInFiringRange()) 
     {
     	DSLog(4, "READY TO FIRE");
+    	DSLog(5, "Arm status: %d", TKOArm::inst()->armInFiringRange());
     }
     // go to next state
     TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Ready to Fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
@@ -296,19 +297,24 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
     if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE or !TKOArm::inst()->armInFiringRange()) {
     	TKOLogger::inst()->addMessage("STATE ERROR ENTER Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
-        return STATE_ERR;
+        TKOLogger::inst()->addMessage("Arm status: %d", TKOArm::inst()->armInFiringRange());
+    	return STATE_ERR;
     }
     
     data->curState = STATE_LATCH_UNLOCK;
     
     _timer->Start();
-
+    
+    TKORoller::inst()->override = true;
+    TKORoller::inst()->_roller1.Set(1.);
+    TKORoller::inst()->_roller2.Set(-1.);
+    Wait(SHOOT_ROLLER_PRERUN_TIME); //timing for roller prerun
+    
     _latch_lock_unlock->Set(DoubleSolenoid::kReverse);
     TKOLogger::inst()->addMessage("STATE ACTION Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
-
     int sensors = 0;
 
-    // reason for 4 is that piston is extended after this step
+    // reason for 4 is that piston is extended after this step 
     while (sensors = getSensorData(data), sensors != DONE_FIRING && (sensors == CONST_READY_TO_FIRE || sensors == 10))
     {
         if (_timer->Get() > LATCH_UNLOCK_REVERSE_TIMEOUT) {
@@ -323,6 +329,10 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     _timer->Reset();
 
     Wait(POST_SHOOT_WAIT_TIME); //TODO figure this out
+    
+	TKORoller::inst()->_roller1.Set(0.);
+	TKORoller::inst()->_roller2.Set(0.);
+    TKORoller::inst()->override = false;
     
     if (sensors != DONE_FIRING)
     {

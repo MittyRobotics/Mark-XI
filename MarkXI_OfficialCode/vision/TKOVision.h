@@ -1,5 +1,8 @@
 //Last edited by Vadim Korolik
 //on 01/04/2014
+
+// for help with vision: http://wpilib.screenstepslive.com/s/3120/m/8731/c/39930
+
 #ifndef __TKOVISION_H
 #define __TKOVISION_H
 
@@ -33,14 +36,14 @@ class TKOVision : public SensorBase
 		TKOVision();
 		~TKOVision();
 
-		Joystick stick1, stick2, stick3, stick4; // define joysticks
+		Joystick stick4;
 		Scores *scores;
 		Task *picProcessT;
 		
-		ColorImage *rawImage;
-		BinaryImage *thresholdImage; // get just the green target pixels
-		BinaryImage *convexHullImage;
-		BinaryImage *filteredImage;
+		ColorImage *rawImage;			// raw image is the original camera image
+		BinaryImage *thresholdImage;	// threshold image gets just the green target pixels
+		BinaryImage *convexHullImage;	// convex hull image fills in any particles
+		BinaryImage *filteredImage;		// filtered image removes any particles that don't match criteria for targets
 		
 		static TKOVision* m_Instance;
 		

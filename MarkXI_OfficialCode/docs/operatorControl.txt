@@ -1,0 +1,22 @@
+Driver Controls:
+	Tank Drive: Stick 1 and 2
+Stick 1
+- trigger: half speed (0.4)
+- button 2: quarter speed (0.2)
+- button 4: full power (1.0)
+Stick 2
+- button 2: shift to low gear
+- button 3: shift to high gear
+- button 4: set ramping to 0
+- button 5: set ramping to 12
+
+Operator Controls:
+Stick 3
+- trigger: fire shooter (move this to driver controls)
+	- also needs button 8?
+- button 4: roller intake
+- button 5: roller outtake
+Stick 4
+- move forwards: arm forward(?)
+- move backwards: arm back(?)
+- button 10: vision - write image to file
