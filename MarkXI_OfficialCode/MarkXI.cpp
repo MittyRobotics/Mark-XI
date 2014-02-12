@@ -21,11 +21,12 @@
 /*---------------MarkXI-Things-to-Do(TODO)---------------------* 
  * FOR 2014 OffSeason: take over scouting?
  * 
- * CRITICAL: StateMachine initialization conflicts with MarkXI solenoid initialization
- * Maybe it doesn't work because of static object initialization, 
- * or is it due to confict?
+ * Test the wait time for how long the roller spins before the shooter fires
  * 
- * Default pneumatic states on initialization?
+ * CRITICAL: StateMachine initialization conflicts with MarkXI solenoid initialization
+ * Does it fail because of static object initialization, or is it due to conflict?
+ * 
+ * Determine default pneumatic states on initialization
  * 
  * -----------------------------LAST DONE-------------------------------*
  * 02/07
@@ -64,11 +65,11 @@ public:
 	void GyroDrive();
 
 	MarkXI::MarkXI() :
-							stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
-							stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
-							stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
-							stick4(STICK_4_PORT),
-							compressor(PRESSURE_SWITCH_PORT, COMPRESSOR_ID)
+		stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
+		stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
+		stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
+		stick4(STICK_4_PORT),
+		compressor(PRESSURE_SWITCH_PORT, COMPRESSOR_ID)
 	{/*DO NOT USE THIS!!! USE RobotInit()*/}
 };
 void MarkXI::RobotInit()
@@ -189,9 +190,7 @@ void MarkXI::Disabled()
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
-	{
-
-	}
+	{}
 }
 
 void MarkXI::Autonomous(void)
@@ -208,7 +207,10 @@ void MarkXI::Autonomous(void)
 		TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
 
-	//INSERT AUTON CODE HERE
+	/* ---TODO for auton---
+	 * insert new PID values
+	 * during auton: shoot & drive forward, calibrate arm?
+	 */
 
 	//TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");

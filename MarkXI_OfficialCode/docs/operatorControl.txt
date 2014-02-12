@@ -14,9 +14,9 @@ Operator Controls:
 Stick 3
 - trigger: fire shooter (move this to driver controls)
 	- also needs button 8?
-- trigger: write image to file (fix this in TKOVision)
 - button 4: roller intake
 - button 5: roller outtake
 Stick 4
 - move forwards: arm forward(?)
 - move backwards: arm back(?)
+- button 10: vision - write image to file
