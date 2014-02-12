@@ -33,7 +33,7 @@ TKOGDrive::TKOGDrive() :
 	rDrive.SetInvertedMotor(RobotDrive::kFrontLeftMotor, true);
 	rDrive.SetInvertedMotor(RobotDrive::kRearLeftMotor, true);
 	ds = DriverStation::GetInstance();
-	driveTask = new Task("Driving", (FUNCPTR) DriveRunner);
+	driveTask = new Task("Driving", (FUNCPTR) DriveRunner, 1);
 //	if (driveTask->SetPriority(5))
 //		printf("gyro driving priority set to 5\n");
 //	else

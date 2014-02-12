@@ -53,7 +53,7 @@ void TKOLogger::Start()
 {
 	// This should be the first class to be Started after enabling
 	if (!_logTask) {
-		_logTask = new Task("Logging", (FUNCPTR) LogRunner); // create a new task called Logging which runs LogRunner
+		_logTask = new Task("Logging", (FUNCPTR) LogRunner, 200); // create a new task called Logging which runs LogRunner
 		printf("Created logger task\n");
 //		if (_logTask->SetPriority(254)) // use the constants first/wpilib provides?
 //			printf("logger priority set to 254\n");

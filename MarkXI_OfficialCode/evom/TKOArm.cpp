@@ -33,6 +33,7 @@ TKOArm::TKOArm() :
 	_arm.EnableControl(0.);
 	armTask = new Task("TKOArm", (FUNCPTR) ArmRunner, 1);
 	armEnabled = true;
+	runningVBus = true;
 	runManualArm();
 	if (limitSwitchArm.Get())
 	{
@@ -63,7 +64,9 @@ void TKOArm::ArmRunner()
 {
 	while (true)
 	{
+		TKORoller::inst()->rollerSimpleMove();
 		m_Instance->runManualArm();
+		m_Instance->runPositionArm();
 	}
 }
 bool TKOArm::Start()
@@ -80,8 +83,32 @@ bool TKOArm::Stop()
 			return true;
 	return false;
 }
+void TKOArm::runPositionArm()
+{
+	if (runningVBus)
+		return;
+	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
+	DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
+	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
+	
+	if (_arm.GetControlMode() == _arm.kPercentVbus)
+		switchToPositionMode();
+	
+	float delta = _arm.Get() - _arm.GetPosition();
+	
+	if (delta < 0.1 and delta > -0.1) //TODO tune this
+		runningVBus = true;
+	else
+		runningVBus = false;
+}
 void TKOArm::runManualArm()
 {	
+	if (!runningVBus)
+		return;
+	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
+	DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
+	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
+	
 	if (_arm.GetControlMode() == _arm.kPosition)
 		switchToVBusMode();
 	
@@ -91,9 +118,6 @@ void TKOArm::runManualArm()
 		_arm.EnableControl(0.);
 		_arm.SetPositionReference(_arm.kPosRef_QuadEncoder);
 	}
-	
-	TKORoller::inst()->rollerSimpleMove();
-	//TKORoller::inst()->rollerManualMove();
 	
 	if (DriverStation::GetInstance()->GetDigitalIn(5))//if shooter running
 	{
@@ -125,25 +149,24 @@ void TKOArm::runManualArm()
 	{
 		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
 	}
-
-	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
-	DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
-	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
 }
 void TKOArm::moveToFront()
 {
+	runningVBus = false;
 	if (_arm.GetControlMode() == _arm.kPercentVbus)
 		TKOArm::switchToPositionMode();
 	_arm.Set(maxArmPos);
 }
 void TKOArm::moveToMid()
 {
+	runningVBus = false;
 	if (_arm.GetControlMode() == _arm.kPercentVbus)
 		TKOArm::switchToPositionMode();
 	_arm.Set(0.);
 }
 void TKOArm::moveToBack()
 {
+	runningVBus = false;
 	if (_arm.GetControlMode() == _arm.kPercentVbus)
 		TKOArm::switchToPositionMode();
 	_arm.Set(minArmPos);

@@ -7,8 +7,8 @@ TKOShooter*  TKOShooter::_instance = NULL;
 TKOShooter::TKOShooter ():
 		stick1(1), stick2(2), stick3(3), stick4(4)
 {	
-	shooterTask = new Task("Shooter", (FUNCPTR) shooterTaskRunner);
-	stateMachineTask = new Task("StateMachine", (FUNCPTR) stateMachineTaskRunner);
+	shooterTask = new Task("Shooter", (FUNCPTR) shooterTaskRunner, 5);
+	stateMachineTask = new Task("StateMachine", (FUNCPTR) stateMachineTaskRunner, 5);
 	/*if (shooterTask->SetPriority(4))
 			printf("shooterTask priority set to 4\n");
 		else

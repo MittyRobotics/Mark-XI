@@ -51,8 +51,10 @@ class TKOArm: public SensorBase
 		static void ArmRunner();
 		const float minArmPos, maxArmPos;
 		void runManualArm();
+		void runPositionArm();
 		Task *armTask;
 		bool armEnabled;
+		bool runningVBus;
 	
 		CANJaguar _arm;
 		DigitalInput limitSwitchArm;

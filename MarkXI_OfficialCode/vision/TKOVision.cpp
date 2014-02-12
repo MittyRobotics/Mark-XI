@@ -11,7 +11,7 @@ TKOVision::TKOVision():
 	stick4(STICK_4_PORT) // initialize joystick 4 < second EVOM joystick
 {
 	printf("Initializing vision\n");
-	picProcessT = new Task("TKOVisProc", (FUNCPTR) ProcessRunner);
+	picProcessT = new Task("TKOVisProc", (FUNCPTR) ProcessRunner, 201);
 	if (picProcessT->SetPriority(200)) //lowest priority, lower than driving etc.
 		printf("vision priority set to 200\n");
 	else
