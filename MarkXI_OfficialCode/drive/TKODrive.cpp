@@ -17,11 +17,7 @@ TKODrive::TKODrive() :
 					speedShiftRPM(165.)
 {	
 	printf("Initializing drive\n");
-	driveTask = new Task("TKODrive", (FUNCPTR) DriveRunner);
-	if (driveTask->SetPriority(0))
-		printf("driving priority set to 0\n");
-	else
-		printf("driving priority not set\n");
+	driveTask = new Task("TKODrive", (FUNCPTR) DriveRunner, 1);
 
 	drive1.SetSafetyEnabled(false);
 	drive2.SetSafetyEnabled(false);
@@ -69,7 +65,7 @@ TKODrive* TKODrive::inst()
 }
 void TKODrive::DriveRunner()
 {
-	while (DriverStation::GetInstance()->IsEnabled())
+	while (true)
 	{
 		m_Instance->TankDrive();
 		m_Instance->LogData();
@@ -125,7 +121,7 @@ void TKODrive::LogData()
 	TKOLogger::inst()->addMessage("Drive 1 Speed: %f", drive1.GetSpeed());
 	TKOLogger::inst()->addMessage("Drive 3 Speed: %f\n", drive3.GetSpeed());
 
-	printf("-----DRIVE DATA------\n");
+	/*printf("-----DRIVE DATA------\n");
 
 	printf("Drive 1 Vbus Percent Output: %f\n", drive1.Get());
 	printf("Drive 2 Vbus Percent Output: %f\n", drive2.Get());
@@ -143,7 +139,7 @@ void TKODrive::LogData()
 	printf("Drive 4 Current Output: %f\n\n", drive4.GetOutputCurrent());
 
 	printf("Drive 1 Speed: %f\n", drive1.GetSpeed());
-	printf("Drive 3 Speed: %f\n\n", drive3.GetSpeed());
+	printf("Drive 3 Speed: %f\n\n", drive3.GetSpeed());*/
 
 	driveLogCounter++;
 	lastDataLog = GetTime();

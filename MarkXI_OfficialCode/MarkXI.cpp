@@ -241,7 +241,7 @@ void MarkXI::OperatorControl()
 		//DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
 		//DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		//DSLog(4, "Clock %f\n", GetClock());
-		Wait(LOOPTIME - loopTimer.Get());
+		//Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}
 	TKODrive::inst()->Stop();
@@ -259,6 +259,10 @@ void MarkXI::Operator()
 		RegDrive();
 	if (stick1.GetRawButton(9))
 		GyroDrive();
+	if (stick4.GetRawButton(3))
+		TKOArm::inst()->moveToFront();
+	if (stick4.GetRawButton(3))
+		TKOArm::inst()->moveToBack();
 }
 
 void MarkXI::RegDrive()
