@@ -26,7 +26,9 @@ DoubleSolenoid* StateMachine::_latch_lock_unlock = NULL;//new DoubleSolenoid(LAT
 float StateMachine::lastSensorStringPrint = 0.;
 bool StateMachine::armCanMove = false;
 bool StateMachine::hasSetPneumatics = false;
+bool StateMachine::hasShot = false;
 SEM_ID StateMachine::_armSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
+SEM_ID StateMachine::_shootSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
 
 StateMachine::StateMachine()
 {
@@ -46,6 +48,7 @@ StateMachine::StateMachine()
 StateMachine::~StateMachine()
 {
 	semDelete(_armSem);
+	semDelete(_shootSem);
 }
 void StateMachine::initPneumatics()
 {
@@ -58,6 +61,25 @@ void StateMachine::initPneumatics()
 	Wait(1.);
 	hasSetPneumatics = true;
 }
+
+bool StateMachine::canAutonShoot()
+{
+	bool tmp;
+	{
+		Synchronized sem(_shootSem);
+		tmp = hasShot;
+	}
+	return tmp;
+}
+
+void StateMachine::setAutonShoot(bool tmp)
+{
+	{
+		Synchronized sem(_shootSem);
+		hasShot = tmp;
+	}
+}
+
 bool StateMachine::canArmMove()
 {
 	bool tmp; 

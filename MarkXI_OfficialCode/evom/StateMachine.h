@@ -70,6 +70,9 @@ public:
     StateMachine();
     ~StateMachine();
 
+    static bool hasShot;
+    static bool canAutonShoot();
+    static void setAutonShoot(bool b);
     static bool armCanMove;
     static bool canArmMove();
     static bool hasSetPneumatics;
@@ -97,6 +100,7 @@ private:
     state_func_t*  _state_table[NUM_STATES + 1];
     
     static SEM_ID _armSem;
+    static SEM_ID _shootSem;
 
     static Timer* _timer;
 
