@@ -12,7 +12,7 @@ ShootAtom::~ShootAtom()
 
 void ShootAtom::run()
 {
-	if (!StateMachine::hasShot)
+	if (!StateMachine::canAutonShoot())
 	{
 		TKOShooter::inst()->Start();
 		StateMachine::setAutonShoot(false);

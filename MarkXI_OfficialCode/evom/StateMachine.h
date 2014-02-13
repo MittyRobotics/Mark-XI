@@ -70,7 +70,7 @@ public:
     StateMachine();
     ~StateMachine();
 
-    static bool hasShot;
+    static bool canShoot;
     static bool canAutonShoot();
     static void setAutonShoot(bool b);
     static bool armCanMove;
