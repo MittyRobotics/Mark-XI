@@ -32,7 +32,7 @@ public:
 		DisableSafety();
 		SetSpeedReference();
 		usePID = true;
-		kP = 200;
+		kP = 25;
 		kI = 0.0;
 		kD = 0.0;
 	}/**
