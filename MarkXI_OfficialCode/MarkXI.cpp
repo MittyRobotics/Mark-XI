@@ -1,5 +1,5 @@
-//Last Edited by Zach Light and Ben Kim
-// on 01/31/2014
+//Last Edited by Ishan Shah
+// on 02/13/2014
 #include "Definitions.h"
 #include "component/TKORelay.h"
 #include "log/TKOLogger.h"
@@ -90,11 +90,15 @@ void MarkXI::Autonomous(void) {
 //	printf("Test done");
 	
 //	for(int i = 0; i < 1; i++){
-		Atom* driveStraightTwentyFeet = new DriveAtom(2.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
-		turnRightBox->addAtom(driveStraightTwentyFeet);
-		
+	Atom* driveStraightTwentyFeet = new DriveAtom(10.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+	Atom* driveBackTwentyFeet = new DriveAtom(-10.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+	turnRightBox->addAtom(driveStraightTwentyFeet);
+	turnRightBox->addAtom(driveBackTwentyFeet);
 //		Atom* turnRightAngleR = new TurnAtom(90.0f,&(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
 //		turnRightBox->addAtom(turnRightAngleR); 
+		
+		
+		
 //	}
 	
 	turnRightBox->start();

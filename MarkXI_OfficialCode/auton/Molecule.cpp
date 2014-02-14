@@ -1,4 +1,4 @@
-//Last edited by Ishan Shah and Alex Parks
+//Last edited by Ishan Shah
 #include <queue>
 #include "Molecule.h"
 

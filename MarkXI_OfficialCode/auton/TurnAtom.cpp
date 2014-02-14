@@ -1,4 +1,4 @@
-//Last edited by Zach Light
+//Last edited by Ishan Shah
 #include "TurnAtom.h"
 
 TurnAtom::TurnAtom(float ang, CANJaguar* drive1, CANJaguar* drive2,	CANJaguar* drive3, CANJaguar* drive4) {
@@ -49,12 +49,13 @@ void TurnAtom::turn(double target) {
 	//Counterclockwise is positive, clockwise is negative
 		//inches/tic = .333134485
 		float _target = target * 0.01925;
-		_drive1->Set(_target);
+		//_target += 10.0; 
+		_drive1->Set(_target);		
 		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave			
 		_drive3->Set(_target);
-		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
+		_drive4->Set(-_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 		
-		if((_drive1->GetPosition() + 0.2) <= _target and (_drive1->GetPosition() -0.2) >= _target)
+		if( (_drive1->GetPosition() + 0.2) <= _target and (_drive1->GetPosition() - 0.2) >= _target)
 		{
 			if (!reachedTarget)
 				{

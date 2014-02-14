@@ -1,4 +1,4 @@
-//Last Edited by Ishan Shah and Alex Parks
+//Last Edited by Ishan Shah
 #include "DriveAtom.h"
 #include <cstring>
 // new branch
@@ -26,7 +26,7 @@ void DriveAtom::run() {
 	_drive3->EnableControl(0);
 //	_drive1->SetPID(kP, kI, kD);
 //	_drive3->SetPID(kP, kI, kD);
-	while (ds->IsEnabled() and (_drive1->Get() + 0.5 >= _distance or _drive1->Get() - 0.5 <= _distance)) {
+	while (ds->IsEnabled() and _drive1->Get() <= _distance ){//and ((_drive1->Get() + 0.5 <= _distance) or (_drive1->Get() - 0.5 <= _distance))) {
 		//need a +difference for distance
 //		while(kP != ds->GetAnalogIn(1)*0.2) {
 			//kP = ds->GetAnalogIn(1)*0.2;
@@ -38,6 +38,7 @@ void DriveAtom::run() {
 //			_drive1->SetPID(kP, kI, kD);
 //			_drive3->SetPID(kP, kI, kD);
 //		}
+		
 		printf("drive 1: %f, drive 3: %f, distance: %f\n",
 				_drive1->GetPosition(), _drive3->GetPosition(), _distance);
 		
