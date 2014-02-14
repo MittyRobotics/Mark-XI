@@ -24,6 +24,7 @@
  * VxWorks Articles:
  * 		http://touro.ligo-la.caltech.edu/~cparames/CDS/vxWorks_commands.html
  * 		http://csg.lbl.gov/pipermail/vxwexplo/2003-March/000762.html
+ * 		http://wpilib.screenstepslive.com/s/3120/m/7913/l/79736-debugging-a-robot-program
  * 
  * -----------------------------LAST DONE-------------------------------*
  * 02/13
