@@ -18,10 +18,10 @@ void ShootAtom::run()
 	StateMachine s;
 	bool _autonFired;
 	_cur_state = TKOShooter::inst()->initStateMachine(&_data);
-	while(DriverStation::GetInstance()->IsAutonomous())
+	while(DriverStation::GetInstance()->IsAutonomous() and DriverStation::GetInstance()->IsEnabled())
 	{
 		string state = s.state_to_string(&_data);
-		if (state == "Ready to Fire")
+		if (state == "Ready to Fire" and StateMachine::armCanMove)
 			s.forceFire = true;
 		
 		if (state == "ERROR STATE!!!")

@@ -15,6 +15,7 @@
 #include "auton/DriveAtom.h"
 #include "auton/Molecule.h"
 #include "auton/TurnAtom.h"
+#include "auton/ShootAtom.h"
 //#define PNEUMATICS_TEST_MODE
 //#define ARM_TEST_MODE
 
@@ -197,6 +198,7 @@ void MarkXI::Autonomous(void)
 {
 	printf("Starting Autonomous \n");
 	TKOLogger::inst()->addMessage("--------------Autonomous started-------------");
+	TKOVision::inst()->StartProcessing();
 	if (DriverStation::GetInstance()->IsFMSAttached())
 	{
 		TKOLogger::inst()->addMessage("-----------FMS DETECTED------------");
@@ -211,8 +213,20 @@ void MarkXI::Autonomous(void)
 	 * insert new PID values
 	 * during auton: shoot & drive forward, calibrate arm?
 	 */
+	Molecule* turnRightBox = new Molecule();
+	Molecule* fire = new Molecule();
+	turnRightBox->MoleculeInit();
+	
+	Atom* driveStraightTwentyFeet = new DriveAtom(2.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+	Atom* shootAtom = new ShootAtom();	
+	
+	turnRightBox->addAtom(driveStraightTwentyFeet);
+	//turnRightBox->start();
+	
+	fire->addAtom(shootAtom);
+	fire->start();
 
-	//TKOVision::inst()->StopProcessing();
+	TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
 	TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
 }

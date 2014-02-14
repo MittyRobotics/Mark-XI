@@ -47,7 +47,7 @@ void Molecule::MoleculeInit() {
 
 Molecule::~Molecule() {
 
-	while (_list.size() > 0) {
+	while (_list.size() > 0 and DriverStation::GetInstance()->IsEnabled() and DriverStation::GetInstance()->IsAutonomous()) {
 		Atom *a = _list.front();
 		_list.pop();
 		delete a;

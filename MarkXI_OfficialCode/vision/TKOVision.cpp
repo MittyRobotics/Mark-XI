@@ -272,7 +272,7 @@ vector<ParticleAnalysisReport> * TKOVision::getLastParticleReport()
 void TKOVision::ProcessRunner()
 {
 	Timer processingTime;
-	while (true)
+	while (DriverStation::GetInstance()->IsEnabled())
 	{
 		if (not AxisCamera::GetInstance().IsFreshImage())
 		{

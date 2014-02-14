@@ -27,7 +27,7 @@ void TurnAtom::run() {
 
 	TKOGyro::inst()->reset();
 
-	while (turn(_angle)) {
+	while (turn(_angle) && DriverStation::GetInstance()->IsEnabled()) {
 
 		//		_drive1->Set(9001/*this value is only for testing*/); //same, but for jag 3 since only 1 and 3 have encoders
 		//		_drive2->Set(-_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second and fourth jags in slave mode

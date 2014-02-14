@@ -117,15 +117,16 @@ void TKOArm::runManualArm()
 		_arm.DisableControl();
 		_arm.EnableControl(0.);
 		_arm.SetPositionReference(_arm.kPosRef_QuadEncoder);
+		printf("Reset arm encoder...\n");
 	}
 	
 	if (DriverStation::GetInstance()->GetDigitalIn(5))//if shooter running
 	{
-		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
+		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER); //override
 		return;
 	}
 	
-	if (not StateMachine::armCanMove or not armEnabled)
+	if (not StateMachine::armCanMove or not armEnabled) //safety, state machine safe positions
 	{
 		_arm.Set(0);
 		return;
