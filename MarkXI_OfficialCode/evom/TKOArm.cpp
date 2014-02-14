@@ -193,6 +193,9 @@ void TKOArm::switchToPositionMode()
 	_arm.SetPID(10., 0.001, 0.);
 	_arm.SetVoltageRampRate(3.); //TODO maybe don't need ramping voltage with pid
 	_arm.ConfigSoftPositionLimits(maxArmPos, minArmPos);
+	_arm.ConfigEncoderCodesPerRev(250);
+	_arm.SetSafetyEnabled(false);
+	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
 }
 void TKOArm::switchToVBusMode()
 {
@@ -200,4 +203,6 @@ void TKOArm::switchToVBusMode()
 	_arm.SetVoltageRampRate(0.0);
 	_arm.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 	_arm.ConfigEncoderCodesPerRev(250);
+	_arm.SetSafetyEnabled(false);
+	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
 }

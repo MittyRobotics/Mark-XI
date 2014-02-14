@@ -16,23 +16,22 @@
 #include "auton/Molecule.h"
 #include "auton/TurnAtom.h"
 #include "auton/ShootAtom.h"
-//#define PNEUMATICS_TEST_MODE
-//#define ARM_TEST_MODE
 
 /*---------------MarkXI-Things-to-Do(TODO)---------------------* 
- * FOR 2014 OffSeason: take over scouting?
+ * FOR 2014 OffSeason: take over scouting? Swag troubleshooting lookup (MYSQL)
  * 
  * Test the wait time for how long the roller spins before the shooter fires
- * 
- * CRITICAL: StateMachine initialization conflicts with MarkXI solenoid initialization
- * Does it fail because of static object initialization, or is it due to conflict?
- * 
- * Determine default pneumatic states on initialization
+ * VxWorks Articles:
+ * 		http://touro.ligo-la.caltech.edu/~cparames/CDS/vxWorks_commands.html
+ * 		http://csg.lbl.gov/pipermail/vxwexplo/2003-March/000762.html
  * 
  * -----------------------------LAST DONE-------------------------------*
+ * 02/13
+ *  Shoot atom, arm additions, state machine improvements
  * 02/07
  *  StateMachine::initPneumatics() --> sets pneumatics to default positions
  * 	Creating duplicate static neumatics objects in statemachine and in markxi
+ * 	Similar for joystick objects in StateMachine
  * 	breaks robot, causes kernel exception? or maybe static objects?
  * 	Added more testing, added TKOArm, uses TKORoller
  * 	DriverStation Digital Inputs in Test mode:
@@ -93,21 +92,7 @@ void MarkXI::Test()
 {	
 	printf("Calling test function \n");
 	TKOLogger::inst()->Start();
-#ifdef PNEUMATICS_TEST_MODE
-	DoubleSolenoid* _piston_retract_extend = new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
-	DoubleSolenoid* _latch_lock_unlock = new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
-#endif
-#ifdef ARM_TEST_MODE
-	CANJaguar* armTest = new CANJaguar(7, CANJaguar::kPercentVbus);
-	armTest->SetSafetyEnabled(false);
-	armTest->ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
-	armTest->SetVoltageRampRate(0.0);
-	armTest->ConfigFaultTime(0.1); 
-	armTest->SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
-	armTest->ConfigEncoderCodesPerRev(250);
-	armTest->EnableControl();
-#endif
-	float lastSTog = GetTime();
+	
 	StateMachine::initPneumatics(); //TODO make sure this works; sets pneumatics to default start positions
 	printf("Done with test initialization \n");
 
@@ -128,46 +113,6 @@ void MarkXI::Test()
 	while (IsEnabled())
 	{
 		DSLog(5, "Arm: %d", TKOArm::inst()->armInFiringRange());
-		if (stick4.GetRawButton(2))
-			TKOArm::inst()->moveToBack();
-		if (stick4.GetRawButton(3))
-			TKOArm::inst()->moveToFront();
-#ifdef ARM_TEST_MODE
-		armTest->Set(stick4.GetY()*-0.5);
-#endif
-#ifdef PNEUMATICS_TEST_MODE
-		DriverStation::GetInstance()->SetDigitalOut(1, _piston_retract_extend->Get());
-		DriverStation::GetInstance()->SetDigitalOut(2, _latch_lock_unlock->Get());
-#endif
-#ifdef ARM_TEST_MODE
-		DSLog(1, "Arm Pos: %f", armTest->GetPosition());
-		DSLog(2, "Arm Volt: %f", armTest->GetOutputVoltage());
-		DSLog(3, "Arm Curr %f", armTest->GetOutputCurrent());
-#endif
-		if (GetTime() - lastSTog < 1.) //1. is the constant for min delay between shifts
-			continue; 
-#ifdef PNEUMATICS_TEST_MODE
-		if (stick4.GetRawButton(4))
-		{
-			_piston_retract_extend->Set(_piston_retract_extend->kForward);
-			lastSTog = GetTime();
-		}
-		if (stick4.GetRawButton(5))
-		{
-			_piston_retract_extend->Set(_piston_retract_extend->kReverse);
-			lastSTog = GetTime();
-		}
-		if (stick4.GetRawButton(3))
-		{
-			_latch_lock_unlock->Set(_latch_lock_unlock->kForward);
-			lastSTog = GetTime();
-		}
-		if (stick4.GetRawButton(2))
-		{
-			_latch_lock_unlock->Set(_latch_lock_unlock->kReverse); //reverse if pulled back
-			lastSTog = GetTime();
-		}
-#endif
 	}
 	printf("Stopping shooter, logger \n");
 	TKOShooter::inst()->Stop();
@@ -187,7 +132,7 @@ void MarkXI::Disabled()
 	TKODrive::inst()->Stop();
 	TKOArm::inst()->Stop();
 	//TKOGDrive::inst()->Stop();
-	//TKOVision::inst()->StopProcessing();
+	TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
@@ -240,7 +185,7 @@ void MarkXI::OperatorControl()
 	//StateMachine::initPneumatics();
 	TKOShooter::inst()->Start();
 	TKOArm::inst()->Start();
-	//TKOVision::inst()->StartProcessing();  //NEW VISION START
+	TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;
 	loopTimer.Start();
@@ -253,10 +198,9 @@ void MarkXI::OperatorControl()
 		if (loopTimer.Get() > 0.1) {
 			TKOLogger::inst()->addMessage("!!!CRITICAL Operator loop very long, %f%s\n",loopTimer.Get(), " seconds.");
 		}
-		//DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
-		//DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
+		DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
+		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
 		//DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
-		//DSLog(4, "Clock %f\n", GetClock());
 		//Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}

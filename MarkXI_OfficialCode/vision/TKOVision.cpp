@@ -95,13 +95,17 @@ bool TKOVision::ProccessImageFromCamera()
 	
 	if (stick4.GetRawButton(10))	// TODO figure out why writing images to file fails
 	{
+		remove("/pics/thresholdImage.bmp");
+		remove("/pics/hullImage.bmp");
+		remove("/pics/filteredImage.bmp");
+		remove("/pics/rawImage.bmp");
 		Wait(1.);
 		thresholdImage->Write("/pics/thresholdImage.bmp");
 		convexHullImage->Write("/pics/hullImage.bmp");
 		filteredImage->Write("/pics/filteredImage.bmp");
 		rawImage->Write("/pics/rawImage.bmp");
 		printf("Wrote files.\n");
-		Wait(5.);
+		Wait(1.);
 	}
 	
 	printf("Processed Particle Filter\n");
