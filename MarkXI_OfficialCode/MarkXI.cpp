@@ -91,7 +91,7 @@ void MarkXI::Autonomous(void) {
 	
 //	for(int i = 0; i < 1; i++){
 	Atom* driveStraightTwentyFeet = new DriveAtom(10.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
-	Atom* driveBackTwentyFeet = new DriveAtom(-10.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+	Atom* driveBackTwentyFeet = new DriveAtom(20.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
 	turnRightBox->addAtom(driveStraightTwentyFeet);
 	turnRightBox->addAtom(driveBackTwentyFeet);
 //		Atom* turnRightAngleR = new TurnAtom(90.0f,&(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
@@ -102,7 +102,8 @@ void MarkXI::Autonomous(void) {
 //	}
 	
 	turnRightBox->start();
-
+//	delete driveBackTwentyFeet;
+//	delete driveStraightTwentyFeet;
 }
 
 void MarkXI::OperatorControl() {
