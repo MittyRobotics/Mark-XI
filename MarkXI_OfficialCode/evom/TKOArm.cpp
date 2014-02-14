@@ -34,7 +34,7 @@ TKOArm::TKOArm() :
 	armTask = new Task("TKOArm", (FUNCPTR) ArmRunner, 1);
 	armEnabled = true;
 	runningVBus = true;
-	runManualArm();
+	lastToggle = GetTime();
 	if (limitSwitchArm.Get())
 	{
 		//kill the arm? because init position not in center
@@ -173,12 +173,18 @@ void TKOArm::moveToBack()
 }
 bool TKOArm::armInFiringRange()
 {
-	/*if (not limitSwitchArm.Get())
-		return false;*/
-	return true;
-	if (_arm.GetPosition() <= ARM_FIRING_LEFT_BOUND and _arm.GetPosition() >= ARM_FIRING_RIGHT_BOUND)
+	if (not limitSwitchArm.Get())
 		return true;
+
+	/*if (_arm.GetPosition() >= ARM_FIRING_LEFT_BOUND and _arm.GetPosition() <= ARM_FIRING_RIGHT_BOUND)
+		return true;*/
 	return false;
+}
+void TKOArm::toggleMode()
+{
+	if (GetTime() - lastToggle <= 1.) return; //1.0 means logs every 1 second
+	runningVBus = ! runningVBus;
+	lastToggle = GetTime();
 }
 void TKOArm::switchToPositionMode()
 {

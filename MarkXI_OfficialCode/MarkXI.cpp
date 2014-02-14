@@ -84,7 +84,7 @@ void MarkXI::RobotInit()
 	}
 	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------");
 	TKOGyro::inst()->reset();
-	//	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
+	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
 
@@ -261,10 +261,12 @@ void MarkXI::Operator()
 		RegDrive();
 	if (stick1.GetRawButton(9))
 		GyroDrive();
+	if (stick4.GetRawButton(8))
+		TKOArm::inst()->toggleMode();
 	if (stick4.GetRawButton(3))
 		TKOArm::inst()->moveToFront();
-	if (stick4.GetRawButton(3))
-		TKOArm::inst()->moveToBack();
+	if (stick4.GetRawButton(2))
+		TKOArm::inst()->moveToMid();
 }
 
 void MarkXI::RegDrive()

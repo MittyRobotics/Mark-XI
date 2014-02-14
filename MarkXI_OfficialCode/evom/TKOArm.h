@@ -17,7 +17,7 @@ class TKORoller
 	private:
 		TKORoller(int rollerPort1, int rollerPort2);
 		DigitalInput limitSwitchBall;
-		Joystick stick3;
+		Joystick stick4;
 		static TKORoller*  _instance;
 };
 
@@ -43,6 +43,7 @@ class TKOArm: public SensorBase
 		void moveToFront();
 		void moveToMid();
 		void moveToBack();
+		void toggleMode();
 		bool armInFiringRange();
 	private:
 		TKOArm();
@@ -50,6 +51,7 @@ class TKOArm: public SensorBase
 		static TKOArm* m_Instance;
 		static void ArmRunner();
 		const float minArmPos, maxArmPos;
+		float lastToggle;
 		void runManualArm();
 		void runPositionArm();
 		Task *armTask;

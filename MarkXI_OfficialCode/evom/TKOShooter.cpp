@@ -49,13 +49,14 @@ bool TKOShooter::stateMachineRunning()
 	return false;
 }
 
-void TKOShooter::initStateMachine()
+state_t TKOShooter::initStateMachine(instance_data_t* temp_data)
 {
-	cur_state = s.init(&data, &stick3);
+	cur_state = s.init(temp_data, &stick3);
+	return cur_state;
 }
 bool TKOShooter::startStateMachine()
 {
-	initStateMachine();
+	initStateMachine(&data);
 	if (not stateMachineTask->Verify())
 		if (stateMachineTask->Start())
 			return true;
@@ -74,6 +75,7 @@ int TKOShooter::runStateMachine()
 {
 	DSLog(4, "");
 	DSLog(5, "");
+	DSLog(6, "");
 	cur_state = s.run_state(cur_state,&data);
 	DSLog(6, "State: %s", s.state_to_string(&data).c_str());
 	//logging here

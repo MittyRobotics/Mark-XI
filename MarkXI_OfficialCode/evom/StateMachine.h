@@ -70,13 +70,12 @@ public:
     StateMachine();
     ~StateMachine();
 
-    static bool canShoot;
-    static bool canAutonShoot();
-    static void setAutonShoot(bool b);
     static bool armCanMove;
-    static bool canArmMove();
     static bool hasSetPneumatics;
+    static bool forceFire;
+    static bool autonFired;
     static void initPneumatics();
+    static bool canArmMove();
     static void setArmMoveable(bool b);
     
     static float lastSensorStringPrint;
@@ -100,7 +99,6 @@ private:
     state_func_t*  _state_table[NUM_STATES + 1];
     
     static SEM_ID _armSem;
-    static SEM_ID _shootSem;
 
     static Timer* _timer;
 
