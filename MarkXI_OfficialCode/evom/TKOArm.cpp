@@ -148,6 +148,18 @@ void TKOArm::runManualArm()
 		return;
 	}
 	
+	if (stick4.GetRawButton(9))
+	{
+		while (limitSwitchArm.Get())
+		{
+			_arm.Set(0.5);
+			if (_arm.GetOutputCurrent() >= 35.)
+				break;
+		}
+		_arm.Set(0.0);
+		
+	}
+	
 	if (_arm.GetPosition() > minArmPos) //if we are farther back than we can be, only go forward
 	{
 		if (stick4.GetY() < 0)

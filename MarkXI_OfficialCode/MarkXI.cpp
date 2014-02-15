@@ -114,6 +114,18 @@ void MarkXI::Test()
 	while (IsEnabled())
 	{
 		StateMachine::updateDriverStationSwitchDisplay();
+		
+		bool masterPiston, latchPiston;
+		if (stick4.GetRawButton(2))
+			masterPiston = true;
+		else if (stick4.GetRawButton(3))
+			masterPiston = false;
+		if (stick4.GetRawButton(5))
+			latchPiston = true;
+		else if (stick4.GetRawButton(4))
+			latchPiston = false;
+		StateMachine::runPneumaticsTest(masterPiston, latchPiston);
+		
 		DSLog(5, "Arm: %d", TKOArm::inst()->armInFiringRange());
 	}
 	printf("Stopping shooter, logger \n");

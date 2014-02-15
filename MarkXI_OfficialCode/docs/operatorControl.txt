@@ -14,9 +14,15 @@ Operator Controls:
 Stick 3
 - trigger: fire shooter (move this to driver controls)
 	- also needs button 8?
+In test:
+	-button 2: main forward
+	-button 3: main backward
+	-button 4: latch backward
+	-button 5: latch forward
 Stick 4
 - button 4: roller intake
 - button 5: roller outtake
+- button 9: manual calibrate to tape
 - move forwards: arm forward(?)
 - move backwards: arm back(?)
 - button 10: vision - write image to file
