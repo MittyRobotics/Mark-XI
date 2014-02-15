@@ -20,10 +20,10 @@ public:
 		l_f(DRIVE_L1_ID, CANJaguar::kSpeed), l_b(DRIVE_L2_ID, CANJaguar::kPercentVbus), r_f(DRIVE_R1_ID, CANJaguar::kSpeed), r_b(DRIVE_R2_ID, CANJaguar::kPercentVbus),
 		dsl()
 		{
-		SetRamping(110);
+//		SetRamping(110);
 		DisableSafety();
 		SetSpeedReference();
-		kP = 50;
+		kP = 75.0;
 		kI = 0;
 		kD = 0.0;
 		SetPID();
@@ -43,9 +43,9 @@ public:
 	void OperatorControl()
 	{
 		l_f.EnableControl();
-				l_b.EnableControl();
-				r_f.EnableControl();
-				r_b.EnableControl();
+//			l_b.EnableControl();
+		r_f.EnableControl();
+//				r_b.EnableControl();
 		while (IsOperatorControl())
 		{
 			TankDrive();
@@ -61,11 +61,28 @@ public:
 	}
 	
 	void TankDrive() {
-		r_f.Set(-stick1.GetY() * kMAX_DRIVE_RPM);
-		r_b.Set(r_f.GetOutputVoltage()/r_f.GetBusVoltage());
-		l_f.Set(stick2.GetY() *kMAX_DRIVE_RPM);
-		l_b.Set(l_f.GetOutputVoltage()/l_f.GetBusVoltage());
+		//r_f.Set(-stick1.GetY() * kMAX_DRIVE_RPM);
+//		r_b.Set(stick1.GetY());
+		if(stick1.GetRawButton(1))
+		{
+			r_f.Set(350);
+			l_f.Set(350);
+		}
 		
+		if(stick1.GetRawButton(2))
+		{
+			r_f.Set(700);
+			l_f.Set(700);
+		}
+		if(stick1.GetRawButton(3))
+		{
+			r_f.Set(0);
+			l_f.Set(0);
+		}
+		
+		r_b.Set(r_f.GetOutputVoltage() / r_f.GetBusVoltage());
+		l_b.Set(l_f.GetOutputVoltage() / l_f.GetBusVoltage());
+				
 		//char lf[50], lb[50], rf[50], rb[50];
 		
 	}
@@ -84,9 +101,9 @@ public:
 	
 	void SetPID() {
 		l_f.SetPID(kP, kI, kD);
-		l_b.SetPID(kP, kI, kD);
+//		l_b.SetPID(kP, kI, kD);
 		r_f.SetPID(kP, kI, kD);
-		r_b.SetPID(kP, kI, kD);
+//		r_b.SetPID(kP, kI, kD);
 	}
 			
 	void SetSpeedReference() {
@@ -96,8 +113,8 @@ public:
 		r_f.SetSpeedReference(r_f.kSpeedRef_QuadEncoder);
 	}
 	void EnablePIDControl() {
-		l_f.EnableControl();
-		r_f.EnableControl();
+//		l_f.EnableControl();
+//		r_f.EnableControl();
 	}
 	void DisableSafety() {
 			l_f.SetSafetyEnabled(false);

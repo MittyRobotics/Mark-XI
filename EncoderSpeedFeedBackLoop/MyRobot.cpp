@@ -78,7 +78,7 @@ public:
 				drive4.Set(0.25);
 				break;
 			}
-			UpdateJag_pV_Val();
+			//UpdateJag_pV_Val();
 		}
 	}
 	
