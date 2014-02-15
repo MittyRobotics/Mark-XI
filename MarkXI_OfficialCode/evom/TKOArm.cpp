@@ -93,14 +93,19 @@ bool TKOArm::Stop()
 		}
 	return false;
 }
+void TKOArm::printDSMessages()
+{
+    DSLog(1, "Arm Pos: %f", _arm.GetPosition());
+    DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
+    DSLog(3, "Arm Mode: %d", runningVBus);
+}
+
 void TKOArm::runPositionArm()
 {
 	printf("Running arm position mode\n");
 	if (runningVBus)
 		return;
-	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
-	DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
-	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
+	printDSMessages();
 	
 	if (_arm.GetControlMode() == _arm.kPercentVbus)
 		switchToPositionMode();
@@ -118,9 +123,7 @@ void TKOArm::runManualArm()
 	printf("Running arm manual mode\n");
 	if (!runningVBus)
 		return;
-	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
-	DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
-	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
+	printDSMessages();
 	
 	if (_arm.GetControlMode() == _arm.kPosition)
 		switchToVBusMode();
