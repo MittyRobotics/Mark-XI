@@ -76,7 +76,7 @@ void Molecule::start() //runs through atoms of molecule, then deletes that membe
 	int i = 0;
 	int anmt = _list.size();
 	for (; i < anmt; i++) {
-		printf("size of list %d", _list.size());
+		printf("size of list %d \n", _list.size());
 		Atom* a = _list.front();
 		a->run();		
 		_list.pop();
