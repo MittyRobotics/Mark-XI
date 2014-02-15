@@ -28,13 +28,13 @@ public:
 		r_f.EnableControl(0);
 		dsl = DriverStationLCD::GetInstance();
 		ds = DriverStation::GetInstance();
-		SetPID();
 		DisableSafety();
 		SetSpeedReference();
 		usePID = true;
-		kP = 25;
+		kP = 200;
 		kI = 0.0;
 		kD = 0.0;
+		SetPID();
 	}/**
 	 * Drive left & right motors for 2 secondsl then stop
 	 */
@@ -51,10 +51,11 @@ public:
 		dsl->PrintfLine(DriverStationLCD::kUser_Line1,"HI");
 		dsl->UpdateLCD();
 		SetPID();
+		EnablePIDControl();
 		
 		while (IsOperatorControl()&&IsEnabled())
 		{
-			EnablePIDControl();
+
 			/*
 			if (stick1.GetRawButton(3))
 				usePID = !usePID;
@@ -80,21 +81,21 @@ public:
 				r_f.EnableControl(0);
 				SetPID();
 			}
-			Arcade.ArcadeDrive(stick2);
+			TankDrive();
 		}
 	}
 	
 	void TankDrive() {
-			if (l_f.GetControlMode() == CANJaguar::kPercentVbus)
-				l_f.ChangeControlMode(CANJaguar::kSpeed);
+			//   if (l_f.GetControlMode() == CANJaguar::kPercentVbus)
+			//	l_f.ChangeControlMode(CANJaguar::kSpeed);
 			
 			/*
 			if (l_b.GetControlMode() == CANJaguar::kPercentVbus)
 				l_b.ChangeControlMode(CANJaguar::kSpeed);
 				*/
 			
-			if (r_f.GetControlMode() == CANJaguar::kPercentVbus)
-				r_f.ChangeControlMode(CANJaguar::kSpeed);
+			//if (r_f.GetControlMode() == CANJaguar::kPercentVbus)
+			//	r_f.ChangeControlMode(CANJaguar::kSpeed);
 			
 			/*
 			if (r_b.GetControlMode() == CANJaguar::kPercentVbus)
@@ -109,13 +110,13 @@ public:
 			float speed1 = l_f.GetSpeed();
 			float speed2 = r_f.GetSpeed();
 			dsl->Clear();
-			char v1[50], v2[50];
-			sprintf(v1, "%f", speed1);
-			sprintf(v2, "%f", speed2);
-			dsl->PrintfLine(DriverStationLCD::kUser_Line1, "Left Speed:");
-			dsl->PrintfLine(DriverStationLCD::kUser_Line2, v1);
-			dsl->PrintfLine(DriverStationLCD::kUser_Line3, "Right Speed:");
-			dsl->PrintfLine(DriverStationLCD::kUser_Line4, v2);
+			//char v1[50], v2[50];
+			printf("%f", speed1);
+			printf( "%f", speed2);
+//			dsl->PrintfLine(DriverStationLCD::kUser_Line1, "Left Speed:");
+//			dsl->PrintfLine(DriverStationLCD::kUser_Line2, v1);
+//			dsl->PrintfLine(DriverStationLCD::kUser_Line3, "Right Speed:");
+//			dsl->PrintfLine(DriverStationLCD::kUser_Line4, v2);
 		/*
 		
 		else {
