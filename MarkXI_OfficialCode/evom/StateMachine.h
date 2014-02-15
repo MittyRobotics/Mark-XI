@@ -77,6 +77,7 @@ public:
     static void initPneumatics();
     static bool canArmMove();
     static void setArmMoveable(bool b);
+    static void runPneumaticsTest(bool mainPistonValue, bool latchValue);
     
     static float lastSensorStringPrint;
     

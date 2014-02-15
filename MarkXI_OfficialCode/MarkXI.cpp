@@ -113,6 +113,7 @@ void MarkXI::Test()
 
 	while (IsEnabled())
 	{
+		StateMachine::updateDriverStationSwitchDisplay();
 		DSLog(5, "Arm: %d", TKOArm::inst()->armInFiringRange());
 	}
 	printf("Stopping shooter, logger \n");
@@ -133,7 +134,7 @@ void MarkXI::Disabled()
 	TKODrive::inst()->Stop();
 	TKOArm::inst()->Stop();
 	//TKOGDrive::inst()->Stop();
-	TKOVision::inst()->StopProcessing();
+	//TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
@@ -186,30 +187,23 @@ void MarkXI::OperatorControl()
 	//StateMachine::initPneumatics();
 	TKOShooter::inst()->Start();
 	TKOArm::inst()->Start();
-	TKOVision::inst()->StartProcessing();  //NEW VISION START
+	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	RegDrive(); //Choose here between kind of drive to start with
-	Timer loopTimer;
-	loopTimer.Start();
 
 	TKOLogger::inst()->addMessage("--------------Teleoperated started-------------");
 
 	while (IsOperatorControl() && IsEnabled())
 	{
 		MarkXI::Operator();
-		if (loopTimer.Get() > 0.1) {
-			TKOLogger::inst()->addMessage("!!!CRITICAL Operator loop very long, %f%s\n",loopTimer.Get(), " seconds.");
-		}
-		DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
-		DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
+		//DSLog(1, "Dist: %f\n", TKOVision::inst()->getLastDistance());
+		//DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
 		//DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
-		//Wait(LOOPTIME - loopTimer.Get());
-		loopTimer.Reset();
+		Wait(LOOPTIME);
 	}
-	TKODrive::inst()->Stop();
-	loopTimer.Stop();
 	compressor.Stop();
 	printf("Ending OperatorControl \n");
 	TKOLogger::inst()->addMessage("Ending OperatorControl");
+	Disabled();
 }
 
 void MarkXI::Operator()

@@ -87,6 +87,19 @@ void StateMachine::updateDriverStationSwitchDisplay()
 	DriverStation::GetInstance()->SetDigitalOut(7, !_piston_retract->Get()); //retract
 }
 
+void StateMachine::runPneumaticsTest(bool mainPistonValue, bool latchValue)
+{
+	if (mainPistonValue)
+		_piston_retract_extend->Set(_piston_retract_extend->kForward);
+	else
+		_piston_retract_extend->Set(_piston_retract_extend->kReverse);
+	
+	if (latchValue)
+		_latch_lock_unlock->Set(_latch_lock_unlock->kForward);
+	else
+		_latch_lock_unlock->Set(_latch_lock_unlock->kReverse);
+}
+
 state_t StateMachine::run_state( state_t cur_state, instance_data_t *data ) {
 	updateDriverStationSwitchDisplay();
     return _state_table[ cur_state ]( data );

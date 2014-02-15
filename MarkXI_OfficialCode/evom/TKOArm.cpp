@@ -23,7 +23,7 @@ TKOArm::TKOArm() :
 	stick3(STICK_3_PORT),
 	stick4(STICK_4_PORT)
 {
-	printf("Initializing intake\n");
+	printf("Initializing TKOArm\n");
 	_arm.SetSafetyEnabled(false);
 	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
 	_arm.SetVoltageRampRate(0.0);
@@ -43,6 +43,7 @@ TKOArm::TKOArm() :
 		_arm.StopMotor();*/
 	}
 	AddToSingletonList();
+	printf("Initialized TKOArm\n");
 }
 
 TKOArm::~TKOArm() 
@@ -67,24 +68,34 @@ void TKOArm::ArmRunner()
 		TKORoller::inst()->rollerSimpleMove();
 		m_Instance->runManualArm();
 		m_Instance->runPositionArm();
+		Wait(LOOPTIME);
 	}
 }
 bool TKOArm::Start()
 {
+	printf("Starting TKOArm task\n");
 	if (not armTask->Verify())
 		if (armTask->Start())
+		{
+			printf("Started TKOArm task\n");
 			return true;
+		}
 	return false;
 }
 bool TKOArm::Stop()
 {
+	printf("Stopping TKOArm task\n");
 	if (armTask->Verify())
 		if (armTask->Stop())
+		{
+			printf("Stopped TKOArm task\n");
 			return true;
+		}
 	return false;
 }
 void TKOArm::runPositionArm()
 {
+	printf("Running arm position mode\n");
 	if (runningVBus)
 		return;
 	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
@@ -100,9 +111,11 @@ void TKOArm::runPositionArm()
 		runningVBus = true;
 	else
 		runningVBus = false;
+	printf("Ran arm position mode\n");
 }
 void TKOArm::runManualArm()
 {	
+	printf("Running arm manual mode\n");
 	if (!runningVBus)
 		return;
 	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
@@ -120,11 +133,11 @@ void TKOArm::runManualArm()
 		printf("Reset arm encoder...\n");
 	}
 	
-	if (DriverStation::GetInstance()->GetDigitalIn(5))//if shooter running
+	/*if (DriverStation::GetInstance()->GetDigitalIn(5))//if override
 	{
 		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER); //override
 		return;
-	}
+	}*/
 	
 	if (not StateMachine::armCanMove or not armEnabled) //safety, state machine safe positions
 	{
@@ -150,9 +163,11 @@ void TKOArm::runManualArm()
 	{
 		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
 	}
+	printf("Ran arm manual mode\n");
 }
 void TKOArm::moveToFront()
 {
+	printf("Bringing arm forward\n");
 	runningVBus = false;
 	if (_arm.GetControlMode() == _arm.kPercentVbus)
 		TKOArm::switchToPositionMode();
@@ -160,6 +175,7 @@ void TKOArm::moveToFront()
 }
 void TKOArm::moveToMid()
 {
+	printf("Bringing arm mid\n");
 	runningVBus = false;
 	if (_arm.GetControlMode() == _arm.kPercentVbus)
 		TKOArm::switchToPositionMode();
@@ -167,6 +183,7 @@ void TKOArm::moveToMid()
 }
 void TKOArm::moveToBack()
 {
+	printf("Bringing arm back\n");
 	runningVBus = false;
 	if (_arm.GetControlMode() == _arm.kPercentVbus)
 		TKOArm::switchToPositionMode();
@@ -183,12 +200,15 @@ bool TKOArm::armInFiringRange()
 }
 void TKOArm::toggleMode()
 {
+	printf("Arm toggling mode\n");
 	if (GetTime() - lastToggle <= 1.) return; //1.0 means logs every 1 second
 	runningVBus = ! runningVBus;
 	lastToggle = GetTime();
+	printf("Arm toggled mode\n");
 }
 void TKOArm::switchToPositionMode()
 {
+	printf("Arm switching to position mode\n");
 	_arm.ChangeControlMode(_arm.kPosition);
 	_arm.SetPID(10., 0.001, 0.);
 	_arm.SetVoltageRampRate(3.); //TODO maybe don't need ramping voltage with pid
@@ -199,6 +219,7 @@ void TKOArm::switchToPositionMode()
 }
 void TKOArm::switchToVBusMode()
 {
+	printf("Arm switching to vBus mode\n");
 	_arm.ChangeControlMode(_arm.kPercentVbus);
 	_arm.SetVoltageRampRate(0.0);
 	_arm.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
