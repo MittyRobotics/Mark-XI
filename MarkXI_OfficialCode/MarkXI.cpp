@@ -126,6 +126,7 @@ void MarkXI::Test()
 
 	while (IsEnabled())
 	{
+		StateMachine::updateDriverStationSwitchDisplay();
 		DSLog(5, "Arm: %d", TKOArm::inst()->armInFiringRange());
 		if (stick4.GetRawButton(2))
 			TKOArm::inst()->moveToBack();
@@ -243,10 +244,13 @@ void MarkXI::OperatorControl()
 		//DSLog(2, "Hot: %i\n", TKOVision::inst()->getLastTargetReport().Hot);
 		//DSLog(3, "G_ang: %f\n", TKOGyro::inst()->GetAngle());
 		//DSLog(4, "Clock %f\n", GetClock());
-		//Wait(LOOPTIME - loopTimer.Get());
+		Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}
 	TKODrive::inst()->Stop();
+	TKOShooter::inst()->Stop();
+	TKODrive::inst()->Stop();
+	TKOArm::inst()->Stop();
 	loopTimer.Stop();
 	compressor.Stop();
 	printf("Ending OperatorControl \n");
@@ -263,8 +267,8 @@ void MarkXI::Operator()
 		GyroDrive();
 	if (stick4.GetRawButton(3))
 		TKOArm::inst()->moveToFront();
-	if (stick4.GetRawButton(3))
-		TKOArm::inst()->moveToBack();
+	if (stick4.GetRawButton(2))
+		TKOArm::inst()->moveToMid();
 }
 
 void MarkXI::RegDrive()

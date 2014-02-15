@@ -24,6 +24,7 @@ TKOArm::TKOArm() :
 	stick4(STICK_4_PORT)
 {
 	printf("Initializing intake\n");
+	TKORoller::inst();
 	_arm.SetSafetyEnabled(false);
 	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
 	_arm.SetVoltageRampRate(0.0);
@@ -31,11 +32,12 @@ TKOArm::TKOArm() :
 	_arm.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 	_arm.ConfigEncoderCodesPerRev(250);
 	_arm.EnableControl(0.);
+	//switchToPositionMode();
 	armTask = new Task("TKOArm", (FUNCPTR) ArmRunner, 1);
 	armEnabled = true;
-	runManualArm();
 	if (limitSwitchArm.Get())
 	{
+		printf("ARM NOT IN SWITCH\n");
 		//kill the arm? because init position not in center
 		//TODO Maybe remove this for testing
 		/*armEnabled = false;
@@ -64,6 +66,8 @@ void TKOArm::ArmRunner()
 	while (true)
 	{
 		m_Instance->runManualArm();
+		m_Instance->printDSMessages();
+		Wait(0.05);
 	}
 }
 bool TKOArm::Start()
@@ -80,6 +84,12 @@ bool TKOArm::Stop()
 			return true;
 	return false;
 }
+void TKOArm::printDSMessages()
+{
+	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
+	DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
+	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
+}
 void TKOArm::runManualArm()
 {	
 	if (_arm.GetControlMode() == _arm.kPosition)
@@ -90,6 +100,7 @@ void TKOArm::runManualArm()
 		_arm.DisableControl();
 		_arm.EnableControl(0.);
 		_arm.SetPositionReference(_arm.kPosRef_QuadEncoder);
+		printf("Reset encoder\n");
 	}
 	
 	TKORoller::inst()->rollerSimpleMove();
@@ -125,10 +136,6 @@ void TKOArm::runManualArm()
 	{
 		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
 	}
-
-	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
-	DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
-	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
 }
 void TKOArm::moveToFront()
 {

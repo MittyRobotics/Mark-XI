@@ -39,6 +39,7 @@ class TKOArm: public SensorBase
 		bool Start();
 		bool Stop();
 		void switchToPositionMode();
+		void printDSMessages();
 		void switchToVBusMode();
 		void moveToFront();
 		void moveToMid();
