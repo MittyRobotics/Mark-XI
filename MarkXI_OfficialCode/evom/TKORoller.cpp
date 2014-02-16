@@ -57,11 +57,11 @@ void TKORoller::rollerSimpleMove() //TODO check negative signs, .Get sign, so th
 			_roller1.Set(1.);
 			_roller2.Set(-1.);
 		}
-		else if (stick3.GetRawButton(3))
+		/*else if (stick3.GetRawButton(3))
 		{
 			_roller1.Set(1.);
 			_roller2.Set(1.);
-		}
+		}*/
 		else //if stick not pressed
 		{
 			_roller1.Set(0.);

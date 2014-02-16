@@ -20,6 +20,7 @@ TKOArm::TKOArm() :
 	maxArmPos(ARM_MAXIMUM_POSITION),
 	_arm(ARM_JAGUAR_ID, CANJaguar::kPercentVbus), 
 	limitSwitchArm(ARM_OPTICAL_SWITCH), // Optical limit switch
+	usonic(7),
 	stick3(STICK_3_PORT),
 	stick4(STICK_4_PORT)
 {
@@ -86,9 +87,11 @@ bool TKOArm::Stop()
 }
 void TKOArm::printDSMessages()
 {
+	DSClear();
 	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
-	DSLog(2, "Arm Volt: %f", _arm.GetOutputVoltage());
+	DSLog(2, "Arm Lim: %f", limitSwitchArm.Get());
 	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
+	DSLog(4, "Dist %f", usonic.GetAverageVoltage() * 512. / 12.); //gets feet
 }
 void TKOArm::runManualArm()
 {	
@@ -111,10 +114,21 @@ void TKOArm::runManualArm()
 		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
 		return;
 	}
-	
 	if (not StateMachine::armCanMove or not armEnabled)
 	{
 		_arm.Set(0);
+		return;
+	}
+	
+	if (stick4.GetRawButton(3))
+	{
+		while (limitSwitchArm.Get() and DriverStation::GetInstance()->IsEnabled())
+		{
+			_arm.Set(.9);
+			if (_arm.GetOutputCurrent() >= 30.)
+				break;
+		}
+		_arm.Set(0.);
 		return;
 	}
 	

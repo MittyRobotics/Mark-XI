@@ -57,6 +57,7 @@ class TKOArm: public SensorBase
 	
 		CANJaguar _arm;
 		DigitalInput limitSwitchArm;
+		AnalogChannel usonic;
 		Joystick stick3, stick4;
 };
 #endif
