@@ -30,7 +30,9 @@ TKOArm::TKOArm() :
 	_arm.ConfigFaultTime(0.1); 
 	_arm.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 	_arm.ConfigEncoderCodesPerRev(250);
+	_arm.EnableControl();
 	_arm.EnableControl(0.);
+	_arm.SetExpiration(0.1);
 	armTask = new Task("TKOArm", (FUNCPTR) ArmRunner, 1);
 	armEnabled = true;
 	runningVBus = true;
