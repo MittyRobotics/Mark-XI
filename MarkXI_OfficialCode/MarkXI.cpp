@@ -252,7 +252,7 @@ void MarkXI::OperatorControl()
 	TKODrive::inst()->Stop();
 	TKOArm::inst()->Stop();
 	loopTimer.Stop();
-	compressor.Stop();
+	compressor.Stop();	
 	printf("Ending OperatorControl \n");
 	TKOLogger::inst()->addMessage("Ending OperatorControl");
 }

@@ -93,11 +93,26 @@ void TKOArm::printDSMessages()
 	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
 	DSLog(4, "Dist %f", usonic.GetVoltage() * 512. / 12.); //gets feet
 }
+void TKOArm::currentTimeout()
+{
+	if (_arm.GetOutputCurrent() >= ARM_CURRENT_THRESHOLD)
+	{
+		Timer timeout;
+		timeout.Start();
+		while (timeout.Get() <= ARM_CURRENT_TIMEOUT)
+		{
+			_arm.DisableControl();
+		}
+		timeout.Stop();
+		_arm.EnableControl();
+	}
+}
 void TKOArm::runManualArm()
 {	
 	/*if (_arm.GetControlMode() == _arm.kPosition)
 		switchToVBusMode();*/
 	printDSMessages();
+	currentTimeout();
 	
 	if (stick4.GetRawButton(8))
 	{
@@ -120,7 +135,7 @@ void TKOArm::runManualArm()
 		return;
 	}*/
 	
-	if (stick4.GetRawButton(9))
+	/*if (stick4.GetRawButton(9))
 	{
 		while (limitSwitchArm.Get() and DriverStation::GetInstance()->IsEnabled())
 		{
@@ -130,12 +145,14 @@ void TKOArm::runManualArm()
 		}
 		_arm.Set(_arm.Get());
 		return;
-	}
+	}*/
 	
 	if (stick4.GetRawButton(3))
 		moveToFront();
 	if (stick4.GetRawButton(2))
 		moveToMid();
+	if (stick4.GetRawButton(7))
+		moveToDSTarget();
 }
 void TKOArm::moveToFront()
 {
@@ -155,17 +172,24 @@ void TKOArm::moveToBack()
 		TKOArm::switchToPositionMode();
 	_arm.Set(minArmPos);
 }
+void TKOArm::moveToDSTarget()
+{
+	if (_arm.GetControlMode() == _arm.kPercentVbus)
+		TKOArm::switchToPositionMode();
+	_arm.Set(DriverStation::GetInstance()->GetAnalogIn(4));
+}
 bool TKOArm::armInFiringRange()
 {
 	/*if (not limitSwitchArm.Get())
 		return false;*/
 	return true;
-	if (_arm.GetPosition() <= ARM_FIRING_LEFT_BOUND and _arm.GetPosition() >= ARM_FIRING_RIGHT_BOUND)
+	if (_arm.GetPosition() >= ARM_FIRING_LEFT_BOUND and _arm.GetPosition() <= ARM_FIRING_RIGHT_BOUND)
 		return true;
 	return false;
 }
 void TKOArm::switchToPositionMode()
 {
+	printf("switching to position\n");
 	_arm.SetSafetyEnabled(true);
 	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
 	_arm.SetVoltageRampRate(0.0);

@@ -44,8 +44,10 @@ class TKOArm: public SensorBase
 		void moveToFront();
 		void moveToMid();
 		void moveToBack();
+		void moveToDSTarget();
 		bool armInFiringRange();
 		void runManualArm();
+		void currentTimeout();
 	private:
 		TKOArm();
 		DISALLOW_COPY_AND_ASSIGN(TKOArm);
