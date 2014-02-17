@@ -59,6 +59,7 @@ void DriveAtom::run() {
 	_drive2->Set(0);
 	_drive3->DisableControl();
 	_drive4->Set(0);
+	Wait(1.0); 
 	
 	
 }

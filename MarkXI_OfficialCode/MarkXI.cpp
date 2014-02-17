@@ -89,17 +89,28 @@ void MarkXI::Autonomous(void) {
 //	turnRightBox->Test();
 //	printf("Test done");
 	
-//	for(int i = 0; i < 1; i++){
-	Atom* driveStraightTwentyFeet = new DriveAtom(10.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
-	Atom* driveBackTwentyFeet = new DriveAtom(20.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+	for(int i = 0; i < 1; i++){
+	Atom* driveStraightTwentyFeet = new DriveAtom(2.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
 	turnRightBox->addAtom(driveStraightTwentyFeet);
-	turnRightBox->addAtom(driveBackTwentyFeet);
-//		Atom* turnRightAngleR = new TurnAtom(90.0f,&(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
-//		turnRightBox->addAtom(turnRightAngleR); 
-		
-		
-		
-//	}
+		Atom* turnRightAngleR = new TurnAtom(90.0f,&(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+		turnRightBox->addAtom(turnRightAngleR); 
+	
+		Atom* driveStraightTFeet = new DriveAtom(2.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+			turnRightBox->addAtom(driveStraightTFeet);
+				Atom* turnRightAR = new TurnAtom(90.0f,&(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+				turnRightBox->addAtom(turnRightAR); 
+			
+				Atom* driveStraightwentyFeet = new DriveAtom(2.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+					turnRightBox->addAtom(driveStraightwentyFeet);
+						Atom* turnightAngleR = new TurnAtom(90.0f,&(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+						turnRightBox->addAtom(turnightAngleR); 
+							
+						Atom* driveStraightTwentFeet = new DriveAtom(2.0f, &(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+							turnRightBox->addAtom(driveStraightTwentFeet);
+								Atom* turnRightAnglR = new TurnAtom(90.0f,&(turnRightBox->drive1), &(turnRightBox->drive2), &(turnRightBox->drive3), &(turnRightBox->drive4));
+								turnRightBox->addAtom(turnRightAnglR); //Lol Arjun doesn't have the touchscreen app on Windows 9.34.
+							
+	}
 	
 	turnRightBox->start();
 //	delete driveBackTwentyFeet;

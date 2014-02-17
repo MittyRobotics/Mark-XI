@@ -42,7 +42,7 @@ void TurnAtom::run() {
 		printf("drive 1: %f, drive 3: %f\n",
 						_drive1->GetPosition(), _drive3->GetPosition());
 	}
-
+printf("Sh!t Occured! Yay1"); 
 }
 
 void TurnAtom::turn(double target) {
@@ -50,12 +50,13 @@ void TurnAtom::turn(double target) {
 		//inches/tic = .333134485
 		float _target = target * 0.01925;
 		//_target += 10.0; 
+		printf("target: %f\n", _target);
 		_drive1->Set(_target);		
 		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave			
 		_drive3->Set(_target);
-		_drive4->Set(-_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
+		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 		
-		if( (_drive1->GetPosition() + 0.2) <= _target and (_drive1->GetPosition() - 0.2) >= _target)
+		if( (fabs(_drive1->GetPosition()) - 0.05) <= fabs(_target) and (fabs(_drive1->GetPosition()) + 0.05) >= fabs(_target))
 		{
 			if (!reachedTarget)
 				{
@@ -64,7 +65,7 @@ void TurnAtom::turn(double target) {
 					//printf("Reset position\n"); //All this resetting does not work properly, needs to be fixed
 					//Cannot go without it because when the robot turns, it affects the position
 				}
-			printf("Reached target, Breaking out");
+			printf("Reached target, Breaking out\n");
 		}
 
 }
