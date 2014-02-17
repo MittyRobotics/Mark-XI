@@ -26,7 +26,7 @@ TKOArm::TKOArm() :
 {
 	printf("Initializing intake\n");
 	TKORoller::inst();
-	_arm.SetSafetyEnabled(true);
+	_arm.SetSafetyEnabled(false);
 	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
 	_arm.SetVoltageRampRate(0.0);
 	_arm.ConfigFaultTime(0.1); 
@@ -97,6 +97,7 @@ void TKOArm::runManualArm()
 {	
 	/*if (_arm.GetControlMode() == _arm.kPosition)
 		switchToVBusMode();*/
+	printDSMessages();
 	
 	if (stick4.GetRawButton(8))
 	{

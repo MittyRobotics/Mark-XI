@@ -224,7 +224,7 @@ void MarkXI::OperatorControl()
 	TKOLogger::inst()->Start();
 	TKOGyro::inst()->reset();
 	compressor.Start();
-	//StateMachine::initPneumatics();
+	StateMachine::initPneumatics();
 	TKOShooter::inst()->Start();
 	TKOArm::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
@@ -259,6 +259,8 @@ void MarkXI::OperatorControl()
 
 void MarkXI::Operator()
 {
+	
+	TKOArm::inst()->runManualArm();
 	if (stick1. GetRawButton(11))
 		TKOGyro::inst()->reset();
 	if (stick1.GetRawButton(8))
