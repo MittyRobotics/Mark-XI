@@ -20,3 +20,19 @@ Stick 4
 - move forwards: arm forward(?)
 - move backwards: arm back(?)
 - button 10: vision - write image to file
+
+Digital Inputs:
+- 1:
+- 2:
+- 3:
+- 4:
+- 5:
+- 6:
+- 7:
+- 8:
+
+Analog Inputs:
+- 1: timing for roller prerun
+- 2:
+- 3: set arm position
+- 4: set drive motors

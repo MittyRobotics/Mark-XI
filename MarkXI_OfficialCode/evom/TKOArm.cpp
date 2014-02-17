@@ -16,8 +16,6 @@ TKOArm* TKOArm::m_Instance = NULL;
  */
 
 TKOArm::TKOArm() :
-	minArmPos(ARM_MINIMUM_POSITION), //TODO Critical, find out what these are...
-	maxArmPos(ARM_MAXIMUM_POSITION),
 	_arm(ARM_JAGUAR_ID, CANJaguar::kPosition), 
 	limitSwitchArm(ARM_OPTICAL_SWITCH), // Optical limit switch
 	usonic(7),
@@ -95,8 +93,6 @@ void TKOArm::printDSMessages()
 }
 void TKOArm::runManualArm()
 {	
-	/*if (_arm.GetControlMode() == _arm.kPosition)
-		switchToVBusMode();*/
 	printDSMessages();
 	
 	if (stick4.GetRawButton(8))
@@ -124,11 +120,11 @@ void TKOArm::runManualArm()
 	{
 		while (limitSwitchArm.Get() and DriverStation::GetInstance()->IsEnabled())
 		{
-			_arm.Set(.9);
+			_arm.Set(DriverStation::GetInstance()->GetAnalogIn(3));
 			if (_arm.GetOutputCurrent() >= 30.)
 				break;
 		}
-		_arm.Set(_arm.Get());
+		_arm.Set(_arm.GetPosition());
 		return;
 	}
 	
@@ -176,4 +172,19 @@ void TKOArm::switchToPositionMode()
 	_arm.EnableControl(0.);
 	//_arm.SetVoltageRampRate(3.); //TODO maybe don't need ramping voltage with pid
 	_arm.ConfigSoftPositionLimits(maxArmPos, minArmPos);
+}
+void TKOArm::calibrateArm()	//TODO test this
+{
+//	switchToPositionMode();
+	while (limitSwitchArm.Get() == 1)
+		_arm.Set(0.3);	// go forward first
+	minArmPos = _arm.GetPosition();
+	_arm.Set(_arm.GetPosition());
+	_arm.Set(0);
+	Wait(0.1);
+	while (limitSwitchArm.Get() == 1)
+		_arm.Set(-0.3);
+	maxArmPos = _arm.GetPosition();
+	_arm.Set(_arm.GetPosition());
+	_arm.Set(0);
 }

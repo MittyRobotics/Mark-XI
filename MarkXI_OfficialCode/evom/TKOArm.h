@@ -46,12 +46,13 @@ class TKOArm: public SensorBase
 		void moveToBack();
 		bool armInFiringRange();
 		void runManualArm();
+		void calibrateArm();
 	private:
 		TKOArm();
 		DISALLOW_COPY_AND_ASSIGN(TKOArm);
 		static TKOArm* m_Instance;
 		static void ArmRunner();
-		const float minArmPos, maxArmPos;
+		float minArmPos, maxArmPos;
 		Task *armTask;
 		bool armEnabled;
 	

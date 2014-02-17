@@ -259,8 +259,13 @@ void MarkXI::OperatorControl()
 
 void MarkXI::Operator()
 {
+	if (stick4.GetTrigger() and stick4.GetRawButton(10))
+		TKOArm::inst()->calibrateArm();
 	
+	// stick 1 button 10 will use analog input 4 to set drive motors (see TKODrive.cpp)
+	// stick 4 button 9  will use analog input 3 to set arm position (see TKOArm.cpp)
 	TKOArm::inst()->runManualArm();
+	
 	if (stick1. GetRawButton(11))
 		TKOGyro::inst()->reset();
 	if (stick1.GetRawButton(8))
