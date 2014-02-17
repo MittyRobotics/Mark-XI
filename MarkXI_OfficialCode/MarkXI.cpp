@@ -265,10 +265,6 @@ void MarkXI::Operator()
 		RegDrive();
 	if (stick1.GetRawButton(9))
 		GyroDrive();
-	if (stick4.GetRawButton(3))
-		TKOArm::inst()->moveToFront();
-	if (stick4.GetRawButton(2))
-		TKOArm::inst()->moveToMid();
 }
 
 void MarkXI::RegDrive()

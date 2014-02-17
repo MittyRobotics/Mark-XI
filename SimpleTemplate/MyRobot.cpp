@@ -10,11 +10,13 @@ class RobotDemo : public SimpleRobot
 {
 	Joystick stick; // only joystick
 	CANJaguar armTest;
+	DigitalInput armOpt;
 
 public:
 	RobotDemo():
 		stick(3),	// as they are declared above.
-		armTest(7, CANJaguar::kPosition)
+		armTest(7, CANJaguar::kPosition), 
+		armOpt(4)
 	{
 		armTest.SetSafetyEnabled(true);
 		armTest.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
@@ -22,6 +24,7 @@ public:
 		armTest.ConfigFaultTime(0.1); 
 		armTest.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 		armTest.ConfigEncoderCodesPerRev(250);
+		armTest.SetPID(-10000., -1., 0.);
 		armTest.EnableControl(0.);
 		printf("Robot init\n");
 	}
@@ -48,9 +51,13 @@ public:
 		printf("Starting test\n");
 		while (IsEnabled())
 		{
-			armTest.Set(stick.GetY());
+			if(stick.GetRawButton(2))
+			{
+				armTest.Set(0.1);
+			}
 			printf("Pos: %f\n", armTest.GetPosition());
 			printf("Tar: %f\n", armTest.Get());
+			printf("ArmOpt: %d\n", armOpt.Get());
 			Wait(0.01);				// wait for a motor update time
 		}
 	}
