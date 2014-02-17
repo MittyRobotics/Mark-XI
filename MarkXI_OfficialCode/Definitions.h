@@ -111,6 +111,7 @@ const int LATCH_PISTON_LOCK_SWITCH_CHANNEL = 1;
 const int IS_COCKED_SWITCH_CHANNEL = 2;
 const int BALL_LIMIT_SWITCH = 11;
 const int ARM_OPTICAL_SWITCH = 4;
+const int ULTRASONIC_PORT = 7;
 
 // Camera Constants
  

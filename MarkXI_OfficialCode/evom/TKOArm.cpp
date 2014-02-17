@@ -20,12 +20,11 @@ TKOArm::TKOArm() :
 	maxArmPos(ARM_MAXIMUM_POSITION),
 	_arm(ARM_JAGUAR_ID, CANJaguar::kPosition), 
 	limitSwitchArm(ARM_OPTICAL_SWITCH), // Optical limit switch
-	usonic(7),
+	usonic(ULTRASONIC_PORT),
 	stick3(STICK_3_PORT),
 	stick4(STICK_4_PORT)
 {
 	printf("Initializing intake\n");
-	TKORoller::inst();
 	_arm.SetSafetyEnabled(false);
 	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
 	_arm.SetVoltageRampRate(0.0);
@@ -34,6 +33,7 @@ TKOArm::TKOArm() :
 	_arm.ConfigEncoderCodesPerRev(250);
 	_arm.SetPID(-10000., -1., 0.);
 	_arm.EnableControl(0.);
+	switchToPositionMode();
 	armTask = new Task("TKOArm", (FUNCPTR) ArmRunner, 1);
 	armEnabled = true;
 	if (limitSwitchArm.Get())
@@ -190,7 +190,7 @@ bool TKOArm::armInFiringRange()
 void TKOArm::switchToPositionMode()
 {
 	printf("switching to position\n");
-	_arm.SetSafetyEnabled(true);
+	_arm.SetSafetyEnabled(false);
 	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
 	_arm.SetVoltageRampRate(0.0);
 	_arm.ConfigFaultTime(0.1); 
