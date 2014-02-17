@@ -18,7 +18,7 @@ TKOArm* TKOArm::m_Instance = NULL;
 TKOArm::TKOArm() :
 	minArmPos(ARM_MINIMUM_POSITION), //TODO Critical, find out what these are...
 	maxArmPos(ARM_MAXIMUM_POSITION),
-	_arm(ARM_JAGUAR_ID, CANJaguar::kPercentVbus), 
+	_arm(ARM_JAGUAR_ID, CANJaguar::kPosition), 
 	limitSwitchArm(ARM_OPTICAL_SWITCH), // Optical limit switch
 	usonic(7),
 	stick3(STICK_3_PORT),
@@ -33,7 +33,7 @@ TKOArm::TKOArm() :
 	_arm.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 	_arm.ConfigEncoderCodesPerRev(250);
 	_arm.EnableControl(0.);
-	//switchToPositionMode();
+	switchToPositionMode();
 	armTask = new Task("TKOArm", (FUNCPTR) ArmRunner, 1);
 	armEnabled = true;
 	if (limitSwitchArm.Get())
@@ -95,8 +95,8 @@ void TKOArm::printDSMessages()
 }
 void TKOArm::runManualArm()
 {	
-	if (_arm.GetControlMode() == _arm.kPosition)
-		switchToVBusMode();
+	/*if (_arm.GetControlMode() == _arm.kPosition)
+		switchToVBusMode();*/
 	
 	if (stick4.GetRawButton(8))
 	{
