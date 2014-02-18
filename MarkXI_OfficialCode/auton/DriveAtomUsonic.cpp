@@ -1,10 +1,11 @@
 //Last Edited by Ishan Shah
-#include "DriveAtom.h"
+#include "DriveAtomUsonic.h"
 #include <cstring>
 // new branch
-DriverStation* ds;
-DriveAtom::DriveAtom(float feet, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4) {
-	_distance = feet; //* REVS_PER_FOOT;
+DriveAtomUsonic::DriveAtomUsonic(float tarD, AnalogChannel* usonicPointer, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4)
+{
+	tarDist = tarD;
+	usonic = usonicPointer;
 	_drive1 = drive1;
 	_drive2 = drive2;
 	_drive3 = drive3;
@@ -12,13 +13,12 @@ DriveAtom::DriveAtom(float feet, CANJaguar* drive1, CANJaguar* drive2, CANJaguar
 //	kP = 0.7;
 //	kI = 0.00;//23;
 //	kD = 0.0;
-	ds = DriverStation::GetInstance();
 }
 
-DriveAtom::~DriveAtom() {
+DriveAtomUsonic::~DriveAtomUsonic() {
 }
 
-void DriveAtom::run() {
+void DriveAtomUsonic::run() {
 	
 	
 	//don't forget to divide nu--mber of rotations by REVS_PER_FOOT in order to get feet traveled
@@ -27,7 +27,7 @@ void DriveAtom::run() {
 	_drive3->SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
 	_drive1->EnableControl(0);
 	_drive3->EnableControl(0);
-	while (!((_drive1->GetPosition() <= _distance + 0.5) and (_drive1->GetPosition() >= _distance - 0.5))) {//TODO FFS FIX THIS SHIT
+	while (usonic->GetVoltage() * 512. / 12. > tarDist && DriverStation::GetInstance()->IsEnabled()) {
 
 //		while(kP != ds->GetAnalogIn(1)*0.2) {
 			//kP = ds->GetAnalogIn(1)*0.2;
@@ -39,22 +39,13 @@ void DriveAtom::run() {
 //			_drive1->SetPID(kP, kI, kD);
 //			_drive3->SetPID(kP, kI, kD);
 //		}
-		
-		printf("drive 1: %f, drive 3: %f, distance: %f\n",
-				_drive1->GetPosition(), _drive3->GetPosition(), _distance);
-		
-		printf("breaking? %d\n", !((_drive1->GetPosition() <= _distance + 0.5) and (_drive1->GetPosition() >= _distance - 0.5)));
 				
-		_drive1->Set(_distance);
+		_drive1->Set(_drive1->Get() - 5);
 		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave			
-		_drive3->Set(-_distance);
+		_drive3->Set(_drive3->Get() + 5);
 		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 		
 	}
-	printf("drive 1: %f, drive 3: %f, distance: %f\n",
-					_drive1->GetPosition(), _drive3->GetPosition(), _distance);
-	printf("broke %d\n", !((_drive1->GetPosition() <= _distance + 0.5) and (_drive1->GetPosition() >= _distance - 0.5)));
-	
 	_drive1->DisableControl();
 	_drive2->Set(0);
 	_drive3->DisableControl();

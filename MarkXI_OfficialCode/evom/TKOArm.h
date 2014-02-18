@@ -42,6 +42,7 @@ class TKOArm: public SensorBase
 		void switchToPositionMode();
 		void printDSMessages();
 		void switchToVBusMode();
+		float getDistance();
 		void moveToFront();
 		void moveToMid();
 		void moveToBack();
@@ -49,6 +50,7 @@ class TKOArm: public SensorBase
 		bool armInFiringRange();
 		void runManualArm();
 		void currentTimeout();
+		AnalogChannel* getUsonic();
 	private:
 		TKOArm();
 		DISALLOW_COPY_AND_ASSIGN(TKOArm);

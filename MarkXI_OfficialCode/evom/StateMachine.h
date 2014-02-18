@@ -71,10 +71,12 @@ public:
     ~StateMachine();
 
     static bool armCanMove;
-    static bool canArmMove();
     static bool hasSetPneumatics;
+    static bool forceFire;
+    static bool autonFired;
     static void initPneumatics();
-    static void deCock();
+    static void manualFire();
+    static bool canArmMove();
     static void setArmMoveable(bool b);
     
     static float lastSensorStringPrint;

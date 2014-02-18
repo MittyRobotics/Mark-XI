@@ -4,6 +4,7 @@
 #include "component/TKORelay.h"
 #include "log/TKOLogger.h"
 #include "drive/TKODrive.h"
+//#include "drive/TKOGDrive.h"
 #include "component/TKOGyro.h"
 #include "component/TKORelay.h"
 #include "vision/TKOVision.h"
@@ -12,8 +13,10 @@
 #include "evom/TKOArm.h"
 #include "auton/Atom.h"
 #include "auton/DriveAtom.h"
+#include "auton/DriveAtomUsonic.h"
 #include "auton/Molecule.h"
 #include "auton/TurnAtom.h"
+#include "auton/ShootAtom.h"
 //#define PNEUMATICS_TEST_MODE
 //#define ARM_TEST_MODE
 
@@ -60,6 +63,8 @@ public:
 	void OperatorControl();
 	void Operator();
 	void Test();
+	void RegDrive();
+	void GyroDrive();
 
 	MarkXI::MarkXI() :
 		stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
@@ -106,7 +111,7 @@ void MarkXI::Test()
 	float lastSTog = GetTime();
 	if (DriverStation::GetInstance()->GetDigitalIn(8))
 	{
-		StateMachine::deCock();
+		//StateMachine::deCock();
 		return;
 	}
 	StateMachine::initPneumatics(); //TODO make sure this works; sets pneumatics to default start positions
@@ -188,6 +193,7 @@ void MarkXI::Disabled()
 	TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOArm::inst()->Stop();
+	//TKOGDrive::inst()->Stop();
 	//TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
@@ -213,11 +219,17 @@ void MarkXI::Autonomous(void)
 	 * insert new PID values
 	 * during auton: shoot & drive forward, calibrate arm?
 	 */
-	
-	
+	TKOShooter::inst()->Start();
+	Molecule* molecule = new Molecule();
+	Atom* driveForward = new DriveAtomUsonic(15., TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	Atom* shoot = new ShootAtom();
+	molecule->addAtom(driveForward);
+	molecule->addAtom(shoot);
+	molecule->start();
 
 	//TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
+	TKOShooter::inst()->Stop();
 	TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
 }
 
@@ -231,7 +243,7 @@ void MarkXI::OperatorControl()
 	TKOShooter::inst()->Start();
 	TKOArm::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
-	TKODrive::inst()->Start();
+	RegDrive(); //Choose here between kind of drive to start with
 	Timer loopTimer;
 	loopTimer.Start();
 
@@ -262,11 +274,31 @@ void MarkXI::OperatorControl()
 
 void MarkXI::Operator()
 {
-	TKOArm::inst()->runManualArm();
+	/*if (stick4.GetTrigger() and stick4.GetRawButton(10))
+		TKOArm::inst()->calibrateArm();*/
+	
+	// stick 1 button 10 will use analog input 4 to set drive motors (see TKODrive.cpp)
+	// stick 4 button 9  will use analog input 3 to set arm position (see TKOArm.cpp)
+	
 	if (stick1. GetRawButton(11))
 		TKOGyro::inst()->reset();
-//	if (stick1.GetRawButton(8))
-//		RegDrive();
+	if (stick1.GetRawButton(8))
+		RegDrive();
+	if (stick1.GetRawButton(9))
+		GyroDrive();
+	/*if (stick3.GetRawButton(8))
+		StateMachine::manualFire();*/
+}
+
+void MarkXI::RegDrive()
+{
+	//TKOGDrive::inst()->Stop();
+	TKODrive::inst()->Start();
+}
+void MarkXI::GyroDrive()
+{
+	TKODrive::inst()->Stop();
+	//TKOGDrive::inst()->Start();
 }
 
 START_ROBOT_CLASS(MarkXI);

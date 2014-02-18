@@ -5,6 +5,7 @@
 
 #include "../Definitions.h"
 #include "../log/TKOLogger.h"
+#include "../evom/StateMachine.h"
 
 class TKODrive : public SensorBase
 {
@@ -22,7 +23,7 @@ private:
 	Task *driveTask;
 	
 	long driveLogCounter;
-	float lastShift, lastDataLog;
+	float lastShift, lastDataLog, lastFire;
 	const float speedShiftRPM;
 	
 	void TankDrive();

@@ -1,4 +1,4 @@
-//Last edited by Ishan Shah and Alex Parks
+//Last edited by Ishan Shah
 #include <queue>
 #include "Molecule.h"
 
@@ -6,16 +6,22 @@
 Molecule::Molecule():
 	/*
 	 * Initialization of motors, creating a list of atoms to form a molecule
-	 */
+	 */ 
 	drive1(DRIVE_L1_ID, CANJaguar::kPosition),
-	drive2(DRIVE_L2_ID, CANJaguar::kVoltage),
+	drive2(DRIVE_L2_ID, CANJaguar::kPercentVbus),
 	drive3(DRIVE_R1_ID, CANJaguar::kPosition),
-	drive4(DRIVE_R2_ID, CANJaguar::kVoltage), _list()
+	drive4(DRIVE_R2_ID, CANJaguar::kPercentVbus),
+	_list()
 
 {
 }
 
 void Molecule::MoleculeInit() {
+	
+	float kP = 20.0; 
+	float kI = 0.045; 
+	float kD = 0.0; 
+	
 	//putting the Encoders as 250 tick Encoders, setting the second and fourth motors as slaves 
 	drive1.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 	drive1.ConfigEncoderCodesPerRev(250);
@@ -40,8 +46,10 @@ void Molecule::MoleculeInit() {
 	drive3.SetExpiration(0.1);
 	drive4.SetExpiration(0.1);
 
-	drive1.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
-	drive3.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+	drive1.SetPID(kP, kI, kD);
+	drive3.SetPID(kP, kI, kD);
+//	drive1.SetVoltageRampRate(12.);
+//	drive3.SetVoltageRampRate(12.);
 
 }
 
@@ -74,9 +82,17 @@ void Molecule::start() //runs through atoms of molecule, then deletes that membe
 	int i = 0;
 	int anmt = _list.size();
 	for (; i < anmt; i++) {
+		printf("size of list %d \n", _list.size());
 		Atom* a = _list.front();
-		a->run();
+		a->run();		
 		_list.pop();
 		delete a;
 	}
 }
+
+
+
+
+
+
+
