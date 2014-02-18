@@ -1,15 +1,16 @@
-#ifndef _DRIVEUSONICATOM_H
-#define _DRIVEUSONICATOM_H
+#ifndef _DRIVEANDSHOOTUSONICATOM_H
+#define _DRIVEANDSHOOTUSONICATOM_H
 
 #include "Atom.h"
 #include "../Definitions.h"
+#include "../evom/StateMachine.h"
 
-class DriveAtomUsonic: public Atom {
+class DriveAndShootUsonicAtom: public Atom {
 
 public:
 	// For feet, positive is moving forward in relation to the robot
-	DriveAtomUsonic(float tarD, AnalogChannel* usonicPointer, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4);
-	~DriveAtomUsonic();
+	DriveAndShootUsonicAtom(float tarD, AnalogChannel* usonicPointer, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4);
+	~DriveAndShootUsonicAtom();
 	float kP;
 	float kI;
 	float kD;

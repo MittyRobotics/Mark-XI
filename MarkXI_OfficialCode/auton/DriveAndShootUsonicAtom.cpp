@@ -1,8 +1,7 @@
-//Last Edited by Ishan Shah
-#include "DriveAtomUsonic.h"
+#include "DriveAndShootUsonicAtom.h"
 #include <cstring>
 // new branch
-DriveAtomUsonic::DriveAtomUsonic(float tarD, AnalogChannel* usonicPointer, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4)
+DriveAndShootUsonicAtom::DriveAndShootUsonicAtom(float tarD, AnalogChannel* usonicPointer, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4)
 {
 	tarDist = tarD;
 	usonic = usonicPointer;
@@ -15,10 +14,10 @@ DriveAtomUsonic::DriveAtomUsonic(float tarD, AnalogChannel* usonicPointer, CANJa
 //	kD = 0.0;
 }
 
-DriveAtomUsonic::~DriveAtomUsonic() {
+DriveAndShootUsonicAtom::~DriveAndShootUsonicAtom() {
 }
 
-void DriveAtomUsonic::run() {
+void DriveAndShootUsonicAtom::run() {
 	
 	
 	//don't forget to divide nu--mber of rotations by REVS_PER_FOOT in order to get feet traveled
@@ -46,6 +45,8 @@ void DriveAtomUsonic::run() {
 		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 		
 	}
+	StateMachine::manualFire();
+	Wait(0.5);
 	_drive1->DisableControl();
 	_drive2->Set(0);
 	_drive3->DisableControl();
