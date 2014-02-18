@@ -13,8 +13,10 @@
 #include "evom/TKOArm.h"
 #include "auton/Atom.h"
 #include "auton/DriveAtom.h"
+#include "auton/DriveAtomUsonic.h"
 #include "auton/Molecule.h"
 #include "auton/TurnAtom.h"
+#include "auton/ShootAtom.h"
 //#define PNEUMATICS_TEST_MODE
 //#define ARM_TEST_MODE
 
@@ -218,7 +220,12 @@ void MarkXI::Autonomous(void)
 	 * during auton: shoot & drive forward, calibrate arm?
 	 */
 	TKOShooter::inst()->Start();
-	
+	Molecule* molecule = new Molecule();
+	Atom* driveForward = new DriveAtomUsonic(15., TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	Atom* shoot = new ShootAtom();
+	molecule->addAtom(driveForward);
+	molecule->addAtom(shoot);
+	molecule->start();
 
 	//TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");

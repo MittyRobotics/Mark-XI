@@ -50,6 +50,7 @@ class TKOArm: public SensorBase
 		bool armInFiringRange();
 		void runManualArm();
 		void currentTimeout();
+		AnalogChannel* getUsonic();
 	private:
 		TKOArm();
 		DISALLOW_COPY_AND_ASSIGN(TKOArm);

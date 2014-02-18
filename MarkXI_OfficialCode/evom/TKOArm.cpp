@@ -78,6 +78,10 @@ float TKOArm::getDistance()
 {
 	return (usonic.GetVoltage() * 512. / 12.);
 }
+AnalogChannel* TKOArm::getUsonic()
+{
+	return &usonic;
+}
 bool TKOArm::Start()
 {
 	if (not armTask->Verify())
