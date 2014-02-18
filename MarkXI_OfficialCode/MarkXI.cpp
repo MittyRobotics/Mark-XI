@@ -109,7 +109,7 @@ void MarkXI::Test()
 	float lastSTog = GetTime();
 	if (DriverStation::GetInstance()->GetDigitalIn(8))
 	{
-		StateMachine::deCock();
+		//StateMachine::deCock();
 		return;
 	}
 	StateMachine::initPneumatics(); //TODO make sure this works; sets pneumatics to default start positions
@@ -271,7 +271,6 @@ void MarkXI::Operator()
 	
 	// stick 1 button 10 will use analog input 4 to set drive motors (see TKODrive.cpp)
 	// stick 4 button 9  will use analog input 3 to set arm position (see TKOArm.cpp)
-	TKOArm::inst()->runManualArm();
 	
 	if (stick1. GetRawButton(11))
 		TKOGyro::inst()->reset();
@@ -279,6 +278,8 @@ void MarkXI::Operator()
 		RegDrive();
 	if (stick1.GetRawButton(9))
 		GyroDrive();
+	/*if (stick3.GetRawButton(8))
+		StateMachine::manualFire();*/
 }
 
 void MarkXI::RegDrive()

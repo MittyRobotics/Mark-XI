@@ -50,6 +50,7 @@ TKODrive::TKODrive() :
 	driveLogCounter = 0;
 	lastShift = GetTime();
 	lastDataLog = GetTime();
+	lastFire = GetTime();
 
 	printf("Finished initializing drive\n");
 	AddToSingletonList();
@@ -180,6 +181,18 @@ void TKODrive::TankDrive()
 	}
 	TKODrive::ManualShift();
 	TKODrive::AutoShift();
+	
+	if (drive1.GetSpeed() > 400 && drive3.GetSpeed() > 400 && stick3.GetRawButton(8) && TKOArm::inst()->getDistance() <= 115)
+	{
+		if (GetTime() - lastFire <= 1.) return;
+		drive1.Set(0);
+		drive2.Set(0);
+		drive3.Set(0);
+		drive4.Set(0);
+		StateMachine::manualFire();
+		lastFire = GetTime();
+		Wait(1.);
+	}
 }
 void TKODrive::ManualShift()
 {

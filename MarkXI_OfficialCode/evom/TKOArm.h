@@ -42,6 +42,7 @@ class TKOArm: public SensorBase
 		void switchToPositionMode();
 		void printDSMessages();
 		void switchToVBusMode();
+		float getDistance();
 		void moveToFront();
 		void moveToMid();
 		void moveToBack();

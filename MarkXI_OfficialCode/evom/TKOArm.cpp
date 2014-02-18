@@ -74,6 +74,10 @@ void TKOArm::ArmRunner()
 		Wait(0.01);
 	}
 }
+float TKOArm::getDistance()
+{
+	return (usonic.GetVoltage() * 512. / 12.);
+}
 bool TKOArm::Start()
 {
 	if (not armTask->Verify())

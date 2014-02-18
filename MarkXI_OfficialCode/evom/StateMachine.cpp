@@ -26,6 +26,8 @@ DoubleSolenoid* StateMachine::_latch_lock_unlock = NULL;//new DoubleSolenoid(LAT
 float StateMachine::lastSensorStringPrint = 0.;
 bool StateMachine::armCanMove = false;
 bool StateMachine::hasSetPneumatics = false;
+bool StateMachine::forceFire = false;
+bool StateMachine::autonFired = false;
 SEM_ID StateMachine::_armSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
 
 StateMachine::StateMachine()
@@ -58,13 +60,11 @@ void StateMachine::initPneumatics()
 	Wait(1.);
 	hasSetPneumatics = true;
 }
-void StateMachine::deCock()
+void StateMachine::manualFire()
 {
-	printf("Uncocking\n");
-	_piston_retract_extend->Set(_piston_retract_extend->kReverse);
-	Wait(1.);
-	_latch_lock_unlock->Set(_latch_lock_unlock->kForward);
+	forceFire = true;
 }
+
 bool StateMachine::canArmMove()
 {
 	bool tmp; 
@@ -200,7 +200,7 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
     }
     data->curState = STATE_LATCH_LOCK;
     _timer->Start();
-    Wait(0.5);//TODO Latch lock wait
+
     _latch_lock_unlock->Set(DoubleSolenoid::kForward);
     TKOLogger::inst()->addMessage("STATE ACTION Latch lock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
 
@@ -287,9 +287,16 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 	setArmMoveable(true);
     
     // wait for the trigger then fire!
-    while (!_triggerJoystick->GetTrigger() or !_triggerJoystick->GetRawButton(3) or !TKOArm::inst()->armInFiringRange()) 
+	
+	while (!_triggerJoystick->GetTrigger() or !_triggerJoystick->GetRawButton(3) or !TKOArm::inst()->armInFiringRange()) 
     {
-    	
+    	DSLog(4, "READY TO FIRE");
+    	DSLog(5, "Arm status: %d", TKOArm::inst()->armInFiringRange());
+    	if (StateMachine::forceFire)
+    	{
+    		StateMachine::forceFire = false;
+    		break;
+    	}
     }
     // go to next state
     TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Ready to Fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
@@ -314,7 +321,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     TKORoller::inst()->override = true;
     TKORoller::inst()->_roller1.Set(1.);
     TKORoller::inst()->_roller2.Set(-1.);
-    Wait(DriverStation::GetInstance()->GetAnalogIn(1));//SHOOT_ROLLER_PRERUN_TIME); //timing for roller prerun
+    Wait(SHOOT_ROLLER_PRERUN_TIME); //timing for roller prerun
     
     _latch_lock_unlock->Set(DoubleSolenoid::kReverse);
     TKOLogger::inst()->addMessage("STATE ACTION Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
@@ -348,6 +355,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
 
     TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     TKOLogger::inst()->addMessage("!!!SUCCESSFUL SHOT!!!");
+    StateMachine::autonFired = true;
     return STATE_PISTON_RETRACT;
 }
 
