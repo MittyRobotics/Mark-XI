@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1389832880 source:d:\repositories\mark-xi\markxi_officialcode\evom\example statemachine\main.cpp
+	<iostream>
+	"statemachine.h"
+
+1389833556 d:\repositories\mark-xi\markxi_officialcode\evom\example statemachine\statemachine.h
+	<iostream>
+	<stdlib.h>
+	<unistd.h>
+	"Windows.h"
+	"WinBase.h"
+
+1389833704 source:d:\repositories\mark-xi\markxi_officialcode\evom\example statemachine\statemachine.cpp
+	"statemachine.h"
+
