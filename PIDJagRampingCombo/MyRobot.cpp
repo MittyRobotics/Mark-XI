@@ -1,5 +1,6 @@
 #include "WPILib.h"
 #include "Definitions.h"
+#include "Gamepad.h"
 
 /**
  * This is a demo program showing the use of the RobotBase class.
@@ -9,21 +10,24 @@
  */ 
 class RobotDemo : public SimpleRobot
 {
-	Joystick stick1, stick2; // only joystick
+	Gamepad g1;
+	//Joystick stick1, stick2; // only joystick
 	CANJaguar l_f, l_b, r_f, r_b;
 	float kP, kI, kD;
 	DriverStationLCD* dsl;
 	
 public:
 	RobotDemo():
-		stick1(STICK_1_PORT), stick2(STICK_2_PORT),		// as they are declared above.
-		l_f(DRIVE_L1_ID, CANJaguar::kSpeed), l_b(DRIVE_L2_ID, CANJaguar::kPercentVbus), r_f(DRIVE_R1_ID, CANJaguar::kSpeed), r_b(DRIVE_R2_ID, CANJaguar::kPercentVbus),
+		g1(STICK_2_PORT),
+		//stick1(STICK_1_PORT), stick2(STICK_2_PORT),		// as they are declared above.
+		l_f(DRIVE_L1_ID, CANJaguar::kSpeed), l_b(DRIVE_L2_ID, CANJaguar::kPercentVbus),
+		r_f(DRIVE_R1_ID, CANJaguar::kSpeed), r_b(DRIVE_R2_ID, CANJaguar::kPercentVbus),
 		dsl()
 		{
 //		SetRamping(110);
 		DisableSafety();
 		SetSpeedReference();
-		kP = 75.0;
+		kP = 25.0;
 		kI = 0;
 		kD = 0.0;
 		SetPID();
@@ -43,11 +47,13 @@ public:
 	void OperatorControl()
 	{
 		l_f.EnableControl();
-//			l_b.EnableControl();
 		r_f.EnableControl();
+//			l_b.EnableControl();
+		
 //				r_b.EnableControl();
-		while (IsOperatorControl())
+		while (IsOperatorControl()&&IsEnabled())
 		{
+			
 			TankDrive();
 			printf("\nlfproto: %f", l_f.Get());
 			printf( "\nlf: %f", l_f.GetSpeed());
@@ -55,33 +61,16 @@ public:
 			printf( "\nlb: %f", l_b.Get());
 			printf("\nrf: %f", r_f.GetSpeed());
 			printf("\nrb: %f", r_b.Get());
-			printf("\nstickl: %f", stick1.GetY());
-			printf("\nstickr: %f", stick2.GetY());
+			//printf("\nstickl: %f", stick1.GetY());
+			//printf("\nstickr: %f", stick2.GetY());
 		}
 	}
 	
 	void TankDrive() {
-		//r_f.Set(-stick1.GetY() * kMAX_DRIVE_RPM);
-//		r_b.Set(stick1.GetY());
-		if(stick1.GetRawButton(1))
-		{
-			r_f.Set(350);
-			l_f.Set(350);
-		}
-		
-		if(stick1.GetRawButton(2))
-		{
-			r_f.Set(700);
-			l_f.Set(700);
-		}
-		if(stick1.GetRawButton(3))
-		{
-			r_f.Set(0);
-			l_f.Set(0);
-		}
-		
-		r_b.Set(r_f.GetOutputVoltage() / r_f.GetBusVoltage());
-		l_b.Set(l_f.GetOutputVoltage() / l_f.GetBusVoltage());
+		//l_f.Set(g1.GetLeftY() * kMAX_DRIVE_RPM);
+		r_f.Set(-g1.GetLeftY() * kMAX_DRIVE_RPM);
+		//r_b.Set(r_f.GetOutputVoltage() / r_f.GetBusVoltage());
+		//l_b.Set(l_f.GetOutputVoltage() / l_f.GetBusVoltage());
 				
 		//char lf[50], lb[50], rf[50], rb[50];
 		
