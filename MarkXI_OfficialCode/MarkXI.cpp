@@ -4,7 +4,6 @@
 #include "component/TKORelay.h"
 #include "log/TKOLogger.h"
 #include "drive/TKODrive.h"
-//#include "drive/TKOGDrive.h"
 #include "component/TKOGyro.h"
 #include "component/TKORelay.h"
 #include "vision/TKOVision.h"
@@ -61,8 +60,6 @@ public:
 	void OperatorControl();
 	void Operator();
 	void Test();
-	void RegDrive();
-	void GyroDrive();
 
 	MarkXI::MarkXI() :
 		stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
@@ -191,7 +188,6 @@ void MarkXI::Disabled()
 	TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOArm::inst()->Stop();
-	//TKOGDrive::inst()->Stop();
 	//TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
@@ -235,7 +231,7 @@ void MarkXI::OperatorControl()
 	TKOShooter::inst()->Start();
 	TKOArm::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
-	RegDrive(); //Choose here between kind of drive to start with
+	TKODrive::inst()->Start();
 	Timer loopTimer;
 	loopTimer.Start();
 
@@ -266,30 +262,11 @@ void MarkXI::OperatorControl()
 
 void MarkXI::Operator()
 {
-	if (stick4.GetTrigger() and stick4.GetRawButton(10))
-		TKOArm::inst()->calibrateArm();
-	
-	// stick 1 button 10 will use analog input 4 to set drive motors (see TKODrive.cpp)
-	// stick 4 button 9  will use analog input 3 to set arm position (see TKOArm.cpp)
 	TKOArm::inst()->runManualArm();
-	
 	if (stick1. GetRawButton(11))
 		TKOGyro::inst()->reset();
-	if (stick1.GetRawButton(8))
-		RegDrive();
-	if (stick1.GetRawButton(9))
-		GyroDrive();
-}
-
-void MarkXI::RegDrive()
-{
-	//TKOGDrive::inst()->Stop();
-	TKODrive::inst()->Start();
-}
-void MarkXI::GyroDrive()
-{
-	TKODrive::inst()->Stop();
-	//TKOGDrive::inst()->Start();
+//	if (stick1.GetRawButton(8))
+//		RegDrive();
 }
 
 START_ROBOT_CLASS(MarkXI);
