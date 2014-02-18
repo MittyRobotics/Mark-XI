@@ -217,11 +217,12 @@ void MarkXI::Autonomous(void)
 	 * insert new PID values
 	 * during auton: shoot & drive forward, calibrate arm?
 	 */
-	
+	TKOShooter::inst()->Start();
 	
 
 	//TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
+	TKOShooter::inst()->Stop();
 	TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
 }
 
