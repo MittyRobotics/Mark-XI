@@ -76,7 +76,7 @@ void TKOArm::ArmRunner()
 }
 float TKOArm::getDistance()
 {
-	return (usonic.GetVoltage() * 512. / 12.);
+	return (usonic.GetVoltage() / 0.009765625 / 12.);
 }
 AnalogChannel* TKOArm::getUsonic()
 {
@@ -98,16 +98,17 @@ bool TKOArm::Stop()
 }
 void TKOArm::printDSMessages()
 {
+	float tempVal = usonic.GetVoltage() / 0.009765625 / 12.;
 	float avr = 0.;
 	while (usonicVals.size() < 10)
 	{
-		usonicVals.push(usonic.GetVoltage() * 512/12.);
-		usonicAvr += usonic.GetVoltage() * 512/12.;
+		usonicVals.push(usonic.GetVoltage() / 0.009765625 / 12.);
+		usonicAvr += tempVal;
 	}
 	
 	usonicAvr -= usonicVals.back();
-	usonicAvr += usonic.GetVoltage() * 512/12.;
-	usonicVals.push(usonic.GetVoltage() * 512/12.);
+	usonicAvr += tempVal;
+	usonicVals.push(tempVal);
 	usonicVals.pop();
 	avr = usonicAvr / usonicVals.size();
 	
@@ -117,7 +118,7 @@ void TKOArm::printDSMessages()
 	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
 	DSLog(4, "Arm Tar %f", _arm.Get());
 	DSLog(5, "DistR %f", avr); //gets feet
-	DSLog(6, "Dist %f", usonic.GetVoltage() * 512/12.); //gets feet
+	DSLog(6, "Dist %f", tempVal); //gets feet
 }
 void TKOArm::currentTimeout()
 {
