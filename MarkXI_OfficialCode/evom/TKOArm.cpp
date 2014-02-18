@@ -38,6 +38,8 @@ TKOArm::TKOArm() :
 	//switchToPositionMode();
 	armTask = new Task("TKOArm", (FUNCPTR) ArmRunner, 1);
 	armEnabled = true;
+	armTargetCurrent = _arm.Get();
+	armTargetFinal = armTargetCurrent;
 	if (limitSwitchArm.Get())
 	{
 		printf("ARM NOT IN SWITCH\n");
@@ -71,7 +73,8 @@ void TKOArm::ArmRunner()
 		m_Instance->runManualArm();
 		m_Instance->printDSMessages();
 		m_Instance->currentTimeout();
-		Wait(0.01);
+		m_Instance->armTargetUpdate();
+		Wait(0.005);
 	}
 }
 float TKOArm::getDistance()
@@ -120,18 +123,35 @@ void TKOArm::printDSMessages()
 	DSLog(5, "DistR %f", avr); //gets feet
 	DSLog(6, "Dist %f", tempVal); //gets feet
 }
+void TKOArm::setArmTarget(float target)
+{
+	armTargetFinal = target;
+}
+void TKOArm::armTargetUpdate()
+{
+	if (armTargetFinal < armTargetCurrent)
+	{
+		armTargetCurrent -= 0.0001; //TODO Arm increment
+	}
+	else if (armTargetFinal > armTargetCurrent)
+	{
+		armTargetCurrent += 0.0001;
+	}
+	_arm.Set(armTargetCurrent);
+}
 void TKOArm::currentTimeout()
 {
 	if (_arm.GetOutputCurrent() >= ARM_CURRENT_THRESHOLD)
 	{
 		printf("Arm current timeout\n");
-		Timer timeout;
-		timeout.Start();
+		//Timer timeout;
+		//timeout.Start();
 		/*while (timeout.Get() <= ARM_CURRENT_TIMEOUT)
 		{
 			_arm.Set(_arm.GetPosition());
+			//TODO Do something here
 		}*/
-		timeout.Stop();
+		//timeout.Stop();
 		//_arm.EnableControl();
 	}
 }
@@ -151,13 +171,13 @@ void TKOArm::runManualArm()
 	
 	if (DriverStation::GetInstance()->GetDigitalIn(5))//if override running
 	{
-		_arm.Set(stick4.GetY() * ARM_SPEED_MULTIPLIER);
+		setArmTarget(stick4.GetY() * ARM_SPEED_MULTIPLIER);
 		return;
 	}
 	if (not StateMachine::armCanMove or not armEnabled)
 	{
 		printf("Arm can't move\n");
-		_arm.Set(_arm.GetPosition());
+		setArmTarget(_arm.GetPosition());
 		return;
 	}
 	
@@ -186,41 +206,41 @@ void TKOArm::runManualArm()
 	{
 		if (stick4.GetRawButton(6))
 		{
-			_arm.Set(_arm.Get() + 0.005);
+			setArmTarget(_arm.Get() + 0.005);
 			lastInc = GetTime();
 		}
 		if (stick4.GetRawButton(7))
 		{
-			_arm.Set(_arm.Get() - 0.005);
+			setArmTarget(_arm.Get() - 0.005);
 			lastInc = GetTime();
 		}
 	}
 	
-	_arm.Set(_arm.Get());
+	//_arm.Set(_arm.Get()); //todo DO WE NEED THIS
 }
 void TKOArm::moveToFront()
 {
 	/*if (_arm.GetControlMode() == _arm.kPercentVbus)
 		TKOArm::switchToPositionMode();*/
-	_arm.Set(maxArmPos);
+	setArmTarget(maxArmPos);
 }
 void TKOArm::moveToMid()
 {
 	/*if (_arm.GetControlMode() == _arm.kPercentVbus)
 		TKOArm::switchToPositionMode();*/
-	_arm.Set(0.);
+	setArmTarget(0.);
 }
 void TKOArm::moveToBack()
 {
 	/*if (_arm.GetControlMode() == _arm.kPercentVbus)
 		TKOArm::switchToPositionMode();*/
-	_arm.Set(minArmPos);
+	setArmTarget(minArmPos);
 }
 void TKOArm::moveToDSTarget()
 {
 	/*if (_arm.GetControlMode() == _arm.kPercentVbus)
 		TKOArm::switchToPositionMode();*/
-	_arm.Set(DriverStation::GetInstance()->GetAnalogIn(4));
+	setArmTarget(DriverStation::GetInstance()->GetAnalogIn(4));
 }
 bool TKOArm::armInFiringRange()
 {

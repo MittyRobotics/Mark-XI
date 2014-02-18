@@ -50,6 +50,8 @@ class TKOArm: public SensorBase
 		bool armInFiringRange();
 		void runManualArm();
 		void currentTimeout();
+		void armTargetUpdate();
+		void setArmTarget(float target);
 		AnalogChannel* getUsonic();
 	private:
 		TKOArm();
@@ -61,6 +63,8 @@ class TKOArm: public SensorBase
 		float lastInc;
 		bool armEnabled;
 		queue<float> usonicVals;
+		float armTargetCurrent;
+		float armTargetFinal;
 		float usonicAvr;
 	
 		CANJaguar _arm;
