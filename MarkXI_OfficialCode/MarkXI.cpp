@@ -221,7 +221,7 @@ void MarkXI::Autonomous(void)
 	 */
 	TKOShooter::inst()->Start();
 	Molecule* molecule = new Molecule();
-	Atom* driveForward = new DriveAtomUsonic(15., TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	Atom* driveForward = new DriveAtomUsonic(3., TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
 	Atom* shoot = new ShootAtom();
 	molecule->addAtom(driveForward);
 	molecule->addAtom(shoot);
