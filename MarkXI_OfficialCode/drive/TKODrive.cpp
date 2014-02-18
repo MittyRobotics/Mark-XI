@@ -5,16 +5,16 @@
 TKODrive* TKODrive::m_Instance = NULL;
 
 TKODrive::TKODrive() :
-					drive1(DRIVE_L1_ID, CANJaguar::kPercentVbus), // initialize motor 1 < first left drive motor
-					drive2(DRIVE_L2_ID, CANJaguar::kPercentVbus), // initialize motor 2 < second left drive motor
-					drive3(DRIVE_R1_ID, CANJaguar::kPercentVbus), // initialize motor 3 < first right drive motor
-					drive4(DRIVE_R2_ID, CANJaguar::kPercentVbus), // initialize motor 4 < second right drive motor
-					stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
-					stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
-					stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
-					stick4(STICK_4_PORT), // initialize joystick 4 < first EVOM joystick-m,	
-					shifterDS(DRIVE_SHIFTER_SOLENOID_A,DRIVE_SHIFTER_SOLENOID_B),
-					speedShiftRPM(165.)
+		drive1(DRIVE_L1_ID, CANJaguar::kPercentVbus), // initialize motor 1 < first left drive motor
+		drive2(DRIVE_L2_ID, CANJaguar::kPercentVbus), // initialize motor 2 < second left drive motor
+		drive3(DRIVE_R1_ID, CANJaguar::kPercentVbus), // initialize motor 3 < first right drive motor
+		drive4(DRIVE_R2_ID, CANJaguar::kPercentVbus), // initialize motor 4 < second right drive motor
+		stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
+		stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
+		stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
+		stick4(STICK_4_PORT), // initialize joystick 4 < first EVOM joystick-m,	
+		shifterDS(DRIVE_SHIFTER_SOLENOID_A,DRIVE_SHIFTER_SOLENOID_B),
+		speedShiftRPM(165.)
 {	
 	printf("Initializing drive\n");
 	driveTask = new Task("TKODrive", (FUNCPTR) DriveRunner, 1);
@@ -50,6 +50,7 @@ TKODrive::TKODrive() :
 	driveLogCounter = 0;
 	lastShift = GetTime();
 	lastDataLog = GetTime();
+	lastFire = GetTime();
 
 	printf("Finished initializing drive\n");
 	AddToSingletonList();
@@ -70,7 +71,7 @@ void TKODrive::DriveRunner()
 		m_Instance->TankDrive();
 		m_Instance->LogData();
 		//m_Instance->VerifyJags();
-		Wait(0.001);
+		Wait(0.005);
 	}
 }
 
@@ -121,26 +122,6 @@ void TKODrive::LogData()
 	TKOLogger::inst()->addMessage("Drive 1 Speed: %f", drive1.GetSpeed());
 	TKOLogger::inst()->addMessage("Drive 3 Speed: %f\n", drive3.GetSpeed());
 
-	/*printf("-----DRIVE DATA------\n");
-
-	printf("Drive 1 Vbus Percent Output: %f\n", drive1.Get());
-	printf("Drive 2 Vbus Percent Output: %f\n", drive2.Get());
-	printf("Drive 3 Vbus Percent Output: %f\n", drive3.Get());
-	printf("Drive 4 Vbus Percent Output: %f\n\n", drive4.Get());
-
-	printf("Drive 1 Voltage Output: %f\n", drive1.GetOutputVoltage());
-	printf("Drive 2 Voltage Output: %f\n", drive2.GetOutputVoltage());
-	printf("Drive 3 Voltage Output: %f\n", drive3.GetOutputVoltage());
-	printf("Drive 4 Voltage Output: %f\n\n", drive4.GetOutputVoltage());
-
-	printf("Drive 1 Current Output: %f\n", drive1.GetOutputCurrent());
-	printf("Drive 2 Current Output: %f\n", drive2.GetOutputCurrent());
-	printf("Drive 3 Current Output: %f\n", drive3.GetOutputCurrent());
-	printf("Drive 4 Current Output: %f\n\n", drive4.GetOutputCurrent());
-
-	printf("Drive 1 Speed: %f\n", drive1.GetSpeed());
-	printf("Drive 3 Speed: %f\n\n", drive3.GetSpeed());*/
-
 	driveLogCounter++;
 	lastDataLog = GetTime();
 }
@@ -148,7 +129,15 @@ void TKODrive::LogData()
 void TKODrive::TankDrive()
 {
 	if (!DriverStation::GetInstance()->IsEnabled()) return;
-	if (stick2.GetRawButton(4))
+	
+	if (stick1.GetRawButton(10))
+	{
+		drive1.Set(DriverStation::GetInstance()->GetAnalogIn(4));
+		drive2.Set(drive1.GetOutputVoltage() / drive1.GetBusVoltage());
+		drive3.Set(-(DriverStation::GetInstance()->GetAnalogIn(4)));
+		drive4.Set(drive3.GetOutputVoltage() / drive3.GetBusVoltage());
+	}
+	else if (stick2.GetRawButton(4))
 	{
 		drive1.SetVoltageRampRate(0.0);
 		drive2.SetVoltageRampRate(0.0);
@@ -192,6 +181,18 @@ void TKODrive::TankDrive()
 	}
 	TKODrive::ManualShift();
 	TKODrive::AutoShift();
+	
+	if (drive1.GetSpeed() > 400 && drive3.GetSpeed() > 400 && stick3.GetRawButton(8) && TKOArm::inst()->getDistance() <= 115)
+	{
+		if (GetTime() - lastFire <= 1.) return;
+		drive1.Set(0);
+		drive2.Set(0);
+		drive3.Set(0);
+		drive4.Set(0);
+		StateMachine::manualFire();
+		lastFire = GetTime();
+		Wait(1.);
+	}
 }
 void TKODrive::ManualShift()
 {

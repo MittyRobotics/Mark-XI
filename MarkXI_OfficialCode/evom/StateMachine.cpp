@@ -60,6 +60,10 @@ void StateMachine::initPneumatics()
 	Wait(1.);
 	hasSetPneumatics = true;
 }
+void StateMachine::manualFire()
+{
+	forceFire = true;
+}
 
 bool StateMachine::canArmMove()
 {
@@ -85,19 +89,6 @@ void StateMachine::updateDriverStationSwitchDisplay()
 	DriverStation::GetInstance()->SetDigitalOut(5, !_latch_lock->Get()); //latch
 	DriverStation::GetInstance()->SetDigitalOut(6, !_piston_extend->Get()); //extend
 	DriverStation::GetInstance()->SetDigitalOut(7, !_piston_retract->Get()); //retract
-}
-
-void StateMachine::runPneumaticsTest(bool mainPistonValue, bool latchValue)
-{
-	if (mainPistonValue)
-		_piston_retract_extend->Set(_piston_retract_extend->kForward);
-	else
-		_piston_retract_extend->Set(_piston_retract_extend->kReverse);
-	
-	if (latchValue)
-		_latch_lock_unlock->Set(_latch_lock_unlock->kForward);
-	else
-		_latch_lock_unlock->Set(_latch_lock_unlock->kReverse);
 }
 
 state_t StateMachine::run_state( state_t cur_state, instance_data_t *data ) {
@@ -297,7 +288,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
     
     // wait for the trigger then fire!
 	
-	while (!_triggerJoystick->GetTrigger() or !_triggerJoystick->GetRawButton(8) or !TKOArm::inst()->armInFiringRange()) 
+	while (!_triggerJoystick->GetTrigger() or !_triggerJoystick->GetRawButton(3) or !TKOArm::inst()->armInFiringRange()) 
     {
     	DSLog(4, "READY TO FIRE");
     	DSLog(5, "Arm status: %d", TKOArm::inst()->armInFiringRange());

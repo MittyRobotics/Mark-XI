@@ -75,9 +75,9 @@ public:
     static bool forceFire;
     static bool autonFired;
     static void initPneumatics();
+    static void manualFire();
     static bool canArmMove();
     static void setArmMoveable(bool b);
-    static void runPneumaticsTest(bool mainPistonValue, bool latchValue);
     
     static float lastSensorStringPrint;
     

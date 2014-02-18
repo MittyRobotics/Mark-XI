@@ -11,13 +11,14 @@ class TKORoller
 		~TKORoller();
 		void rollerManualMove();
 		void rollerSimpleMove();
+		void rollerIn();
 		static TKORoller* inst();
 		CANJaguar _roller1, _roller2;
 		bool override;
 	private:
 		TKORoller(int rollerPort1, int rollerPort2);
 		DigitalInput limitSwitchBall;
-		Joystick stick4;
+		Joystick stick3;
 		static TKORoller*  _instance;
 };
 
@@ -41,26 +42,30 @@ class TKOArm: public SensorBase
 		void switchToPositionMode();
 		void printDSMessages();
 		void switchToVBusMode();
+		float getDistance();
 		void moveToFront();
 		void moveToMid();
 		void moveToBack();
-		void toggleMode();
+		void moveToDSTarget();
 		bool armInFiringRange();
+		void runManualArm();
+		void currentTimeout();
+		AnalogChannel* getUsonic();
 	private:
 		TKOArm();
 		DISALLOW_COPY_AND_ASSIGN(TKOArm);
 		static TKOArm* m_Instance;
 		static void ArmRunner();
 		const float minArmPos, maxArmPos;
-		float lastToggle;
-		void runManualArm();
-		void runPositionArm();
 		Task *armTask;
+		float lastInc;
 		bool armEnabled;
-		bool runningVBus;
+		queue<float> usonicVals;
+		float usonicAvr;
 	
 		CANJaguar _arm;
 		DigitalInput limitSwitchArm;
+		AnalogChannel usonic;
 		Joystick stick3, stick4;
 };
 #endif

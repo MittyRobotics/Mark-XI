@@ -12,7 +12,7 @@ TKORoller::TKORoller(int rollerPort1,int rollerPort2):
 	_roller1(rollerPort1, CANJaguar::kPercentVbus),
 	_roller2(rollerPort2, CANJaguar::kPercentVbus),
 	limitSwitchBall(BALL_LIMIT_SWITCH),
-	stick4(4)
+	stick3(3)
 {
 	override = false;
 }
@@ -34,16 +34,22 @@ void TKORoller::rollerManualMove()
 {
 	if (override)
 		return;
-	if(stick4.GetRawButton(2)) 
+	if(stick3.GetRawButton(2)) 
 	{
-		_roller1.Set(stick4.GetY());
-		_roller2.Set(-stick4.GetY());
+		_roller1.Set(stick3.GetY());
+		_roller2.Set(-stick3.GetY());
 	}
 	else
 	{
 		_roller1.Set(0);
 		_roller2.Set(0);
 	}	
+}
+void TKORoller::rollerIn()
+{
+	if (!limitSwitchBall.Get()) return;
+	_roller1.Set(-1.);
+	_roller2.Set(1.);
 }
 
 void TKORoller::rollerSimpleMove() //TODO check negative signs, .Get sign, so that this works
@@ -52,16 +58,16 @@ void TKORoller::rollerSimpleMove() //TODO check negative signs, .Get sign, so th
 		return;
 	if (!limitSwitchBall.Get()) //if ball hitting switch, we dont want operator to make it go more
 	{
-		if(stick4.GetRawButton(5)) //only allow going out
+		if(stick3.GetRawButton(5)) //only allow going out
 		{
 			_roller1.Set(1.);
 			_roller2.Set(-1.);
 		}
-		else if (stick4.GetRawButton(3))
+		/*else if (stick3.GetRawButton(3))
 		{
 			_roller1.Set(1.);
 			_roller2.Set(1.);
-		}
+		}*/
 		else //if stick not pressed
 		{
 			_roller1.Set(0.);
@@ -70,12 +76,12 @@ void TKORoller::rollerSimpleMove() //TODO check negative signs, .Get sign, so th
 	}
 	else //if ball NOT hitting switch
 	{
-		if(stick4.GetRawButton(4)) //allow going in
+		if(stick3.GetRawButton(4)) //allow going in
 		{
 			_roller1.Set(-1.);
 			_roller2.Set(1.);
 		}
-		else if(stick4.GetRawButton(5)) //allow going out
+		else if(stick3.GetRawButton(5)) //allow going out
 		{
 			_roller1.Set(1.);
 			_roller2.Set(-1.);

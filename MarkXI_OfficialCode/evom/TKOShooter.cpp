@@ -77,7 +77,6 @@ int TKOShooter::runStateMachine()
 	DSLog(5, "");
 	DSLog(6, "");
 	cur_state = s.run_state(cur_state,&data);
-	DSLog(6, "State: %s", s.state_to_string(&data).c_str());
 	//logging here
 	return -1;
 }

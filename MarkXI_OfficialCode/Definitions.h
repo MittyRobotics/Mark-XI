@@ -55,9 +55,10 @@ const int ARM_JAGUAR_ID = 7;
 const float ARM_MINIMUM_POSITION = 0.07;
 const float ARM_MAXIMUM_POSITION = -0.09;
 const float ARM_SPEED_MULTIPLIER = -.9;
-const float ARM_FIRING_LEFT_BOUND = -1;//-0.015;
-const float ARM_FIRING_RIGHT_BOUND = 1;// -0.025;
-
+const float ARM_FIRING_LEFT_BOUND = -0.015;//-0.015;
+const float ARM_FIRING_RIGHT_BOUND = 0.0;// -0.025;
+const float ARM_CURRENT_THRESHOLD = 30.;
+const float ARM_CURRENT_TIMEOUT = 1.;
 // Spinner constants
 const float RADIUS_WHEELS = 4;
 const float TAN_SPINNER_THETA = tan(57.5);
@@ -106,10 +107,11 @@ const int DRIVE_SHIFTER_SOLENOID_B = 4;
 
 const int PISTON_SWITCH_RETRACT_CHANNEL = 7;
 const int PISTON_SWITCH_EXTEND_CHANNEL = 6;
-const int LATCH_PISTON_LOCK_SWITCH_CHANNEL = 8;
-const int IS_COCKED_SWITCH_CHANNEL = 14;
-const int BALL_LIMIT_SWITCH = 5;
-const int ARM_OPTICAL_SWITCH = 4;
+const int LATCH_PISTON_LOCK_SWITCH_CHANNEL = 1;
+const int IS_COCKED_SWITCH_CHANNEL = 2;
+const int BALL_LIMIT_SWITCH = 10;
+const int ARM_OPTICAL_SWITCH = 11;
+const int ULTRASONIC_PORT = 7;
 
 // Camera Constants
  
