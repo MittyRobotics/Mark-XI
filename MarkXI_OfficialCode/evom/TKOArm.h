@@ -11,6 +11,7 @@ class TKORoller
 		~TKORoller();
 		void rollerManualMove();
 		void rollerSimpleMove();
+		void rollerIn();
 		static TKORoller* inst();
 		CANJaguar _roller1, _roller2;
 		bool override;
@@ -55,7 +56,10 @@ class TKOArm: public SensorBase
 		static void ArmRunner();
 		const float minArmPos, maxArmPos;
 		Task *armTask;
+		float lastInc;
 		bool armEnabled;
+		queue<float> usonicVals;
+		float usonicAvr;
 	
 		CANJaguar _arm;
 		DigitalInput limitSwitchArm;

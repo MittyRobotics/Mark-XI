@@ -107,6 +107,11 @@ void MarkXI::Test()
 	armTest->EnableControl();
 #endif
 	float lastSTog = GetTime();
+	if (DriverStation::GetInstance()->GetDigitalIn(8))
+	{
+		StateMachine::deCock();
+		return;
+	}
 	StateMachine::initPneumatics(); //TODO make sure this works; sets pneumatics to default start positions
 	printf("Done with test initialization \n");
 
@@ -212,6 +217,8 @@ void MarkXI::Autonomous(void)
 	 * insert new PID values
 	 * during auton: shoot & drive forward, calibrate arm?
 	 */
+	
+	
 
 	//TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
@@ -224,7 +231,7 @@ void MarkXI::OperatorControl()
 	TKOLogger::inst()->Start();
 	TKOGyro::inst()->reset();
 	compressor.Start();
-	StateMachine::initPneumatics();
+	//StateMachine::initPneumatics();
 	TKOShooter::inst()->Start();
 	TKOArm::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START

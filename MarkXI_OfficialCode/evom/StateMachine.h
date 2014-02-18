@@ -74,6 +74,7 @@ public:
     static bool canArmMove();
     static bool hasSetPneumatics;
     static void initPneumatics();
+    static void deCock();
     static void setArmMoveable(bool b);
     
     static float lastSensorStringPrint;

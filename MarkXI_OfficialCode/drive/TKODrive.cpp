@@ -70,7 +70,7 @@ void TKODrive::DriveRunner()
 		m_Instance->TankDrive();
 		m_Instance->LogData();
 		//m_Instance->VerifyJags();
-		Wait(0.001);
+		Wait(0.005);
 	}
 }
 

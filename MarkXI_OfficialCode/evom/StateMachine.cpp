@@ -58,6 +58,13 @@ void StateMachine::initPneumatics()
 	Wait(1.);
 	hasSetPneumatics = true;
 }
+void StateMachine::deCock()
+{
+	printf("Uncocking\n");
+	_piston_retract_extend->Set(_piston_retract_extend->kReverse);
+	Wait(1.);
+	_latch_lock_unlock->Set(_latch_lock_unlock->kForward);
+}
 bool StateMachine::canArmMove()
 {
 	bool tmp; 
@@ -193,7 +200,7 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
     }
     data->curState = STATE_LATCH_LOCK;
     _timer->Start();
-
+    Wait(0.5);//TODO Latch lock wait
     _latch_lock_unlock->Set(DoubleSolenoid::kForward);
     TKOLogger::inst()->addMessage("STATE ACTION Latch lock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
 

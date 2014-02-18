@@ -45,6 +45,12 @@ void TKORoller::rollerManualMove()
 		_roller2.Set(0);
 	}	
 }
+void TKORoller::rollerIn()
+{
+	if (!limitSwitchBall.Get()) return;
+	_roller1.Set(-1.);
+	_roller2.Set(1.);
+}
 
 void TKORoller::rollerSimpleMove() //TODO check negative signs, .Get sign, so that this works
 {
