@@ -59,7 +59,7 @@ const float ARM_FIRING_LEFT_BOUND = -0.015;//-0.015;
 const float ARM_FIRING_RIGHT_BOUND = 0.0;// -0.025;
 const float ARM_CURRENT_THRESHOLD = 30.;
 const float ARM_CURRENT_TIMEOUT = 1.;
-const float ARM_TARGET_RAMP_INCREMENT = 0.00025;
+const float ARM_TARGET_RAMP_INCREMENT = 0.001;
 const float ARM_MANUAL_DRIVE_INREMENT = 0.0025;
 // Spinner constants
 const float RADIUS_WHEELS = 4;

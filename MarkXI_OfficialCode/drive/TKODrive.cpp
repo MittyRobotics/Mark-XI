@@ -182,7 +182,7 @@ void TKODrive::TankDrive()
 	TKODrive::ManualShift();
 	TKODrive::AutoShift();
 	
-	if (drive1.GetSpeed() > 400 && drive3.GetSpeed() > 400 && stick3.GetRawButton(8) && TKOArm::inst()->getDistance() <= 115)
+	if (drive1.GetSpeed() > 400 && drive3.GetSpeed() > 400 && stick3.GetRawButton(8) && TKOArm::inst()->getDistance() <= 3000)
 	{
 		if (GetTime() - lastFire <= 1.) return;
 		drive1.Set(0);
