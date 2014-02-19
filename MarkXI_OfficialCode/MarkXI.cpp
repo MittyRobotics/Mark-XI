@@ -84,7 +84,7 @@ void MarkXI::RobotInit()
 		remove("logT.txt");
 		printf("Digital input 1 true\n");
 	}
-	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------");
+	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------TIMESTAMP: %f", GetFPGATime());
 	TKOGyro::inst()->reset();
 	//	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
