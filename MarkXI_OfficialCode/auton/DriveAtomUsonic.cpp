@@ -27,7 +27,7 @@ void DriveAtomUsonic::run() {
 	_drive3->SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
 	_drive1->EnableControl(0);
 	_drive3->EnableControl(0);
-	while (usonic->GetVoltage() / 0.009765625 / 12. > tarDist && DriverStation::GetInstance()->IsEnabled()) {
+	while (usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET > tarDist && DriverStation::GetInstance()->IsEnabled()) {
 
 //		while(kP != ds->GetAnalogIn(1)*0.2) {
 			//kP = ds->GetAnalogIn(1)*0.2;

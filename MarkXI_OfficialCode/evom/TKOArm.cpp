@@ -79,7 +79,7 @@ void TKOArm::ArmRunner()
 }
 float TKOArm::getDistance()
 {
-	return (usonic.GetVoltage() / 0.009765625 / 12.);
+	return (usonic.GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET);
 }
 AnalogChannel* TKOArm::getUsonic()
 {
@@ -101,11 +101,11 @@ bool TKOArm::Stop()
 }
 void TKOArm::printDSMessages()
 {
-	float tempVal = usonic.GetVoltage() / 0.009765625 / 12.;
+	float tempVal = usonic.GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET;
 	float avr = 0.;
 	while (usonicVals.size() < 10)
 	{
-		usonicVals.push(usonic.GetVoltage() / 0.009765625 / 12.);
+		usonicVals.push(usonic.GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET);
 		usonicAvr += tempVal;
 	}
 	
@@ -131,11 +131,11 @@ void TKOArm::armTargetUpdate()
 {
 	if (armTargetFinal < armTargetCurrent)
 	{
-		armTargetCurrent -= 0.0001; //TODO Arm increment
+		armTargetCurrent -= ARM_TARGET_RAMP_INCREMENT; //TODO Arm increment
 	}
 	else if (armTargetFinal > armTargetCurrent)
 	{
-		armTargetCurrent += 0.0001;
+		armTargetCurrent += ARM_TARGET_RAMP_INCREMENT;
 	}
 	_arm.Set(armTargetCurrent);
 }
@@ -161,6 +161,8 @@ void TKOArm::runManualArm()
 	{
 		_arm.DisableControl();
 		_arm.EnableControl(0.);
+		armTargetCurrent = 0.;
+		armTargetFinal = 0.;
 		printf("Reset encoder\n");
 	}
 	
@@ -206,12 +208,12 @@ void TKOArm::runManualArm()
 	{
 		if (stick4.GetRawButton(6))
 		{
-			setArmTarget(_arm.Get() + 0.005);
+			setArmTarget(_arm.Get() + ARM_MANUAL_DRIVE_INREMENT);
 			lastInc = GetTime();
 		}
 		if (stick4.GetRawButton(7))
 		{
-			setArmTarget(_arm.Get() - 0.005);
+			setArmTarget(_arm.Get() - ARM_MANUAL_DRIVE_INREMENT);
 			lastInc = GetTime();
 		}
 	}
