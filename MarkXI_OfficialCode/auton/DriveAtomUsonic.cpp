@@ -1,7 +1,6 @@
-//Last Edited by Ishan Shah
 #include "DriveAtomUsonic.h"
 #include <cstring>
-// new branch
+
 DriveAtomUsonic::DriveAtomUsonic(float tarD, AnalogChannel* usonicPointer, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4)
 {
 	tarDist = tarD;
@@ -10,9 +9,6 @@ DriveAtomUsonic::DriveAtomUsonic(float tarD, AnalogChannel* usonicPointer, CANJa
 	_drive2 = drive2;
 	_drive3 = drive3;
 	_drive4 = drive4;
-//	kP = 0.7;
-//	kI = 0.00;//23;
-//	kD = 0.0;
 }
 
 DriveAtomUsonic::~DriveAtomUsonic() {
@@ -20,9 +16,7 @@ DriveAtomUsonic::~DriveAtomUsonic() {
 
 void DriveAtomUsonic::run() {
 	
-	
-	//don't forget to divide nu--mber of rotations by REVS_PER_FOOT in order to get feet traveled
-
+	//don't forget to divide number of rotations by REVS_PER_FOOT in order to get feet traveled
 	_drive1->SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
 	_drive3->SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
 	_drive1->EnableControl(0);
@@ -39,7 +33,6 @@ void DriveAtomUsonic::run() {
 //			_drive1->SetPID(kP, kI, kD);
 //			_drive3->SetPID(kP, kI, kD);
 //		}
-				
 		_drive1->Set(_drive1->Get() - 5);
 		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave			
 		_drive3->Set(_drive3->Get() + 5);
@@ -51,6 +44,5 @@ void DriveAtomUsonic::run() {
 	_drive3->DisableControl();
 	_drive4->Set(0);
 	Wait(1.0); 
-	
 	
 }

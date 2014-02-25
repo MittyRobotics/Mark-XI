@@ -13,9 +13,9 @@ Stick 2
 
 Operator Controls:
 Stick 3
-- trigger AND button 3: fire shooter (move this to driver controls)
 - button 4: roller intake
 - button 5: roller outtake
+- button 8: must be held to fire shooter (move this to driver controls?)
 Stick 4
 - move forwards: arm forward(?)
 - move backwards: arm back(?)

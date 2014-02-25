@@ -7,7 +7,7 @@ protected:
 	Atom();
 	
 public:
-		virtual void run() = 0;
-		virtual ~Atom(){}
+	virtual void run() = 0;
+	virtual ~Atom(){}
 };
 #endif

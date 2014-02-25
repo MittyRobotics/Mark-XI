@@ -1,6 +1,6 @@
 #include "DriveAndShootUsonicAtom.h"
 #include <cstring>
-// new branch
+
 DriveAndShootUsonicAtom::DriveAndShootUsonicAtom(float tarD, AnalogChannel* usonicPointer, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4)
 {
 	tarDist = tarD;
@@ -9,19 +9,13 @@ DriveAndShootUsonicAtom::DriveAndShootUsonicAtom(float tarD, AnalogChannel* uson
 	_drive2 = drive2;
 	_drive3 = drive3;
 	_drive4 = drive4;
-//	kP = 0.7;
-//	kI = 0.00;//23;
-//	kD = 0.0;
 }
 
-DriveAndShootUsonicAtom::~DriveAndShootUsonicAtom() {
-}
+DriveAndShootUsonicAtom::~DriveAndShootUsonicAtom() {}
 
 void DriveAndShootUsonicAtom::run() {
 	
-	
-	//don't forget to divide nu--mber of rotations by REVS_PER_FOOT in order to get feet traveled
-
+	//don't forget to divide number of rotations by REVS_PER_FOOT in order to get feet traveled
 	_drive1->SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
 	_drive3->SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
 	_drive1->EnableControl(0);
@@ -52,6 +46,5 @@ void DriveAndShootUsonicAtom::run() {
 	_drive3->DisableControl();
 	_drive4->Set(0);
 	Wait(1.0); 
-	
 	
 }
