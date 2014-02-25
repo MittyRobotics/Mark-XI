@@ -21,6 +21,8 @@
 //#define ARM_TEST_MODE
 
 /*---------------MarkXI-Things-to-Do(TODO)---------------------* 
+ * At beginning of auton, shift to high gear
+ * 
  * FOR 2014 OffSeason: take over scouting?
  * 
  * Test the wait time for how long the roller spins before the shooter fires
