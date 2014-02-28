@@ -12,11 +12,8 @@
 #include "evom/StateMachine.h"
 #include "evom/TKOArm.h"
 #include "auton/Atom.h"
-#include "auton/DriveAtom.h"
-#include "auton/DriveAtomUsonic.h"
 #include "auton/Molecule.h"
-#include "auton/TurnAtom.h"
-#include "auton/ShootAtom.h"
+#include "auton/DriveAndShootUsonicAtom.h"
 //#define PNEUMATICS_TEST_MODE
 //#define ARM_TEST_MODE
 
@@ -211,10 +208,10 @@ void MarkXI::Autonomous(void)
 	{
 		TKOLogger::inst()->addMessage("-----------FMS DETECTED------------");
 		TKOLogger::inst()->addMessage("PROBABLY A SERIOUS MATCH");
-		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kBlue);
-		TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
-		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kRed);
-		TKOLogger::inst()->addMessage("RED ALLIANCE!");
+		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kBlue)
+			TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
+		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kRed)
+			TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
 
 	/* ---TODO for auton---
@@ -223,10 +220,9 @@ void MarkXI::Autonomous(void)
 	 */
 	TKOShooter::inst()->Start();
 	Molecule* molecule = new Molecule();
-	Atom* driveForward = new DriveAtomUsonic(3., TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
-	Atom* shoot = new ShootAtom();
-	molecule->addAtom(driveForward);
-	molecule->addAtom(shoot);
+	Atom* driveAndShoot = new DriveAndShootUsonicAtom(3., TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	molecule->addAtom(driveAndShoot);
+	molecule->MoleculeInit();
 	molecule->start();
 
 	//TKOVision::inst()->StopProcessing();

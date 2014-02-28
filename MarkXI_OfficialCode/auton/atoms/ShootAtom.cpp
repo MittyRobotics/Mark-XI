@@ -1,5 +1,4 @@
 #include "ShootAtom.h"
-#include "../evom/StateMachine.h"
 
 ShootAtom::ShootAtom()
 {

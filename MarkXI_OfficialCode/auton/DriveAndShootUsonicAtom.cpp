@@ -16,10 +16,7 @@ DriveAndShootUsonicAtom::~DriveAndShootUsonicAtom() {}
 void DriveAndShootUsonicAtom::run() {
 	
 	//don't forget to divide number of rotations by REVS_PER_FOOT in order to get feet traveled
-	_drive1->SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
-	_drive3->SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
-	_drive1->EnableControl(0);
-	_drive3->EnableControl(0);
+
 	while (usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET > tarDist && DriverStation::GetInstance()->IsEnabled()) {
 
 //		while(kP != ds->GetAnalogIn(1)*0.2) {

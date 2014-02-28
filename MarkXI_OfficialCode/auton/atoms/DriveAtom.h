@@ -1,8 +1,8 @@
 #ifndef _DRIVEATOM_H
 #define _DRIVEATOM_H
 
-#include "Atom.h"
-#include "../Definitions.h"
+#include "../Atom.h"
+#include "../../Definitions.h"
 
 class DriveAtom: public Atom {
 
