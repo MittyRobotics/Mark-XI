@@ -14,11 +14,10 @@
 #include "auton/Atom.h"
 #include "auton/DriveAtom.h"
 #include "auton/DriveAtomUsonic.h"
+#include "auton/DriveAndShootUsonicAtom.h"
 #include "auton/Molecule.h"
 #include "auton/TurnAtom.h"
 #include "auton/ShootAtom.h"
-//#define PNEUMATICS_TEST_MODE
-//#define ARM_TEST_MODE
 
 /*---------------MarkXI-Things-to-Do(TODO)---------------------* 
  * At beginning of auton, shift to high gear
@@ -96,92 +95,8 @@ void MarkXI::Test()
 {	
 	printf("Calling test function \n");
 	TKOLogger::inst()->Start();
-#ifdef PNEUMATICS_TEST_MODE
-	DoubleSolenoid* _piston_retract_extend = new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
-	DoubleSolenoid* _latch_lock_unlock = new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
-#endif
-#ifdef ARM_TEST_MODE
-	CANJaguar* armTest = new CANJaguar(7, CANJaguar::kPercentVbus);
-	armTest->SetSafetyEnabled(false);
-	armTest->ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
-	armTest->SetVoltageRampRate(0.0);
-	armTest->ConfigFaultTime(0.1); 
-	armTest->SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
-	armTest->ConfigEncoderCodesPerRev(250);
-	armTest->EnableControl();
-#endif
-	float lastSTog = GetTime();
-	if (DriverStation::GetInstance()->GetDigitalIn(8))
-	{
-		//StateMachine::deCock();
-		return;
-	}
-	StateMachine::initPneumatics(); //TODO make sure this works; sets pneumatics to default start positions
-	printf("Done with test initialization \n");
-
-	printf("Starting tasks \n");
-	TKOLogger::inst()->addMessage("STARTING TEST MODE");
-	if (DriverStation::GetInstance()->GetDigitalIn(2))
-		compressor.Start();
-	else
-		compressor.Stop();
-	if (DriverStation::GetInstance()->GetDigitalIn(3))
-		TKOShooter::inst()->Start();
-	if (DriverStation::GetInstance()->GetDigitalIn(4)) //TODO Before running this, remove armTest initialization
-		TKOArm::inst()->Start();
-	printf("Driver station depended actions completed\n");
-
-	TKOLogger::inst()->addMessage("ENTERING TEST LOOP");
-
-	while (IsEnabled())
-	{
-		StateMachine::updateDriverStationSwitchDisplay();
-		DSLog(5, "Arm: %d", TKOArm::inst()->armInFiringRange());
-		if (stick4.GetRawButton(2))
-			TKOArm::inst()->moveToBack();
-		if (stick4.GetRawButton(3))
-			TKOArm::inst()->moveToFront();
-#ifdef ARM_TEST_MODE
-		armTest->Set(stick4.GetY()*-0.5);
-#endif
-#ifdef PNEUMATICS_TEST_MODE
-		DriverStation::GetInstance()->SetDigitalOut(1, _piston_retract_extend->Get());
-		DriverStation::GetInstance()->SetDigitalOut(2, _latch_lock_unlock->Get());
-#endif
-#ifdef ARM_TEST_MODE
-		DSLog(1, "Arm Pos: %f", armTest->GetPosition());
-		DSLog(2, "Arm Volt: %f", armTest->GetOutputVoltage());
-		DSLog(3, "Arm Curr %f", armTest->GetOutputCurrent());
-#endif
-		if (GetTime() - lastSTog < 1.) //1. is the constant for min delay between shifts
-			continue; 
-#ifdef PNEUMATICS_TEST_MODE
-		if (stick4.GetRawButton(4))
-		{
-			_piston_retract_extend->Set(_piston_retract_extend->kForward);
-			lastSTog = GetTime();
-		}
-		if (stick4.GetRawButton(5))
-		{
-			_piston_retract_extend->Set(_piston_retract_extend->kReverse);
-			lastSTog = GetTime();
-		}
-		if (stick4.GetRawButton(3))
-		{
-			_latch_lock_unlock->Set(_latch_lock_unlock->kForward);
-			lastSTog = GetTime();
-		}
-		if (stick4.GetRawButton(2))
-		{
-			_latch_lock_unlock->Set(_latch_lock_unlock->kReverse); //reverse if pulled back
-			lastSTog = GetTime();
-		}
-#endif
-	}
 	printf("Stopping shooter, logger \n");
-	TKOShooter::inst()->Stop();
-	TKOArm::inst()->Stop();
-	compressor.Stop();
+
 	printf("Stopped testing \n");
 	TKOLogger::inst()->addMessage("ENDED TEST MODE");
 	TKOLogger::inst()->Stop();
@@ -221,10 +136,14 @@ void MarkXI::Autonomous(void)
 	 * insert new PID values
 	 * during auton: shoot & drive forward, calibrate arm?
 	 */
+	float driveDist = 3.;
 	TKOShooter::inst()->Start();
+	
 	Molecule* molecule = new Molecule();
-	Atom* driveForward = new DriveAtomUsonic(3., TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
 	Atom* shoot = new ShootAtom();
+	
 	molecule->addAtom(driveForward);
 	molecule->addAtom(shoot);
 	molecule->start();
