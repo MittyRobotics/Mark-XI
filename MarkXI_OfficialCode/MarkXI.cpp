@@ -14,6 +14,7 @@
 #include "auton/Atom.h"
 #include "auton/Molecule.h"
 #include "auton/DriveAndShootUsonicAtom.h"
+#include "auton/TurnAtom.h"
 //#define PNEUMATICS_TEST_MODE
 //#define ARM_TEST_MODE
 
@@ -218,14 +219,20 @@ void MarkXI::Autonomous(void)
 	 * insert new PID values
 	 * during auton: shoot & drive forward, calibrate arm?
 	 */
+	TKOVision::inst()->StartProcessing();
 	TKOShooter::inst()->Start();
 	Molecule* molecule = new Molecule();
+	
+	//TODO edit these atoms
 	Atom* driveAndShoot = new DriveAndShootUsonicAtom(3., TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	Atom* turnAtom = new TurnAtom(0., &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	if (TKOVision::inst()->lastTarget.Hot)
+		molecule->addAtom(turnAtom);
 	molecule->addAtom(driveAndShoot);
 	molecule->MoleculeInit();
 	molecule->start();
 
-	//TKOVision::inst()->StopProcessing();
+	TKOVision::inst()->StopProcessing();
 	printf("Ending Autonomous \n");
 	TKOShooter::inst()->Stop();
 	TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");

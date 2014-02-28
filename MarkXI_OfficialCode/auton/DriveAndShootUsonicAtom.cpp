@@ -36,7 +36,9 @@ void DriveAndShootUsonicAtom::run() {
 		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 		
 	}
+	printf("Reached target, firing\n");
 	StateMachine::manualFire();
+	printf("Done firing\n");
 	Wait(0.5);
 	_drive1->DisableControl();
 	_drive2->Set(0);

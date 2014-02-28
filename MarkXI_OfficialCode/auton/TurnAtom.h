@@ -2,10 +2,10 @@
 #ifndef _TURN_ATOM_H
 #define _TURN_ATOM_H
 
-#include "../Atom.h"
-#include "../../Definitions.h"
+#include "Atom.h"
+#include "../Definitions.h"
 
-class TurnAtom: public Atom {
+class TurnAtom : public Atom {
 
 public:
 	// For angle, positive is (left/right) in relation to the front of the robot
