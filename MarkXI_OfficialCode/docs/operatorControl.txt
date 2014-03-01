@@ -1,5 +1,8 @@
+//Last edited by Ben Kim
+//on 03/01/14
+
 Driver Controls:
-	Tank Drive: Stick 1 and 2
+* Tank Drive: Stick 1 and 2 *
 Stick 1
 - trigger: half speed (0.4)
 - button 2: quarter speed (0.2)
@@ -31,6 +34,16 @@ Digital Inputs:
 - 6: log the drive data
 - 7: shoot wait
 - 8: uncock
+
+Digital Outputs:
+- 1: 
+- 2: 
+- 3: 
+- 4: shooter cocked
+- 5: latch locked
+- 6: piston extended
+- 7: piston retracted
+- 8: 
 
 Analog Inputs:
 - 1: roller spin before firing

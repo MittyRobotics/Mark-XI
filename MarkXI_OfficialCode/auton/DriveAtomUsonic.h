@@ -1,3 +1,5 @@
+//Last edited by Vadim Korolik
+//on 03/01/14
 #ifndef _DRIVEUSONICATOM_H
 #define _DRIVEUSONICATOM_H
 

@@ -1,3 +1,5 @@
+//Last edited by Vadim Korolik
+//on 03/01/14
 #ifndef _CAMERASHOOTATOM_H
 #define _CAMERASHOOTATOM_H
 

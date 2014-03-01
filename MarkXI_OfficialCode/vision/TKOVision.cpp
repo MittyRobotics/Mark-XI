@@ -1,6 +1,5 @@
-//Last edited by Vadim Korolik
-//on 01/08/2014
-
+//Last edited by Ben Kim
+//on 02/11/14
 #include "TKOVision.h"
 
 //TODO Add Logging

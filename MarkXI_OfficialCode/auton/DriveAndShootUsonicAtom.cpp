@@ -1,3 +1,5 @@
+//Last edited by Vadim Korolik
+//on 03/01/14
 #include "DriveAndShootUsonicAtom.h"
 #include <cstring>
 
@@ -17,13 +19,17 @@ DriveAndShootUsonicAtom::~DriveAndShootUsonicAtom() {}
 void DriveAndShootUsonicAtom::run() {
 	
 	//don't forget to divide number of rotations by REVS_PER_FOOT in order to get feet traveled
+	_drive1->SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+	_drive3->SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+	_drive1->EnableControl(0);
+	_drive3->EnableControl(0);
 
 	while (usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET > tarDist && DriverStation::GetInstance()->IsEnabled()) 
 	{
-		_shifterDoubleSolenoid->Set(_shifterDoubleSolenoid->kForward);
-		_drive1->Set(_drive1->Get() - 5);
+		_shifterDoubleSolenoid->Set(_shifterDoubleSolenoid->kForward);	//shift to high gear
+		_drive1->Set(_drive1->Get() - DRIVE_POSITION_INCREMENT);
 		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave			
-		_drive3->Set(_drive3->Get() + 5);
+		_drive3->Set(_drive3->Get() + DRIVE_POSITION_INCREMENT);
 		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 	}
 	printf("Reached target, firing\n");

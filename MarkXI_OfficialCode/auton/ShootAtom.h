@@ -1,3 +1,4 @@
+//Last edited by Vadim Korolik
 #ifndef _SHOOTATOM_H
 #define _SHOOTATOM_H
 

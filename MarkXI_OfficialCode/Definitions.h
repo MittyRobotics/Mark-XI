@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 02/06/2014
+//on 03/01/2014
 #ifndef __DEFINITIONS_H
 #define __DEFINITIONS_H
 
@@ -73,8 +73,8 @@ const float TOP_FENDER = 0.585;
 const float SPINNER_kP = 0.2; //working P: 0.20, working I: .0034
 const float SPINNER_kI = 0.004;
 const float SPINNER_kD = 0.0;
-const float DRIVE_kP = 0.2; //working P: 0.20, working I: .0034
-const float DRIVE_kI = 0.0015;
+const float DRIVE_kP = 65.0; //working P: 0.20, working I: .0034
+const float DRIVE_kI = 0.046;
 const float DRIVE_kD = 0.0;
 const float WINCH_kP = .0075;
 const float WINCH_kI = 0.000001;
@@ -90,6 +90,7 @@ const float kMAX_DRIVE_RPM = 700;
 const float deadzone = 0.1; 
 const int kBURNOUT = 500;
 const int kBURNOUT_CYCLES = 100;
+const float DRIVE_POSITION_INCREMENT = 20.;
 
 //Miscelaneous
 const int GYRO_PORT = 1;

@@ -60,6 +60,7 @@ double VisionFunc::computeDistance (BinaryImage *image, ParticleAnalysisReport *
 double VisionFunc::scoreAspectRatio(BinaryImage *image, ParticleAnalysisReport *report, bool vertical){
 	double rectLong, rectShort, idealAspectRatio, aspectRatio;
 	idealAspectRatio = vertical ? (4.0/18.0) : (24.0/4.0);	
+	//TODO Change to real values ^^^^
 	//Vertical reflector 4" wide x 32" tall, horizontal 23.5" wide x 4" tall
 	//OUR GHETTO: Vertical reflector 4" wide x 18" tall, horizontal 24" wide x 4" tall
 	imaqMeasureParticle(image->GetImaqImage(), report->particleIndex, 0, IMAQ_MT_EQUIVALENT_RECT_LONG_SIDE, &rectLong);

@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 02/06/2014
+//on 03/01/2014
 #include "TKOLEDArduino.h"
 
 TKOLEDArduino* TKOLEDArduino::m_Instance = NULL;
@@ -11,7 +11,7 @@ TKOLEDArduino::TKOLEDArduino():
 		reset(5, Relay::kBothDirections)
 {	
 	printf("Initializing drive\n");
-	driveTask = new Task("TKOLEDArduino", (FUNCPTR) TaskRunner, 50);
+	arduinoTask = new Task("TKOLEDArduino", (FUNCPTR) TaskRunner, 50);
 	modeChanged = true;
 	mode = 1;
 	printf("Finished initializing drive\n");
@@ -77,18 +77,18 @@ void TKOLEDArduino::sendData(short mode)
 }
 void TKOLEDArduino::Start()
 {
-	if (not driveTask->Verify() or driveTask->IsSuspended())
-		driveTask->Start();
+	if (not arduinoTask->Verify() or arduinoTask->IsSuspended())
+		arduinoTask->Start();
 }
 void TKOLEDArduino::Stop()
 {
-	if (driveTask->Verify())
-		driveTask->Stop();
+	if (arduinoTask->Verify())
+		arduinoTask->Stop();
 }
 
 TKOLEDArduino::~TKOLEDArduino()
 {
-	driveTask->Stop();
+	arduinoTask->Stop();
 	m_Instance = NULL;
 }
 

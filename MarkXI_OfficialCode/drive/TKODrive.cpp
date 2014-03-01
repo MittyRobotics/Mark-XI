@@ -1,10 +1,11 @@
 //Last edited by Vadim Korolik
-//on 02/06/2014
+//on 03/01/2014
 #include "TKODrive.h"
 
 TKODrive* TKODrive::m_Instance = NULL;
 
 TKODrive::TKODrive() :
+		//jags created later
 		stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
 		stick2(STICK_2_PORT), // initialize joystick 2 < second drive joystick
 		stick3(STICK_3_PORT), // initialize joystick 3 < first EVOM joystick
@@ -208,6 +209,10 @@ void TKODrive::TankDrive()
 	TKODrive::ManualShift();
 	TKODrive::AutoShift();
 	
+	/*
+	 * code for shooting while driving:
+	 * robot must be driving full speed and operator must be holding safety for shooter to fire once it reaches target distance
+	 */
 	if (drive1->GetSpeed() > 400 && drive3->GetSpeed() > 400 && stick3.GetRawButton(8) && TKOArm::inst()->getDistance() <= 6)
 	{
 		if (GetTime() - lastFire <= 1.) return;
