@@ -59,6 +59,8 @@ const float ARM_FIRING_LEFT_BOUND = -0.015;//-0.015;
 const float ARM_FIRING_RIGHT_BOUND = 0.0;// -0.025;
 const float ARM_CURRENT_THRESHOLD = 30.;
 const float ARM_CURRENT_TIMEOUT = 1.;
+const float ARM_TARGET_RAMP_INCREMENT = 0.001;
+const float ARM_MANUAL_DRIVE_INREMENT = 0.0025;
 // Spinner constants
 const float RADIUS_WHEELS = 4;
 const float TAN_SPINNER_THETA = tan(57.5);
@@ -91,7 +93,8 @@ const int kBURNOUT_CYCLES = 100;
 
 //Miscelaneous
 const int GYRO_PORT = 1;
-const double LOOPTIME = .01;
+const float LOOPTIME = .01;
+const double ULTRASONIC_CONVERSION_TO_FEET = 0.009765625 * 12.;
 
 // Pneumatics constants
 //PN stands for pneumatics, R stands for relay, S stands for solenoid

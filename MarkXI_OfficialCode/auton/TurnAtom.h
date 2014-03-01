@@ -5,7 +5,7 @@
 #include "Atom.h"
 #include "../Definitions.h"
 
-class TurnAtom: public Atom {
+class TurnAtom : public Atom {
 
 public:
 	// For angle, positive is (left/right) in relation to the front of the robot

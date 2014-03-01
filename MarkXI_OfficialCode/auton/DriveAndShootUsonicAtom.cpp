@@ -1,7 +1,7 @@
-#include "DriveAtomUsonic.h"
+#include "DriveAndShootUsonicAtom.h"
 #include <cstring>
 
-DriveAtomUsonic::DriveAtomUsonic(float tarD, AnalogChannel* usonicPointer, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4)
+DriveAndShootUsonicAtom::DriveAndShootUsonicAtom(float tarD, AnalogChannel* usonicPointer, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4)
 {
 	tarDist = tarD;
 	usonic = usonicPointer;
@@ -11,16 +11,12 @@ DriveAtomUsonic::DriveAtomUsonic(float tarD, AnalogChannel* usonicPointer, CANJa
 	_drive4 = drive4;
 }
 
-DriveAtomUsonic::~DriveAtomUsonic() {
-}
+DriveAndShootUsonicAtom::~DriveAndShootUsonicAtom() {}
 
-void DriveAtomUsonic::run() {
+void DriveAndShootUsonicAtom::run() {
 	
 	//don't forget to divide number of rotations by REVS_PER_FOOT in order to get feet traveled
-	_drive1->SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
-	_drive3->SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
-	_drive1->EnableControl(0);
-	_drive3->EnableControl(0);
+
 	while (usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET > tarDist && DriverStation::GetInstance()->IsEnabled()) {
 
 //		while(kP != ds->GetAnalogIn(1)*0.2) {
@@ -33,12 +29,17 @@ void DriveAtomUsonic::run() {
 //			_drive1->SetPID(kP, kI, kD);
 //			_drive3->SetPID(kP, kI, kD);
 //		}
+				
 		_drive1->Set(_drive1->Get() - 5);
 		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave			
 		_drive3->Set(_drive3->Get() + 5);
 		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 		
 	}
+	printf("Reached target, firing\n");
+	StateMachine::manualFire();
+	printf("Done firing\n");
+	Wait(0.5);
 	_drive1->DisableControl();
 	_drive2->Set(0);
 	_drive3->DisableControl();

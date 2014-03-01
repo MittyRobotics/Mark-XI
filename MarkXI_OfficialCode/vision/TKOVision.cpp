@@ -11,7 +11,7 @@ TKOVision::TKOVision():
 	stick4(STICK_4_PORT) // initialize joystick 4 < second EVOM joystick
 {
 	printf("Initializing vision\n");
-	picProcessT = new Task("TKOVisProc", (FUNCPTR) ProcessRunner, 201);
+	picProcessT = new Task("TKOVisProc", (FUNCPTR) ProcessRunner, 105);
 	if (picProcessT->SetPriority(200)) //lowest priority, lower than driving etc.
 		printf("vision priority set to 200\n");
 	else
@@ -95,17 +95,13 @@ bool TKOVision::ProccessImageFromCamera()
 	
 	if (stick4.GetRawButton(10))	// TODO figure out why writing images to file fails
 	{
-		remove("/pics/thresholdImage.bmp");
-		remove("/pics/hullImage.bmp");
-		remove("/pics/filteredImage.bmp");
-		remove("/pics/rawImage.bmp");
 		Wait(1.);
 		thresholdImage->Write("/pics/thresholdImage.bmp");
 		convexHullImage->Write("/pics/hullImage.bmp");
 		filteredImage->Write("/pics/filteredImage.bmp");
 		rawImage->Write("/pics/rawImage.bmp");
 		printf("Wrote files.\n");
-		Wait(1.);
+		Wait(5.);
 	}
 	
 	printf("Processed Particle Filter\n");
@@ -276,7 +272,7 @@ vector<ParticleAnalysisReport> * TKOVision::getLastParticleReport()
 void TKOVision::ProcessRunner()
 {
 	Timer processingTime;
-	while (DriverStation::GetInstance()->IsEnabled())
+	while (true)
 	{
 		if (not AxisCamera::GetInstance().IsFreshImage())
 		{

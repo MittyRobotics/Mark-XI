@@ -1,5 +1,4 @@
 #include "ShootAtom.h"
-#include "../evom/StateMachine.h"
 
 ShootAtom::ShootAtom()
 {
@@ -11,7 +10,7 @@ ShootAtom::~ShootAtom()
 	
 }
 
-void ShootAtom::run()
+void ShootAtom::run() // TODO write this
 {
 	printf("Starting to shoot auton\n");
 	while (!StateMachine::armCanMove and DriverStation::GetInstance()->IsEnabled())

@@ -17,22 +17,20 @@ Molecule::Molecule():
 }
 
 void Molecule::MoleculeInit() {
-	
-	float kP = 20.0; 
-	float kI = 0.045; 
-	float kD = 0.0; 
+	drive1.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+	drive3.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
+	drive1.EnableControl(0);
+	drive3.EnableControl(0);
 	
 	//putting the Encoders as 250 tick Encoders, setting the second and fourth motors as slaves 
 	drive1.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 	drive1.ConfigEncoderCodesPerRev(250);
 	drive1.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
-	drive1.EnableControl();
 	drive1.SetSafetyEnabled(false); //new before true
 
 	drive3.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 	drive3.ConfigEncoderCodesPerRev(250);
 	drive3.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
-	drive3.EnableControl();
 	drive3.SetSafetyEnabled(false);
 
 	drive2.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
@@ -45,11 +43,6 @@ void Molecule::MoleculeInit() {
 	drive2.SetExpiration(0.1);
 	drive3.SetExpiration(0.1);
 	drive4.SetExpiration(0.1);
-
-	drive1.SetPID(kP, kI, kD);
-	drive3.SetPID(kP, kI, kD);
-//	drive1.SetVoltageRampRate(12.);
-//	drive3.SetVoltageRampRate(12.);
 
 }
 
