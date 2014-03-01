@@ -1,8 +1,8 @@
 #ifndef _DRIVEUSONICATOM_H
 #define _DRIVEUSONICATOM_H
 
-#include "../Atom.h"
-#include "../../Definitions.h"
+#include "Atom.h"
+#include "../Definitions.h"
 
 class DriveAtomUsonic: public Atom {
 
