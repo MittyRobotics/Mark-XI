@@ -15,13 +15,14 @@ CameraShootAtom::~CameraShootAtom() {}
 void CameraShootAtom::run() 
 {
 	TKOVision::inst()->StartProcessing();
+	float _camTS, _camDist;
+	bool _camHot;
 	while (DriverStation::GetInstance()->IsEnabled()) 
 	{
-				
-		_drive1->Set(_drive1->Get() - 5);
-		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave			
-		_drive3->Set(_drive3->Get() + 5);
-		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
+		_camTS = TKOVision::inst()->getLastTimestamp();
+		_camDist = TKOVision::inst()->getLastDistance();
+		_camHot = TKOVision::inst()->getLastTargetReport().Hot;
+		
 		
 	}
 	printf("Reached target, firing\n");
