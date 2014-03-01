@@ -137,25 +137,26 @@ void MarkXI::Autonomous(void)
 	 * during auton: shoot & drive forward, calibrate arm?
 	 */
 	float driveDist = 3.;
-	float tmpAngle = 0.;
-	TKOVision::inst()->StartProcessing();
+	//TKOVision::inst()->StartProcessing();
 	TKOShooter::inst()->Start();
 	
 	Molecule* molecule = new Molecule();
 	Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
 	Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
 	Atom* shoot = new ShootAtom();
-	Atom* turn = new TurnAtom(tmpAngle, &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
-	
-	if (TKOVision::inst()->lastTarget.Hot)
-		molecule->addAtom(turn);
+
 	molecule->addAtom(driveForward);
 	molecule->addAtom(shoot);
 	molecule->MoleculeInit();
 	molecule->start();
 
 	printf("Ending Autonomous \n");
-	TKOVision::inst()->StopProcessing();
+	delete molecule;
+	delete driveForward;
+	delete driveAndShoot;
+	delete shoot;
+	
+	//TKOVision::inst()->StopProcessing();
 	TKOShooter::inst()->Stop();
 	TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
 }

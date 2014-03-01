@@ -12,7 +12,8 @@ TKOLEDArduino::TKOLEDArduino():
 {	
 	printf("Initializing drive\n");
 	driveTask = new Task("TKOLEDArduino", (FUNCPTR) TaskRunner, 50);
-
+	modeChanged = true;
+	mode = 1;
 	printf("Finished initializing drive\n");
 	AddToSingletonList();
 }
@@ -33,6 +34,12 @@ void TKOLEDArduino::TaskRunner()
 	}
 }
 
+void TKOLEDArduino::setMode(short tmode)
+{
+	mode = tmode;
+	modeChanged = true;
+}
+
 void TKOLEDArduino::processData()
 {
 	reset.Set(reset.kForward);
@@ -41,9 +48,11 @@ void TKOLEDArduino::processData()
 	data3.Set(data3.kForward);
 	//^ default values
 	Wait(0.1);
+	if (modeChanged)
+		sendData(mode);
 }
 
-void TKOLEDArduino::sendData(int mode)
+void TKOLEDArduino::sendData(short mode)
 {
 	bitset<16> bitData = mode;
 	
@@ -53,17 +62,18 @@ void TKOLEDArduino::sendData(int mode)
 	else
 		data1.Set(data1.kOff);
 	if (bitData[1])
-		data2.Set(data1.kForward);
+		data2.Set(data2.kForward);
 	else
-		data2.Set(data1.kOff);
+		data2.Set(data2.kOff);
 	if (bitData[2])
-		data3.Set(data1.kForward);
+		data3.Set(data3.kForward);
 	else
-		data3.Set(data1.kOff);
+		data3.Set(data3.kOff);
 	reset.Set(reset.kOff);//record data on arduino
 	Wait(0.1);
 	reset.Set(reset.kForward);
 	Wait(2.);
+	modeChanged = false;
 }
 void TKOLEDArduino::Start()
 {

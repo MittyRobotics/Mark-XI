@@ -13,6 +13,7 @@ public:
 	static TKOLEDArduino* inst();
 	void Start();
 	void Stop();
+	void setMode(short mode);
 private:
 	Task *driveTask;
 	Relay data1, data2, data3, reset;
@@ -21,7 +22,9 @@ private:
 	~TKOLEDArduino();
 	static TKOLEDArduino* m_Instance;
 	static void TaskRunner();
+	short mode;
+	bool modeChanged;
 	void processData();
-	void sendData(int mode);
+	void sendData(short);
 };
 #endif
