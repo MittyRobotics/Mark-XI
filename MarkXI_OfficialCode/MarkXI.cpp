@@ -18,6 +18,7 @@
 #include "auton/Molecule.h"
 #include "auton/TurnAtom.h"
 #include "auton/ShootAtom.h"
+#include "auton/CameraShootAtom.h"
 
 /*---------------MarkXI-Things-to-Do(TODO)---------------------* 
  * At beginning of auton, shift to high gear
@@ -87,7 +88,7 @@ void MarkXI::RobotInit()
 	}
 	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------TIMESTAMP: %f", GetFPGATime());
 	TKOGyro::inst()->reset();
-	//	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
+	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
 
@@ -110,8 +111,7 @@ void MarkXI::Disabled()
 	TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOArm::inst()->Stop();
-	//TKOGDrive::inst()->Stop();
-	//TKOVision::inst()->StopProcessing();
+	TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
@@ -142,16 +142,20 @@ void MarkXI::Autonomous(void)
 	
 	Molecule* molecule = new Molecule();
 	Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
-	Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4, TKODrive::inst()->getShifterDoubleSolenoid());
+	Atom* cameraWait = new CameraShootAtom(TKOArm::inst()->getUsonic());
 	Atom* shoot = new ShootAtom();
 
+	molecule->addAtom(cameraWait);
 	molecule->addAtom(driveForward);
 	molecule->addAtom(shoot);
 	molecule->MoleculeInit();
+	
 	molecule->start();
 
 	printf("Ending Autonomous \n");
 	delete molecule;
+	delete cameraWait;
 	delete driveForward;
 	delete driveAndShoot;
 	delete shoot;
@@ -214,8 +218,6 @@ void MarkXI::Operator()
 		RegDrive();
 	if (stick1.GetRawButton(9))
 		GyroDrive();
-	/*if (stick3.GetRawButton(8))
-		StateMachine::manualFire();*/
 }
 
 void MarkXI::RegDrive()
