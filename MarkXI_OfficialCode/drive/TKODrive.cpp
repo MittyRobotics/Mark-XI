@@ -180,31 +180,31 @@ void TKODrive::TankDrive()
 	}
 	else if (stick1.GetTrigger())
 	{
-		drive1->Set(stick1.GetY() * 0.4);
-		drive2->Set(stick1.GetY() * 0.4);
-		drive3->Set(-stick2.GetY() * 0.4);
-		drive4->Set(-stick2.GetY() * 0.4);
+		drive1->Set(-stick1.GetY() * 0.4);
+		drive2->Set(-stick1.GetY() * 0.4);
+		drive3->Set(stick2.GetY() * 0.4);
+		drive4->Set(stick2.GetY() * 0.4);
 	}
 	else if (stick1.GetRawButton(2))
 	{
-		drive1->Set(stick1.GetY() * 0.2);
-		drive2->Set(stick1.GetY() * 0.2);
-		drive3->Set(-stick2.GetY() * 0.2);
-		drive4->Set(-stick2.GetY() * 0.2);
+		drive1->Set(-stick1.GetY() * 0.2);
+		drive2->Set(-stick1.GetY() * 0.2);
+		drive3->Set(stick2.GetY() * 0.2);
+		drive4->Set(stick2.GetY() * 0.2);
 	}
 	else if (stick1.GetRawButton(4))
 	{
-		drive1->Set(stick1.GetY());
-		drive2->Set(stick1.GetY());
-		drive3->Set(-stick2.GetY());
-		drive4->Set(-stick2.GetY());
+		drive1->Set(-stick1.GetY());
+		drive2->Set(-stick1.GetY());
+		drive3->Set(stick2.GetY());
+		drive4->Set(stick2.GetY());
 	}
 	else
 	{
-		drive1->Set(stick1.GetY() * 0.8);
-		drive2->Set(stick1.GetY() * 0.8);
-		drive3->Set(-stick2.GetY() * 0.8);
-		drive4->Set(-stick2.GetY() * 0.8);
+		drive1->Set(-stick1.GetY() * 0.8);
+		drive2->Set(-stick1.GetY() * 0.8);
+		drive3->Set(stick2.GetY() * 0.8);
+		drive4->Set(stick2.GetY() * 0.8);
 	}
 	TKODrive::ManualShift();
 	TKODrive::AutoShift();
