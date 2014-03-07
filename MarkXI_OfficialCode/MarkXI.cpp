@@ -23,6 +23,8 @@
 /*---------------MarkXI-Things-to-Do(TODO)---------------------* 
  * At beginning of auton, shift to high gear	DONE
  * 
+ * Add driving jaguar current logging/burnout
+ * 
  * FOR 2014 OffSeason: take over scouting?
  * 
  * Test the wait time for how long the roller spins before the shooter fires
@@ -35,7 +37,7 @@
  * -----------------------------LAST DONE-------------------------------*
  * 02/07
  *  StateMachine::initPneumatics() --> sets pneumatics to default positions
- * 	Creating duplicate static neumatics objects in statemachine and in markxi
+ * 	Creating duplicate static pneumatics objects in statemachine and in markxi
  * 	breaks robot, causes kernel exception? or maybe static objects?
  * 	Added more testing, added TKOArm, uses TKORoller
  * 	DriverStation Digital Inputs in Test mode:
@@ -98,7 +100,11 @@ void MarkXI::Test()
 	TKOLogger::inst()->Start();
 	if (DriverStation::GetInstance()->GetDigitalIn(2))
 		compressor.Start();
-	
+	while (IsEnabled())
+	{
+		DSClear();
+		StateMachine::updateDriverStationSwitchDisplay();
+	}
 	printf("Stopped testing \n");
 	compressor.Stop();
 	TKOLogger::inst()->addMessage("ENDED TEST MODE");
