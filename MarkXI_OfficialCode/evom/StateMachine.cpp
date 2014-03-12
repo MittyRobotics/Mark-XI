@@ -122,9 +122,9 @@ int StateMachine::createIntFromBoolArray(instance_data_t *data)
     return num;
 }
 
-state_t StateMachine::init(instance_data_t *data, Joystick *stick3)
+state_t StateMachine::init(instance_data_t *data, Joystick *stick)
 {
-	_triggerJoystick = stick3;
+	_triggerJoystick = stick;
     int sensors = getSensorData(data);
     printf("Initializing state machine \n");
     TKOLogger::inst()->addMessage("Initializing state machine");
@@ -290,7 +290,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
     
     // wait for the trigger then fire!
 	
-	while (!_triggerJoystick->GetTrigger() or !_triggerJoystick->GetRawButton(3) or !TKOArm::inst()->armInFiringRange()) 
+	while (!_triggerJoystick->GetTrigger()/* or !_triggerJoystick->GetRawButton(3) */or !TKOArm::inst()->armInFiringRange()) 
     {
     	/*DSLog(4, "READY TO FIRE");
     	DSLog(5, "Arm status: %d", TKOArm::inst()->armInFiringRange());*/

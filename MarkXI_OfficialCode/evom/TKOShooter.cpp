@@ -49,14 +49,13 @@ bool TKOShooter::stateMachineRunning()
 	return false;
 }
 
-state_t TKOShooter::initStateMachine(instance_data_t* temp_data)
+void TKOShooter::initStateMachine()
 {
-	cur_state = s.init(temp_data, &stick3);
-	return cur_state;
+	cur_state = s.init(&data, &stick2);
 }
 bool TKOShooter::startStateMachine()
 {
-	initStateMachine(&data);
+	initStateMachine();
 	if (not stateMachineTask->Verify())
 		if (stateMachineTask->Start())
 			return true;

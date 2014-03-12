@@ -95,7 +95,7 @@ const float DRIVE_POSITION_INCREMENT = 20.;
 //Miscelaneous
 const int GYRO_PORT = 1;
 const float LOOPTIME = .01;
-const double ULTRASONIC_CONVERSION_TO_FEET = 0.009765625 * 12.;
+const double ULTRASONIC_CONVERSION_TO_FEET = (0.009765625 * 12.);
 
 // Pneumatics constants
 //PN stands for pneumatics, R stands for relay, S stands for solenoid

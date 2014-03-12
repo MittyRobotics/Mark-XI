@@ -37,11 +37,11 @@
 #define LATCH_LOCKED_PISTON_RETRACTED 5	// LL and PR
 #define CONST_READY_TO_FIRE 14	// IC and LL and PE
 
-#define PISTON_RETRACT_TIMEOUT 3.
-#define LATCH_LOCK_FORWARD_TIMEOUT 2.
-#define PISTON_EXTEND_TIMEOUT 3.
-#define LATCH_UNLOCK_REVERSE_TIMEOUT 2.
-#define POST_SHOOT_WAIT_TIME .5
+#define PISTON_RETRACT_TIMEOUT 5.
+#define LATCH_LOCK_FORWARD_TIMEOUT 3.
+#define PISTON_EXTEND_TIMEOUT 5.
+#define LATCH_UNLOCK_REVERSE_TIMEOUT 3.
+#define POST_SHOOT_WAIT_TIME 1.
 #define SHOOT_ROLLER_PRERUN_TIME .1
 
 // Define the states
@@ -82,7 +82,7 @@ public:
     static float lastSensorStringPrint;
     
     state_t run_state(state_t, instance_data_t*);
-    state_t init(instance_data_t *data, Joystick *stick3);
+    state_t init(instance_data_t *data, Joystick *stick);
     static string state_to_string(instance_data_t *data);
     static void sensors_to_string(instance_data_t *data);
     static void updateDriverStationSwitchDisplay();

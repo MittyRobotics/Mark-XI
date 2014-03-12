@@ -26,7 +26,7 @@ TKOArm::TKOArm() :
 {
 	printf("Initializing intake\n");
 	_arm.SetSafetyEnabled(false);
-	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
+	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);  
 	_arm.SetVoltageRampRate(0.0);
 	_arm.ConfigFaultTime(0.1); 
 	_arm.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
@@ -102,7 +102,7 @@ bool TKOArm::Stop()
 void TKOArm::printDSMessages()
 {
 	float tempVal = usonic.GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET;
-	float avr = 0.;
+	/*float avr = 0.;
 	while (usonicVals.size() < 10)
 	{
 		usonicVals.push(usonic.GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET);
@@ -113,15 +113,16 @@ void TKOArm::printDSMessages()
 	usonicAvr += tempVal;
 	usonicVals.push(tempVal);
 	usonicVals.pop();
-	avr = usonicAvr / usonicVals.size();
-	
+	avr = usonicAvr / usonicVals.size();*/
+	DriverStation::GetInstance()->SetDigitalOut(8,limitSwitchArm.Get());
 	DSClear();
 	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
 	DSLog(2, "Arm Lim: %f", limitSwitchArm.Get());
 	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
 	DSLog(4, "Arm Tar %f", _arm.Get());
-	DSLog(5, "DistR %f", avr); //gets feet
+	//DSLog(5, "DistR %f", avr); //gets feet
 	DSLog(6, "Dist %f", tempVal); //gets feet
+	
 }
 void TKOArm::setArmTarget(float target)
 {
@@ -168,8 +169,9 @@ void TKOArm::runManualArm()
 	
 	TKORoller::inst()->rollerSimpleMove();
 	//TKORoller::inst()->rollerManualMove();
-	if (_arm.GetPosition() <= -0.05)
-		TKORoller::inst()->rollerIn();
+	/*if (_arm.GetPosition() <= -0.05)
+		TKORoller::inst()->rollerIn();*/
+	//TODO ^
 	
 	if (DriverStation::GetInstance()->GetDigitalIn(5))//if override running
 	{
@@ -249,6 +251,7 @@ bool TKOArm::armInFiringRange()
 	/*if (not limitSwitchArm.Get())
 		return false;*/
 	return true;
+	
 	if (_arm.GetPosition() >= ARM_FIRING_LEFT_BOUND and _arm.GetPosition() <= ARM_FIRING_RIGHT_BOUND)
 		return true;
 	return false;
@@ -258,7 +261,7 @@ void TKOArm::switchToPositionMode()
 	printf("switching to position\n");
 	//_arm.ChangeControlMode(_arm.kPosition);
 	_arm.SetSafetyEnabled(false);
-	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);  
+	_arm.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);  
 	_arm.SetVoltageRampRate(0.0);
 	_arm.ConfigFaultTime(0.1); 
 	_arm.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
