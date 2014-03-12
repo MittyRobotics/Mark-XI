@@ -10,11 +10,7 @@ TKOVision::TKOVision():
 	stick4(STICK_4_PORT) // initialize joystick 4 < second EVOM joystick
 {
 	printf("Initializing vision\n");
-	picProcessT = new Task("TKOVisProc", (FUNCPTR) ProcessRunner, 105);
-	if (picProcessT->SetPriority(200)) //lowest priority, lower than driving etc.
-		printf("vision priority set to 200\n");
-	else
-		printf("vision priority not set\n");
+	picProcessT = new Task("TKOVisProc", (FUNCPTR) ProcessRunner);
 	lastDist = 0.;
 	lastProcessingTime = 0.;
 	lastTimestamp = 0.;
@@ -240,6 +236,7 @@ bool TKOVision::ProccessImageFromCamera()
 }
 void TKOVision::StartProcessing()
 {
+	printf("Starting vision proc\n");
 	if (not picProcessT->Verify() or picProcessT->IsSuspended())
 		picProcessT->Start();
 }
@@ -270,6 +267,7 @@ vector<ParticleAnalysisReport> * TKOVision::getLastParticleReport()
 }
 void TKOVision::ProcessRunner()
 {
+	printf("Running vision runner\n");
 	Timer processingTime;
 	while (true)
 	{

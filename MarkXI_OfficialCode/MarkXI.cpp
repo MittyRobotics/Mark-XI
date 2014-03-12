@@ -104,6 +104,7 @@ void MarkXI::Test()
 	{
 		DSClear();
 		StateMachine::updateDriverStationSwitchDisplay();
+		//StateMachine::
 	}
 	printf("Stopped testing \n");
 	compressor.Stop();
@@ -154,7 +155,7 @@ void MarkXI::Autonomous(void)
 	Atom* cameraWait = new CameraShootAtom(TKOArm::inst()->getUsonic());
 	//Atom* shoot = new ShootAtom();
 
-	molecule->addAtom(cameraWait);
+	//molecule->addAtom(cameraWait);
 	molecule->addAtom(driveAndShoot);
 	molecule->MoleculeInit();
 	

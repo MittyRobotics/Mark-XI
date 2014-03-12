@@ -9,8 +9,8 @@
 TKORoller* TKORoller::_instance = NULL;
 
 TKORoller::TKORoller(int rollerPort1,int rollerPort2):
-	_roller1(rollerPort1, CANJaguar::kPercentVbus),
-	_roller2(rollerPort2, CANJaguar::kPercentVbus),
+	_roller1(rollerPort2, CANJaguar::kPercentVbus),
+	_roller2(rollerPort1, CANJaguar::kPercentVbus),
 	limitSwitchBall(BALL_LIMIT_SWITCH),
 	stick3(3)
 {
