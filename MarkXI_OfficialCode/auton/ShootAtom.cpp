@@ -1,3 +1,4 @@
+//Last edited by Vadim Korolik
 #include "ShootAtom.h"
 
 ShootAtom::ShootAtom()

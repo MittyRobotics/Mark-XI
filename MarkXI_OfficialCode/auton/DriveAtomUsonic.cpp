@@ -1,3 +1,5 @@
+//Last edited by Vadim Korolik
+//on 03/01/14
 #include "DriveAtomUsonic.h"
 #include <cstring>
 
@@ -22,20 +24,11 @@ void DriveAtomUsonic::run() {
 	_drive1->EnableControl(0);
 	_drive3->EnableControl(0);
 	while (usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET > tarDist && DriverStation::GetInstance()->IsEnabled()) {
+		//while current distance is greater than target distance
 
-//		while(kP != ds->GetAnalogIn(1)*0.2) {
-			//kP = ds->GetAnalogIn(1)*0.2;
-//			_drive1->SetPID(kP, kI, kD);
-//			_drive3->SetPID(kP, kI, kD);
-//		}
-//		while(kI != ds->GetAnalogIn(2)*0.0008) {
-//			kI = ds->GetAnalogIn(2)*0.0008;
-//			_drive1->SetPID(kP, kI, kD);
-//			_drive3->SetPID(kP, kI, kD);
-//		}
-		_drive1->Set(_drive1->Get() - 5);
+		_drive1->Set(_drive1->Get() - DRIVE_POSITION_INCREMENT);
 		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave			
-		_drive3->Set(_drive3->Get() + 5);
+		_drive3->Set(_drive3->Get() + DRIVE_POSITION_INCREMENT);
 		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 		
 	}

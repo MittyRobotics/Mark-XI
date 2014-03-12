@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 02/06/2014
+//on 03/01/2014
 #ifndef __TKOLEDARDUINO_H
 #define __TKOLEDARDUINO_H
 
@@ -15,7 +15,7 @@ public:
 	void Stop();
 	void setMode(short mode);
 private:
-	Task *driveTask;
+	Task *arduinoTask;
 	Relay data1, data2, data3, reset;
 	
 	TKOLEDArduino();

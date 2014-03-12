@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 02/07/2014
+//on 03/01/2014
 #include "Definitions.h"
 #include "component/TKORelay.h"
 #include "log/TKOLogger.h"
@@ -18,9 +18,12 @@
 #include "auton/Molecule.h"
 #include "auton/TurnAtom.h"
 #include "auton/ShootAtom.h"
+#include "auton/CameraShootAtom.h"
 
 /*---------------MarkXI-Things-to-Do(TODO)---------------------* 
- * At beginning of auton, shift to high gear
+ * At beginning of auton, shift to high gear	DONE
+ * 
+ * Add driving jaguar current logging/burnout
  * 
  * FOR 2014 OffSeason: take over scouting?
  * 
@@ -34,7 +37,7 @@
  * -----------------------------LAST DONE-------------------------------*
  * 02/07
  *  StateMachine::initPneumatics() --> sets pneumatics to default positions
- * 	Creating duplicate static neumatics objects in statemachine and in markxi
+ * 	Creating duplicate static pneumatics objects in statemachine and in markxi
  * 	breaks robot, causes kernel exception? or maybe static objects?
  * 	Added more testing, added TKOArm, uses TKORoller
  * 	DriverStation Digital Inputs in Test mode:
@@ -64,8 +67,8 @@ public:
 	void OperatorControl();
 	void Operator();
 	void Test();
-	void RegDrive();
-	void GyroDrive();
+//	void RegDrive();
+//	void GyroDrive();
 
 	MarkXI::MarkXI() :
 		stick1(STICK_1_PORT), // initialize joystick 1 < first drive joystick
@@ -87,7 +90,7 @@ void MarkXI::RobotInit()
 	}
 	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------TIMESTAMP: %f", GetFPGATime());
 	TKOGyro::inst()->reset();
-	//	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
+	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
 
@@ -95,9 +98,15 @@ void MarkXI::Test()
 {	
 	printf("Calling test function \n");
 	TKOLogger::inst()->Start();
-	printf("Stopping shooter, logger \n");
-
+	if (DriverStation::GetInstance()->GetDigitalIn(2))
+		compressor.Start();
+	while (IsEnabled())
+	{
+		DSClear();
+		StateMachine::updateDriverStationSwitchDisplay();
+	}
 	printf("Stopped testing \n");
+	compressor.Stop();
 	TKOLogger::inst()->addMessage("ENDED TEST MODE");
 	TKOLogger::inst()->Stop();
 }
@@ -110,8 +119,7 @@ void MarkXI::Disabled()
 	TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOArm::inst()->Stop();
-	//TKOGDrive::inst()->Stop();
-	//TKOVision::inst()->StopProcessing();
+	TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
@@ -141,20 +149,23 @@ void MarkXI::Autonomous(void)
 	TKOShooter::inst()->Start();
 	
 	Molecule* molecule = new Molecule();
-	Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
-	Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
-	Atom* shoot = new ShootAtom();
+	//Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4, TKODrive::inst()->getShifterDoubleSolenoid());
+	Atom* cameraWait = new CameraShootAtom(TKOArm::inst()->getUsonic());
+	//Atom* shoot = new ShootAtom();
 
-	molecule->addAtom(driveForward);
-	molecule->addAtom(shoot);
+	molecule->addAtom(cameraWait);
+	molecule->addAtom(driveAndShoot);
 	molecule->MoleculeInit();
+	
 	molecule->start();
 
 	printf("Ending Autonomous \n");
 	delete molecule;
-	delete driveForward;
+	delete cameraWait;
+	//delete driveForward;
 	delete driveAndShoot;
-	delete shoot;
+	//delete shoot;
 	
 	//TKOVision::inst()->StopProcessing();
 	TKOShooter::inst()->Stop();
@@ -171,7 +182,7 @@ void MarkXI::OperatorControl()
 	TKOShooter::inst()->Start();
 	TKOArm::inst()->Start();
 	//TKOVision::inst()->StartProcessing();  //NEW VISION START
-	RegDrive(); //Choose here between kind of drive to start with
+	TKODrive::inst()->Start();
 	Timer loopTimer;
 	loopTimer.Start();
 
@@ -190,7 +201,7 @@ void MarkXI::OperatorControl()
 		Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
 	}
-	TKODrive::inst()->Stop();
+
 	TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOArm::inst()->Stop();
@@ -210,15 +221,10 @@ void MarkXI::Operator()
 	
 	if (stick1. GetRawButton(11))
 		TKOGyro::inst()->reset();
-	if (stick1.GetRawButton(8))
-		RegDrive();
-	if (stick1.GetRawButton(9))
-		GyroDrive();
-	/*if (stick3.GetRawButton(8))
-		StateMachine::manualFire();*/
+
 }
 
-void MarkXI::RegDrive()
+/*void MarkXI::RegDrive()
 {
 	//TKOGDrive::inst()->Stop();
 	TKODrive::inst()->Start();
@@ -227,6 +233,6 @@ void MarkXI::GyroDrive()
 {
 	TKODrive::inst()->Stop();
 	//TKOGDrive::inst()->Start();
-}
+}*/
 
 START_ROBOT_CLASS(MarkXI);

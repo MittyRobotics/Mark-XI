@@ -2,14 +2,15 @@
 
 class RobotDemo : public SimpleRobot
 {
-	Relay relay1, relay2, relay3, relay4, relay5;
+	Relay relay2, relay3, relay4, relay5;
+	Compressor comp;
 public:
 	RobotDemo():
-		relay1(1, Relay::kBothDirections),
 		relay2(2, Relay::kBothDirections),
 		relay3(3, Relay::kBothDirections),
 		relay4(4, Relay::kBothDirections),
-		relay5(5, Relay::kBothDirections)
+		relay5(5, Relay::kBothDirections),
+		comp(3,1)
 	{}
 
 	void Autonomous()
@@ -27,6 +28,7 @@ public:
 				if (true)
 				{
 					printf("Seding data\n");
+				
 					relay2.Set(relay2.kForward);
 					relay3.Set(relay3.kForward);
 					relay4.Set(relay4.kOff);
@@ -65,8 +67,13 @@ public:
 		}
 	}
 
-	void Test() {
-
+	void Test() 
+	{
+		comp.Start();
+		while (IsEnabled())
+		{
+		}
+		comp.Stop();
 	}
 };
 

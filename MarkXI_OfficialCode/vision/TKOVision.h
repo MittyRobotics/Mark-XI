@@ -1,6 +1,5 @@
-//Last edited by Vadim Korolik
-//on 01/04/2014
-
+//Last edited by Ben Kim
+//on 02/11/14
 // for help with vision: http://wpilib.screenstepslive.com/s/3120/m/8731/c/39930
 
 #ifndef __TKOVISION_H

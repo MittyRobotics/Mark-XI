@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 02/06/2014
+//on 03/01/2014
 #ifndef __TKODRIVE_H
 #define __TKODRIVE_H
 
@@ -15,9 +15,10 @@ public:
 	void Start();
 	void Stop();
 	bool VerifyJags();
+	DoubleSolenoid* getShifterDoubleSolenoid();
 	double maxDrive1RPM, maxDrive3RPM;
 private:
-	CANJaguar drive1, drive2, drive3, drive4; // define motors
+	CANJaguar* drive1, *drive2, *drive3, *drive4; // define motors
 	Joystick stick1, stick2, stick3, stick4; // define joysticks
 	DoubleSolenoid shifterDS;
 	Task *driveTask;
@@ -25,7 +26,8 @@ private:
 	long driveLogCounter;
 	float lastShift, lastDataLog, lastFire;
 	const float speedShiftRPM;
-	
+	void initJaguars();
+	void destroyJaguars();
 	void TankDrive();
 	void LogData();
 	void ManualShift();

@@ -1,5 +1,5 @@
-//Last Edited by Arjun Biju, Murad Awad, and Ishan Shah
-// on 01/31/2014
+//Last edited by Vadim Korolik
+//on 03/01/14
 #include "TKOArm.h"
 
 TKOArm* TKOArm::m_Instance = NULL;

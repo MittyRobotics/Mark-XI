@@ -3,14 +3,15 @@
 //@author Matthew Pleva
 
 /*
- * TODO 6
+ * TODO
  * arm must be in fire pos or shouldn't fire (btn for that)???
  * also arm doesnt move unless this is in ready to fire state
- * adjust timeout values
  * check state in ready to fire
  * */
 
 #include "StateMachine.h"
+
+//static members must be declared in this format
 
 Timer* StateMachine::_timer = new Timer();
 
@@ -28,6 +29,7 @@ bool StateMachine::armCanMove = false;
 bool StateMachine::hasSetPneumatics = false;
 bool StateMachine::forceFire = false;
 bool StateMachine::autonFired = false;
+
 SEM_ID StateMachine::_armSem = semMCreate(SEM_Q_PRIORITY | SEM_DELETE_SAFE | SEM_INVERSION_SAFE);
 
 StateMachine::StateMachine()
@@ -53,7 +55,7 @@ void StateMachine::initPneumatics()
 {
 	if (hasSetPneumatics)
 		return;
-	//Set pneumatics to default settings
+	//default state for pnuematics: 
 	printf("Setting default pneumatics\n");
 	_piston_retract_extend->Set(_piston_retract_extend->kForward);
 	_latch_lock_unlock->Set(_latch_lock_unlock->kReverse);
@@ -62,7 +64,7 @@ void StateMachine::initPneumatics()
 }
 void StateMachine::manualFire()
 {
-	forceFire = true;
+	forceFire = true;	//forces a break out of ready to fire to go to latch unlock state
 }
 
 bool StateMachine::canArmMove()

@@ -1,3 +1,5 @@
+//Last edited by Vadim Korolik
+//on 03/01/14
 #ifndef _CAMERASHOOTATOM_H
 #define _CAMERASHOOTATOM_H
 
@@ -10,14 +12,10 @@ class CameraShootAtom: public Atom {
 
 public:
 	// For feet, positive is moving forward in relation to the robot
-	CameraShootAtom(AnalogChannel* usonicPointer, CANJaguar* drive1, CANJaguar* drive2, CANJaguar* drive3, CANJaguar* drive4);
+	CameraShootAtom(AnalogChannel* usonicPointer);
 	~CameraShootAtom();
 	void run();
 private:
-	CANJaguar* _drive1;
-	CANJaguar* _drive2;
-	CANJaguar* _drive3;
-	CANJaguar* _drive4;
 	AnalogChannel* usonic;
 };
 

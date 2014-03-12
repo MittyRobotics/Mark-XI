@@ -4,6 +4,7 @@
  */
 //Last edited by Vadim Korolik
 //on 01/04/2014
+//@author Varun Naik
 #include "TKOLogger.h"
 
 TKOLogger* TKOLogger::_instance = NULL;

@@ -1,4 +1,5 @@
-//Last edited by Ishan Shah
+//Last edited by Ben Kim
+//on 03/01/14
 #include <queue>
 #include "Molecule.h"
 
@@ -17,18 +18,14 @@ Molecule::Molecule():
 }
 
 void Molecule::MoleculeInit() {
-	drive1.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
-	drive3.SetPID(DRIVE_kP, DRIVE_kI, DRIVE_kD);
-	drive1.EnableControl(0);
-	drive3.EnableControl(0);
 	
 	//putting the Encoders as 250 tick Encoders, setting the second and fourth motors as slaves 
-	drive1.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
+	drive1.SetPositionReference(JAG_POSREF);
 	drive1.ConfigEncoderCodesPerRev(250);
 	drive1.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
 	drive1.SetSafetyEnabled(false); //new before true
 
-	drive3.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
+	drive3.SetPositionReference(JAG_POSREF);
 	drive3.ConfigEncoderCodesPerRev(250);
 	drive3.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
 	drive3.SetSafetyEnabled(false);
@@ -61,8 +58,7 @@ void Molecule::Test()
 	drive2.Set(drive1.GetOutputVoltage());
 	drive3.Set(100);
 	drive4.Set(drive3.GetOutputVoltage());
-	printf("drive %f %f %f\n", drive1.GetPosition(), drive3.GetPosition(),
-			drive1.GetOutputVoltage());
+	printf("drive %f %f %f\n", drive1.GetPosition(), drive3.GetPosition(), drive1.GetOutputVoltage());
 }
 
 void Molecule::addAtom(Atom *a) //atom added to end of molecule
@@ -82,10 +78,3 @@ void Molecule::start() //runs through atoms of molecule, then deletes that membe
 		delete a;
 	}
 }
-
-
-
-
-
-
-

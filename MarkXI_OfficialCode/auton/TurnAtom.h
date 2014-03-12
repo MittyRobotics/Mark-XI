@@ -1,4 +1,4 @@
-//Created by Ishan Shah
+//Last edited by Ishan Shah
 #ifndef _TURN_ATOM_H
 #define _TURN_ATOM_H
 
