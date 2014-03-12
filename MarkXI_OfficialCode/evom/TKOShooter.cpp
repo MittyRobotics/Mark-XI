@@ -51,7 +51,7 @@ bool TKOShooter::stateMachineRunning()
 
 void TKOShooter::initStateMachine()
 {
-	cur_state = s.init(&data, &stick3);
+	cur_state = s.init(&data, &stick2);
 }
 bool TKOShooter::startStateMachine()
 {
