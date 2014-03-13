@@ -19,12 +19,12 @@ class TKOShooter
 		bool Start();
 		bool Stop();
 		bool stateMachineRunning();
-		state_t initStateMachine(instance_data_t*);
-		
+
 	private:
 		Task *shooterTask;
 		Task *stateMachineTask;
 		Joystick stick1, stick2, stick3, stick4;
+		void initStateMachine();
 		bool startStateMachine();
 		bool stopStateMachine();
 		int runStateMachine();
