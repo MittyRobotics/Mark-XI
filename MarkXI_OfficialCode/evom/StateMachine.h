@@ -10,6 +10,7 @@
 #include "../Definitions.h"
 #include "../log/TKOLogger.h"
 #include "TKOArm.h"
+#include "TKOLEDArduino.h"
 
 /*
  * 0b | IC | LL | PE | PR |

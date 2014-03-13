@@ -3,7 +3,7 @@
 class RobotDemo : public SimpleRobot
 {
 	CANJaguar _arm;
-	DigitalInput armOpt;
+	DigitalInput armOpt, pistRetract, pistExtend, latch, isCocked, ballLim;
 	/*const int PISTON_SWITCH_RETRACT_CHANNEL = 7;
 	const int PISTON_SWITCH_EXTEND_CHANNEL = 6;
 	const int LATCH_PISTON_LOCK_SWITCH_CHANNEL = 1;
@@ -15,7 +15,12 @@ class RobotDemo : public SimpleRobot
 public:
 	RobotDemo():
 		_arm(7, CANJaguar::kPercentVbus),
-		armOpt(11)
+		armOpt(11),
+		pistRetract(7),
+		pistExtend(6),
+		latch(1),
+		isCocked(2),
+		ballLim(10)
 	{}
 	
 	void RobotInit()
@@ -35,6 +40,12 @@ public:
 		while (IsOperatorControl() && IsEnabled())
 		{
 			printf("arm: %f\n", _arm.GetPosition());
+			DriverStation::GetInstance()->SetDigitalOut(1, armOpt.Get());
+			DriverStation::GetInstance()->SetDigitalOut(2, pistRetract.Get());
+			DriverStation::GetInstance()->SetDigitalOut(3, pistExtend.Get());
+			DriverStation::GetInstance()->SetDigitalOut(4, latch.Get());
+			DriverStation::GetInstance()->SetDigitalOut(5, isCocked.Get());
+			DriverStation::GetInstance()->SetDigitalOut(6, ballLim.Get());
 		}
 	}
 

@@ -11,7 +11,7 @@ TKOLEDArduino::TKOLEDArduino():
 		reset(5, Relay::kBothDirections)
 {	
 	printf("Initializing drive\n");
-	arduinoTask = new Task("TKOLEDArduino", (FUNCPTR) TaskRunner, 50);
+	arduinoTask = new Task("TKOLEDArduino", (FUNCPTR) TaskRunner, 105);
 	modeChanged = true;
 	mode = 1;
 	printf("Finished initializing drive\n");
@@ -34,7 +34,7 @@ void TKOLEDArduino::TaskRunner()
 	}
 }
 
-void TKOLEDArduino::setMode(short tmode)
+void TKOLEDArduino::setMode(short tmode)//call this with short mode to set a mode
 {
 	mode = tmode;
 	modeChanged = true;
@@ -55,9 +55,18 @@ void TKOLEDArduino::processData()
 void TKOLEDArduino::sendData(short mode)
 {
 	bitset<16> bitData = mode;
+	//example, set mode to 1: bs[0]=1;bs[1]=0;bs[2]=0;
+	//example, set mode to 7: bs[0]=1;bs[1]=1;bs[2]=1;
+	
+	//mode 1 is piston retract
+	//mode 2 is latch lock
+	//mode 3 is piston extend
+	//mode 4 is ready to fire
+	//mode 5 is shooting, undoing latch
+	//mode 6 is error
 	
 	printf("Seding data\n");
-	if (bitData[0])
+	if (bitData[0]) //no mode 0
 		data1.Set(data1.kForward);
 	else
 		data1.Set(data1.kOff);
