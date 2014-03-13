@@ -8,9 +8,9 @@
 
 TKORoller* TKORoller::_instance = NULL;
 
-TKORoller::TKORoller(int rollerPort1,int rollerPort2):
-	_roller1(rollerPort1, CANJaguar::kPercentVbus),
-	_roller2(rollerPort2, CANJaguar::kPercentVbus),
+TKORoller::TKORoller():
+	_roller1(ROLLER_1_JAGUAR_ID, CANJaguar::kPercentVbus),
+	_roller2(ROLLER_2_JAGUAR_ID, CANJaguar::kPercentVbus),
 	limitSwitchBall(BALL_LIMIT_SWITCH),
 	stick3(3)
 {
@@ -24,7 +24,7 @@ TKORoller* TKORoller::inst()
 	if (!_instance) 
 	{
 		printf("TKORoller instance is null\n");
-		_instance = new TKORoller(ROLLER_1_JAGUAR_ID, ROLLER_2_JAGUAR_ID);
+		_instance = new TKORoller;
 		printf("TKORoller initialized\n");
 	}
 	return _instance;

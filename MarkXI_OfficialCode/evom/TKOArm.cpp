@@ -49,6 +49,8 @@ TKOArm::TKOArm() :
 		_arm.StopMotor();*/
 	}
 	AddToSingletonList();
+	printf("Arm initialized\n");
+	printf("Complete\n");
 }
 
 TKOArm::~TKOArm() 
@@ -180,7 +182,7 @@ void TKOArm::runManualArm()
 	}
 	if (not StateMachine::armCanMove or not armEnabled)
 	{
-		printf("Arm can't move\n");
+		//printf("Arm can't move\n");
 		setArmTarget(_arm.GetPosition());
 		return;
 	}

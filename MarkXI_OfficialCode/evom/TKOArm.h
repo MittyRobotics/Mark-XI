@@ -16,7 +16,7 @@ class TKORoller
 		CANJaguar _roller1, _roller2;
 		bool override;
 	private:
-		TKORoller(int rollerPort1, int rollerPort2);
+		TKORoller();
 		DigitalInput limitSwitchBall;
 		Joystick stick3;
 		static TKORoller*  _instance;
