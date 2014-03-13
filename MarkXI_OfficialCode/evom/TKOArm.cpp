@@ -21,6 +21,8 @@ TKOArm::TKOArm() :
 	_arm(ARM_JAGUAR_ID, CANJaguar::kPosition), 
 	limitSwitchArm(ARM_OPTICAL_SWITCH), // Optical limit switch
 	usonic(ULTRASONIC_PORT),
+	stick1(STICK_1_PORT),
+	stick2(STICK_2_PORT),
 	stick3(STICK_3_PORT),
 	stick4(STICK_4_PORT)
 {
@@ -32,9 +34,11 @@ TKOArm::TKOArm() :
 	_arm.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
 	_arm.ConfigEncoderCodesPerRev(250);
 	//_arm.ConfigSoftPositionLimits(maxArmPos, minArmPos);
-	_arm.SetPID(-10000., -1., 0.);
+	//_arm.SetPID(-10000., -1., 0.);
+	_arm.SetPID(-5000., -1., 0.);
 	_arm.EnableControl(0.);
 	lastInc = GetTime();
+	lastCalib = GetTime();
 	//switchToPositionMode();
 	armTask = new Task("TKOArm", (FUNCPTR) ArmRunner, 1);
 	armEnabled = true;
@@ -117,12 +121,49 @@ void TKOArm::printDSMessages()
 	DriverStation::GetInstance()->SetDigitalOut(8,limitSwitchArm.Get());
 	DSClear();
 	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
-	DSLog(2, "Arm Lim: %f", limitSwitchArm.Get());
 	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
 	DSLog(4, "Arm Tar %f", _arm.Get());
 	//DSLog(5, "DistR %f", avr); //gets feet
 	DSLog(6, "Dist %f", tempVal); //gets feet
 	
+}
+void TKOArm::forwardCalibration()
+{
+	if (GetTime() - lastCalib > 1.)
+		return;
+	printf("Running front calib\n");
+	Timer _temp;
+	_temp.Start();
+	while (_temp.Get() < 1. and limitSwitchArm.Get())
+	{
+		setArmTarget(maxArmPos);
+		armTargetUpdate();
+	}
+	setArmTarget(_arm.GetPosition());
+	_arm.Set(_arm.GetPosition());
+	_temp.Stop();
+	resetEncoder();
+	lastCalib = GetTime();
+	printf("Done with front calib!\n");
+}
+void TKOArm::reverseCalibration()
+{
+	if (GetTime() - lastCalib > 1.)
+		return;
+	printf("Running rev calib\n");
+	Timer _temp;
+	_temp.Start();
+	while (_temp.Get() < 1. and limitSwitchArm.Get())
+	{
+		setArmTarget(minArmPos);
+		armTargetUpdate();
+	}
+	setArmTarget(_arm.GetPosition());
+	_arm.Set(_arm.GetPosition());
+	_temp.Stop();
+	resetEncoder();
+	lastCalib = GetTime();
+	printf("Done with rev calib!\n");
 }
 void TKOArm::setArmTarget(float target)
 {
@@ -132,7 +173,7 @@ void TKOArm::armTargetUpdate()
 {
 	if (armTargetFinal < armTargetCurrent)
 	{
-		armTargetCurrent -= ARM_TARGET_RAMP_INCREMENT; //TODO Arm increment
+		armTargetCurrent -= ARM_TARGET_RAMP_INCREMENT; //TODO Arm increment, going forward
 	}
 	else if (armTargetFinal > armTargetCurrent)
 	{
@@ -156,15 +197,29 @@ void TKOArm::currentTimeout()
 		//_arm.EnableControl();
 	}
 }
+void TKOArm::resetEncoder()
+{
+	_arm.DisableControl();
+	_arm.EnableControl(0.);
+	armTargetCurrent = 0.;
+	armTargetFinal = 0.;
+	printf("Reset encoder\n");
+}
 void TKOArm::runManualArm()
 {	
 	if (stick4.GetRawButton(8))
 	{
-		_arm.DisableControl();
-		_arm.EnableControl(0.);
-		armTargetCurrent = 0.;
-		armTargetFinal = 0.;
-		printf("Reset encoder\n");
+		resetEncoder();
+	}
+	if (stick2.GetRawButton(10))
+	{
+		reverseCalibration();
+		return;
+	}
+	if (stick2.GetRawButton(11))
+	{
+		forwardCalibration();
+		return;
 	}
 	
 	TKORoller::inst()->rollerSimpleMove();
@@ -178,9 +233,9 @@ void TKOArm::runManualArm()
 		setArmTarget(stick4.GetY() * ARM_SPEED_MULTIPLIER);
 		return;
 	}
-	if (not StateMachine::armCanMove or not armEnabled)
+	if (/*not StateMachine::armCanMove or*/ StateMachine::getCockingSwitch()->Get() or not armEnabled)
 	{
-		printf("Arm can't move\n");
+		printf("Arm can't move, \n");
 		setArmTarget(_arm.GetPosition());
 		return;
 	}
@@ -205,6 +260,8 @@ void TKOArm::runManualArm()
 		moveToBack();
 	if (stick4.GetRawButton(3))
 		moveToDSTarget();
+	/*else
+		moveToMid();*/
 	if (GetTime() - lastInc <= 1.){}
 	else
 	{
@@ -221,6 +278,7 @@ void TKOArm::runManualArm()
 	}
 	
 	//_arm.Set(_arm.Get()); //todo DO WE NEED THIS
+	
 }
 void TKOArm::moveToFront()
 {

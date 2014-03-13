@@ -97,7 +97,10 @@ state_t StateMachine::run_state( state_t cur_state, instance_data_t *data ) {
 	updateDriverStationSwitchDisplay();
     return _state_table[ cur_state ]( data );
 };
-
+DigitalInput* StateMachine::getCockingSwitch()
+{
+	return _is_cocked;
+}
 
 int StateMachine::getSensorData(instance_data_t *data)
 {
@@ -161,6 +164,7 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
         return STATE_ERR;
     }
     data->curState = STATE_PISTON_RETRACT;
+    _timer->Reset();
     _timer->Start();
 
     _piston_retract_extend->Set(DoubleSolenoid::kReverse);
@@ -201,6 +205,7 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
         return STATE_ERR;
     }
     data->curState = STATE_LATCH_LOCK;
+    _timer->Reset();
     _timer->Start();
 
     _latch_lock_unlock->Set(DoubleSolenoid::kForward);
@@ -243,6 +248,7 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
         return STATE_ERR;
     }
     data->curState = STATE_PISTON_EXTEND;
+    _timer->Reset();
     _timer->Start();
 
     _piston_retract_extend->Set(DoubleSolenoid::kForward);
@@ -317,7 +323,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     }
     
     data->curState = STATE_LATCH_UNLOCK;
-    
+    _timer->Reset();
     _timer->Start();
     
     TKORoller::inst()->override = true;

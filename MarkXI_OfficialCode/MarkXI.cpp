@@ -24,6 +24,7 @@
  * At beginning of auton, shift to high gear	DONE
  * 
  * Add driving jaguar current logging/burnout
+ * ADD BATERY VOLTAGE LOGGING
  * 
  * FOR 2014 OffSeason: take over scouting?
  * 
@@ -145,7 +146,7 @@ void MarkXI::Autonomous(void)
 	 * insert new PID values
 	 * during auton: shoot & drive forward, calibrate arm?
 	 */
-	float driveDist = 3.;
+	float driveDist = DriverStation::GetInstance()->GetAnalogIn(3);
 	//TKOVision::inst()->StartProcessing();
 	TKOShooter::inst()->Start();
 	
@@ -169,6 +170,8 @@ void MarkXI::Autonomous(void)
 	//delete shoot;
 	
 	//TKOVision::inst()->StopProcessing();
+	while (IsEnabled())
+	{}
 	TKOShooter::inst()->Stop();
 	TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
 }

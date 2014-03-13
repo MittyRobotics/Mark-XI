@@ -207,7 +207,7 @@ void TKODrive::TankDrive()
 		drive4->Set(-stick2.GetY() * 0.8);
 	}
 	TKODrive::ManualShift();
-	TKODrive::AutoShift();
+	//TKODrive::AutoShift();
 	
 	/*
 	 * code for shooting while driving:

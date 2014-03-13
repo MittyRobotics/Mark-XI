@@ -75,6 +75,11 @@ int TKOShooter::runStateMachine()
 	DSLog(4, "");
 	DSLog(5, "");
 	DSLog(6, "");
+	if (stick4.GetRawButton(11))
+	{
+		printf("Resetting state machine\n");
+		initStateMachine();
+	}
 	cur_state = s.run_state(cur_state,&data);
 	//logging here
 	return -1;
