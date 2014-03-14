@@ -32,6 +32,8 @@ TKORoller* TKORoller::inst()
 
 void TKORoller::rollerManualMove()
 {
+	/* not used
+	 * 
 	if (override)
 		return;
 	if(stick3.GetRawButton(2)) 
@@ -43,7 +45,9 @@ void TKORoller::rollerManualMove()
 	{
 		_roller1.Set(0);
 		_roller2.Set(0);
-	}	
+	}
+	*
+	*/	
 }
 void TKORoller::rollerIn()
 {

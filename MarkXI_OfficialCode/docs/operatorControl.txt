@@ -1,5 +1,5 @@
 //Last edited by Ben Kim
-//on 03/08/14
+//on 03/13/14
 
 Driver Controls:
 * Tank Drive: Stick 1 and 2 *
@@ -7,24 +7,31 @@ Stick 1
 - trigger: half speed (0.4)
 - button 2: quarter speed (0.2)
 - button 4: full power (1.0)
-- button 10: set motors to analog input 4
+- button 11: reset gyro
 Stick 2
 - trigger: fire shooter
-- button 2: shift to low gear
-- button 3: shift to high gear
+- button 2: manually shift to low gear
+- button 3: manually shift to high gear
 - button 4: set ramping to 0
 - button 5: set ramping to 12
+- button 10: reverse calibration
+- button 11: forward calibration
 
 Operator Controls:
 Stick 3
 - button 4: roller intake
 - button 5: roller outtake
-- button 8: must be held to fire shooter (move this to driver controls?)
+- button 8: must be held to fire (for automatic shooting in teleop)
 Stick 4
-- button 4: move arm to back
 - button 2: move arm to middle
+- button 3: move to DS target
+- button 4: move arm to back
 - button 5: move arm to front
+- button 6: move arm one increment backwards
+- button 7: move arm one increment forwards
+- button 8: reset encoder (current arm pos will be new 0)
 - button 10: vision - write image to file
+- button 11: reset state machine (NOTE: use as last resort)
 
 Digital Inputs:
 - 1: clear log file

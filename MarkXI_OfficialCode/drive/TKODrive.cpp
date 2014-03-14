@@ -157,14 +157,14 @@ void TKODrive::TankDrive()
 {
 	if (!DriverStation::GetInstance()->IsEnabled()) return;
 	
-	if (stick1.GetRawButton(10))
+	/*if (stick1.GetRawButton(10))
 	{
 		drive1->Set(DriverStation::GetInstance()->GetAnalogIn(4));
 		drive2->Set(drive1->GetOutputVoltage() / drive1->GetBusVoltage());
 		drive3->Set(-(DriverStation::GetInstance()->GetAnalogIn(4)));
 		drive4->Set(drive3->GetOutputVoltage() / drive3->GetBusVoltage());
-	}
-	else if (stick2.GetRawButton(4))
+	}*/
+	if (stick2.GetRawButton(4))
 	{
 		drive1->SetVoltageRampRate(0.0);
 		drive2->SetVoltageRampRate(0.0);

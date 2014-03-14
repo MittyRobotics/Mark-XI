@@ -297,12 +297,12 @@ void TKOArm::runManualArm()
 	{
 		if (stick4.GetRawButton(6))
 		{
-			setArmTarget(_arm.Get() + ARM_MANUAL_DRIVE_INREMENT);
+			setArmTarget(_arm.Get() + ARM_MANUAL_DRIVE_INCREMENT);
 			lastInc = GetTime();
 		}
 		if (stick4.GetRawButton(7))
 		{
-			setArmTarget(_arm.Get() - ARM_MANUAL_DRIVE_INREMENT);
+			setArmTarget(_arm.Get() - ARM_MANUAL_DRIVE_INCREMENT);
 			lastInc = GetTime();
 		}
 	}

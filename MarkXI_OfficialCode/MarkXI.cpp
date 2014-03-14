@@ -204,6 +204,11 @@ void MarkXI::OperatorControl()
 		//DSLog(4, "Clock %f\n", GetClock());
 		Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
+		
+		if (DriverStation::GetInstance()->GetBatteryVoltage() < 8.)
+		{
+			TKOLogger::inst()->addMessage("Battery voltage very low: %f\n", DriverStation::GetInstance()->GetBatteryVoltage());
+		}
 	}
 
 	TKOShooter::inst()->Stop();
