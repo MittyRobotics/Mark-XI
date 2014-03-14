@@ -58,7 +58,10 @@ bool TKOShooter::startStateMachine()
 	initStateMachine();
 	if (not stateMachineTask->Verify())
 		if (stateMachineTask->Start())
+		{
+			TKOLEDArduino::inst()->Start();
 			return true;
+		}
 	
 	return false;
 }
@@ -66,7 +69,10 @@ bool TKOShooter::stopStateMachine()
 {
 	//if (stateMachineTask->Verify())
 		if (stateMachineTask->Stop())
+		{
+			TKOLEDArduino::inst()->Stop();
 			return true;
+		}
 	
 	return false;
 }

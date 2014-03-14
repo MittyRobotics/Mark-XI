@@ -35,7 +35,7 @@ TKOArm::TKOArm() :
 	_arm.ConfigEncoderCodesPerRev(250);
 	//_arm.ConfigSoftPositionLimits(maxArmPos, minArmPos);
 	//_arm.SetPID(-10000., -1., 0.);
-	_arm.SetPID(-5000., -1., 0.);
+	_arm.SetPID(-5000., -.5, 0.);
 	_arm.EnableControl(0.);
 	lastInc = GetTime();
 	lastCalib = GetTime();
@@ -129,40 +129,68 @@ void TKOArm::printDSMessages()
 }
 void TKOArm::forwardCalibration()
 {
-	if (GetTime() - lastCalib > 1.)
+	if (GetTime() - lastCalib < 1.)
 		return;
 	printf("Running front calib\n");
+	armEnabled = false;
+	resetEncoder();
+	printf("arm tar %f\n", _arm.Get());
+	printf("arm pos %f\n", _arm.GetPosition());
+	_arm.Set(0.);
 	Timer _temp;
 	_temp.Start();
-	while (_temp.Get() < 1. and limitSwitchArm.Get())
+	//float val = _arm.Get();
+	Wait(1.);
+	printf("arm tar %f\n", _arm.Get());
+	printf("arm pos %f\n", _arm.GetPosition());
+	_arm.Set(0.);
+	while (_temp.Get() < 5. and limitSwitchArm.Get())
 	{
-		setArmTarget(maxArmPos);
-		armTargetUpdate();
+		//val += 0.00001;
+		printf("arm tar %f\n", _arm.Get());
+		printf("arm pos %f\n", _arm.GetPosition());
+		_arm.Set(_arm.Get() - 0.0001);
+		//_arm.Set(val);
 	}
-	setArmTarget(_arm.GetPosition());
+	printf("Out of while loop calib\n");
 	_arm.Set(_arm.GetPosition());
 	_temp.Stop();
 	resetEncoder();
 	lastCalib = GetTime();
+	armEnabled = true;
 	printf("Done with front calib!\n");
 }
 void TKOArm::reverseCalibration()
 {
-	if (GetTime() - lastCalib > 1.)
+	if (GetTime() - lastCalib < 1.)
 		return;
 	printf("Running rev calib\n");
+	armEnabled = false;
+	resetEncoder();
+	printf("arm tar %f\n", _arm.Get());
+	printf("arm pos %f\n", _arm.GetPosition());
+	_arm.Set(0.);
 	Timer _temp;
 	_temp.Start();
-	while (_temp.Get() < 1. and limitSwitchArm.Get())
+	//float val = _arm.Get();
+	Wait(1.);
+	printf("arm tar %f\n", _arm.Get());
+	printf("arm pos %f\n", _arm.GetPosition());
+	_arm.Set(0.);
+	while (_temp.Get() < 5. and limitSwitchArm.Get())
 	{
-		setArmTarget(minArmPos);
-		armTargetUpdate();
+		//val += 0.00001;
+		printf("arm tar %f\n", _arm.Get());
+		printf("arm pos %f\n", _arm.GetPosition());
+		_arm.Set(_arm.Get() + 0.0001);
+		//_arm.Set(val);
 	}
-	setArmTarget(_arm.GetPosition());
+	printf("Out of while loop calib\n");
 	_arm.Set(_arm.GetPosition());
 	_temp.Stop();
 	resetEncoder();
 	lastCalib = GetTime();
+	armEnabled = true;
 	printf("Done with rev calib!\n");
 }
 void TKOArm::setArmTarget(float target)
@@ -171,6 +199,8 @@ void TKOArm::setArmTarget(float target)
 }
 void TKOArm::armTargetUpdate()
 {
+	if (not armEnabled)
+		return;
 	if (armTargetFinal < armTargetCurrent)
 	{
 		armTargetCurrent -= ARM_TARGET_RAMP_INCREMENT; //TODO Arm increment, going forward

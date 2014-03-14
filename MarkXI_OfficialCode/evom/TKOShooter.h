@@ -8,6 +8,7 @@
 #include "../Definitions.h"
 #include "../log/TKOLogger.h"
 #include "StateMachine.h"
+#include "TKOLEDArduino.h"
 
 
 class TKOShooter

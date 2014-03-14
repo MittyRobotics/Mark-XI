@@ -36,8 +36,11 @@ void TKOLEDArduino::TaskRunner()
 
 void TKOLEDArduino::setMode(short tmode)
 {
+	if (tmode == mode)
+		modeChanged = false;
+	else
+		modeChanged = true;
 	mode = tmode;
-	modeChanged = true;
 }
 
 void TKOLEDArduino::processData()
