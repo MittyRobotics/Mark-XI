@@ -140,7 +140,7 @@ void TKOArm::forwardCalibration()
 	Timer _temp;
 	_temp.Start();
 	//float val = _arm.Get();
-	Wait(1.);
+	Wait(.1);
 	printf("arm tar %f\n", _arm.Get());
 	printf("arm pos %f\n", _arm.GetPosition());
 	_arm.Set(0.);
@@ -173,7 +173,7 @@ void TKOArm::reverseCalibration()
 	Timer _temp;
 	_temp.Start();
 	//float val = _arm.Get();
-	Wait(1.);
+	Wait(.1);
 	printf("arm tar %f\n", _arm.Get());
 	printf("arm pos %f\n", _arm.GetPosition());
 	_arm.Set(0.);
@@ -237,6 +237,8 @@ void TKOArm::resetEncoder()
 }
 void TKOArm::runManualArm()
 {	
+	if (DriverStation::GetInstance()->IsAutonomous())
+		return;
 	if (stick4.GetRawButton(8))
 	{
 		resetEncoder();

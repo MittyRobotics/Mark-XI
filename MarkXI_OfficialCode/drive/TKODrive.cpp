@@ -15,6 +15,7 @@ TKODrive::TKODrive() :
 {	
 	printf("Initializing drive\n");
 	driveTask = new Task("TKODrive", (FUNCPTR) DriveRunner, 1);
+	shifterDS.Set(shifterDS.kForward);
 
 	maxDrive1RPM = 0;
 	maxDrive3RPM = 0;
@@ -57,10 +58,10 @@ void TKODrive::initJaguars()
 	drive2->ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);   
 	drive3->ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
 	drive4->ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
-	drive1->SetVoltageRampRate(0.0);
-	drive2->SetVoltageRampRate(0.0);
-	drive3->SetVoltageRampRate(0.0);
-	drive4->SetVoltageRampRate(0.0);
+	drive1->SetVoltageRampRate(24.0);
+	drive2->SetVoltageRampRate(24.0);
+	drive3->SetVoltageRampRate(24.0);
+	drive4->SetVoltageRampRate(24.0);
 	drive1->ConfigFaultTime(0.1);
 	drive2->ConfigFaultTime(0.1);
 	drive3->ConfigFaultTime(0.1);
@@ -173,10 +174,10 @@ void TKODrive::TankDrive()
 	}
 	else if (stick2.GetRawButton(5))
 	{
-		drive1->SetVoltageRampRate(12.0);
-		drive2->SetVoltageRampRate(12.0);
-		drive3->SetVoltageRampRate(12.0);
-		drive4->SetVoltageRampRate(12.0);
+		drive1->SetVoltageRampRate(24.0);
+		drive2->SetVoltageRampRate(24.0);
+		drive3->SetVoltageRampRate(24.0);
+		drive4->SetVoltageRampRate(24.0);
 	}
 	else if (stick1.GetTrigger())
 	{
@@ -216,10 +217,14 @@ void TKODrive::TankDrive()
 	//printf("Speed1: %f \tSpeed2: %f \tDist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
 	if (drive1->GetSpeed() > 400 && drive3->GetSpeed() > 400 && stick3.GetRawButton(8) && TKOArm::inst()->getDistance() <= 6)
 	{
-		printf("Auto fire?\n");
-		if (GetTime() - lastFire <= 1.) return;
+		printf("Auto fire?\n");if (GetTime() - lastFire <= 1.) return;
 		printf("Going to autofire\n");
-		StateMachine::manualFire();
+		TKOLogger::inst()->addMessage("Automatic teleop firing! D1 Speed: %f \t D3 Speed: %f \t Dist: %f", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
+		printf("Automatic teleop firing! D1 Speed: %f \t D3 Speed: %f \t Dist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
+		if (not DriverStation::GetInstance()->GetDigitalIn(8))
+			StateMachine::manualFire();
+		else
+			printf("NOT DOING TELEOP AUTOFIRE\n");
 		drive1->Set(0);
 		drive2->Set(0);
 		drive3->Set(0);

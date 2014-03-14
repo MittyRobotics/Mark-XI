@@ -174,7 +174,7 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
     int sensors = 0;
     // reason for 8 is that piston is retracted then
     while (sensors = getSensorData(data), sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING) ) {
-    	printf("Piston Retract running: %d  Sensors: %d\n", sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING), sensors);
+    	//printf("Piston Retract running: %d  Sensors: %d\n", sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING), sensors);
         if (_timer->Get() > PISTON_RETRACT_TIMEOUT) {
             _timer->Stop();
             _timer->Reset();
@@ -217,7 +217,7 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
 
     // reason for 8 is that piston is retracted then
     while (sensors = getSensorData(data), sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED)) {
-    	printf("latch_lock running: %d\n", sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED));
+    	//printf("latch_lock running: %d\n", sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED));
     	      
     	if (_timer->Get() > LATCH_LOCK_FORWARD_TIMEOUT) {
             _timer->Stop();
@@ -261,7 +261,7 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 
     // reason for 8 is that piston is retracted then
     while (sensors = getSensorData(data), sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6)) {
-    	printf("piston_extend running: %d\n", sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6));
+    	//printf("piston_extend running: %d\n", sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6));
     	    	 
     	if (_timer->Get() > PISTON_EXTEND_TIMEOUT) {
             _timer->Stop();

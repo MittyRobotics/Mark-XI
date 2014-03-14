@@ -91,6 +91,7 @@ void MarkXI::RobotInit()
 	}
 	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------TIMESTAMP: %f", GetFPGATime());
 	TKOGyro::inst()->reset();
+	TKOArm::inst();
 	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
@@ -149,11 +150,15 @@ void MarkXI::Autonomous(void)
 	float driveDist = DriverStation::GetInstance()->GetAnalogIn(3);
 	//TKOVision::inst()->StartProcessing();
 	TKOShooter::inst()->Start();
+	//TKOArm::inst()->Start();
+	//TKOArm::inst()->setArmTarget(TKOArm::inst()->);
+	/*TKOArm::inst()->forwardCalibration();
+	Wait(0.1);*/
 	
 	Molecule* molecule = new Molecule();
 	//Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
 	Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4, TKODrive::inst()->getShifterDoubleSolenoid());
-	Atom* cameraWait = new CameraShootAtom(TKOArm::inst()->getUsonic());
+	//Atom* cameraWait = new CameraShootAtom(TKOArm::inst()->getUsonic());
 	//Atom* shoot = new ShootAtom();
 
 	//molecule->addAtom(cameraWait);
@@ -163,16 +168,17 @@ void MarkXI::Autonomous(void)
 	molecule->start();
 
 	printf("Ending Autonomous \n");
-	delete molecule;
-	delete cameraWait;
+	//delete cameraWait;
 	//delete driveForward;
 	delete driveAndShoot;
+	delete molecule;
 	//delete shoot;
 	
 	//TKOVision::inst()->StopProcessing();
 	while (IsEnabled())
 	{}
 	TKOShooter::inst()->Stop();
+	//TKOArm::inst()->Stop();
 	TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
 }
 

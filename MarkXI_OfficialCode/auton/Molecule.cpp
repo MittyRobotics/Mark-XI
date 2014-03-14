@@ -40,7 +40,11 @@ void Molecule::MoleculeInit() {
 	drive2.SetExpiration(0.1);
 	drive3.SetExpiration(0.1);
 	drive4.SetExpiration(0.1);
-
+	
+	drive1.SetVoltageRampRate(24.0);
+	drive2.SetVoltageRampRate(24.0);
+	drive3.SetVoltageRampRate(24.0);
+	drive4.SetVoltageRampRate(24.0);
 }
 
 Molecule::~Molecule() {

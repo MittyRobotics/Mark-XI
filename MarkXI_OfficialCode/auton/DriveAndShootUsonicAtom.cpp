@@ -25,14 +25,18 @@ void DriveAndShootUsonicAtom::run()
 	_drive1->EnableControl(0);
 	_drive3->EnableControl(0);
 	test.Start();
-	while (/*test.Get() < 2. and */ usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET > tarDist and DriverStation::GetInstance()->IsEnabled()) 
+	while (/*test.Get() < 5. and */usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET > tarDist and DriverStation::GetInstance()->IsEnabled()) 
 	{
 		_shifterDoubleSolenoid->Set(_shifterDoubleSolenoid->kForward);	//shift to high gear
 		_drive1->Set(_drive1->Get() - DRIVE_POSITION_INCREMENT);
 		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave			
 		_drive3->Set(_drive3->Get() + DRIVE_POSITION_INCREMENT);
 		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
+		//printf("Drive 1: %f\t Drive 3: %f\n", _drive1->GetSpeed(), _drive3->GetSpeed());
 	}
+	TKOLogger::inst()->addMessage("Drive 1: %f\t Drive 3: %f\n", _drive1->GetSpeed(), _drive3->GetSpeed());
+	TKOLogger::inst()->addMessage("Drive 2: %f\t Drive 4: %f\n", _drive2->GetSpeed(), _drive4->GetSpeed());
+	TKOLogger::inst()->addMessage("Auton shot distance %f", usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET);
 	test.Stop();
 	printf("Reached target, firing\n");
 	StateMachine::manualFire();
