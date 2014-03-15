@@ -132,6 +132,7 @@ void TKOArm::forwardCalibration()
 	if (GetTime() - lastCalib < 1.)
 		return;
 	printf("Running front calib\n");
+	TKOLogger::inst()->addMessage("Running front calib");
 	armEnabled = false;
 	resetEncoder();
 	printf("arm tar %f\n", _arm.Get());
@@ -159,12 +160,14 @@ void TKOArm::forwardCalibration()
 	lastCalib = GetTime();
 	armEnabled = true;
 	printf("Done with front calib!\n");
+	TKOLogger::inst()->addMessage("Done with front calib");
 }
 void TKOArm::reverseCalibration()
 {
 	if (GetTime() - lastCalib < 1.)
 		return;
 	printf("Running rev calib\n");
+	TKOLogger::inst()->addMessage("Running rev calib");
 	armEnabled = false;
 	resetEncoder();
 	printf("arm tar %f\n", _arm.Get());
@@ -192,6 +195,7 @@ void TKOArm::reverseCalibration()
 	lastCalib = GetTime();
 	armEnabled = true;
 	printf("Done with rev calib!\n");
+	TKOLogger::inst()->addMessage("Done with rev calib");
 }
 void TKOArm::setArmTarget(float target)
 {
@@ -234,6 +238,7 @@ void TKOArm::resetEncoder()
 	armTargetCurrent = 0.;
 	armTargetFinal = 0.;
 	printf("Reset encoder\n");
+	TKOLogger::inst()->addMessage("Reset encoder");
 }
 void TKOArm::runManualArm()
 {	

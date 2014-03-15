@@ -217,7 +217,7 @@ void TKODrive::TankDrive()
 	//printf("Speed1: %f \tSpeed2: %f \tDist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
 	if (drive1->GetSpeed() > 300 && drive3->GetSpeed() > 300 && stick3.GetRawButton(8) && TKOArm::inst()->getDistance() <= 6)
 	{
-		printf("Auto fire?\n");if (GetTime() - lastFire <= 1.) return;
+		if (GetTime() - lastFire <= 1.) return;
 		printf("Going to autofire\n");
 		TKOLogger::inst()->addMessage("Automatic teleop firing! D1 Speed: %f \t D3 Speed: %f \t Dist: %f", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
 		printf("Automatic teleop firing! D1 Speed: %f \t D3 Speed: %f \t Dist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
@@ -243,12 +243,14 @@ void TKODrive::ManualShift()
 		shifterDS.Set(shifterDS.kForward);
 		lastShift = GetTime();
 		printf("Manually shifted backwards (high gear)\n");
+		TKOLogger::inst()->addMessage("Manually shifted backwards (high gear)\n");
 	}
 	if (stick2.GetRawButton(3)) 
 	{
 		shifterDS.Set(shifterDS.kReverse);
 		lastShift = GetTime();
 		printf("Manually shifted forward (low gear)\n");
+		TKOLogger::inst()->addMessage("Manually shifted backwards (low gear)\n");
 	}
 }
 void TKODrive::AutoShift()
@@ -260,12 +262,14 @@ void TKODrive::AutoShift()
 		shifterDS.Set(shifterDS.kForward);
 		lastShift = GetTime();
 		printf("Auto shifted backwards (high gear)\n");
+		TKOLogger::inst()->addMessage("Auto shifted backwards (high gear)\n");
 	}
 	else if (drive1->GetSpeed() < speedShiftRPM and drive3->GetSpeed() < speedShiftRPM and shifterDS.Get() != shifterDS.kReverse)
 	{
 		shifterDS.Set(shifterDS.kReverse);
 		lastShift = GetTime();
 		printf("Auto shifted forward (low gear)\n");
+		TKOLogger::inst()->addMessage("Auto shifted backwards (low gear)\n");
 	}
 }
 
