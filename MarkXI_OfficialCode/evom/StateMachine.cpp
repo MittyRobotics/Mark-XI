@@ -368,6 +368,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
 
     TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     TKOLogger::inst()->addMessage("!!!SUCCESSFUL SHOT!!!");
+    TKOLogger::inst()->addMessage("!!!Shot Distance: %f\n", (TKOArm::inst()->getUsonic()->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET));
     StateMachine::autonFired = true;
     return STATE_PISTON_RETRACT;
 }

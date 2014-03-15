@@ -149,6 +149,26 @@ void TKODrive::LogData()
 
 	TKOLogger::inst()->addMessage("Drive 1 Speed: %f", drive1->GetSpeed());
 	TKOLogger::inst()->addMessage("Drive 3 Speed: %f\n", drive3->GetSpeed());
+	
+	printf("-----DRIVE DATA------\n");
+
+	printf("Drive 1 Vbus Percent Output: %f\n", drive1->Get());
+	printf("Drive 2 Vbus Percent Output: %f\n", drive2->Get());
+	printf("Drive 3 Vbus Percent Output: %f\n", drive3->Get());
+	printf("Drive 4 Vbus Percent Output: %f\n", drive4->Get());
+
+	printf("Drive 1 Voltage Output: %f\n", drive1->GetOutputVoltage());
+	printf("Drive 2 Voltage Output: %f\n", drive2->GetOutputVoltage());
+	printf("Drive 3 Voltage Output: %f\n", drive3->GetOutputVoltage());
+	printf("Drive 4 Voltage Output: %f\n", drive4->GetOutputVoltage());
+
+	printf("Drive 1 Current Output: %f\n", drive1->GetOutputCurrent());
+	printf("Drive 2 Current Output: %f\n", drive2->GetOutputCurrent());
+	printf("Drive 3 Current Output: %f\n", drive3->GetOutputCurrent());
+	printf("Drive 4 Current Output: %f\n", drive4->GetOutputCurrent());
+
+	printf("Drive 1 Speed: %f\n", drive1->GetSpeed());
+	printf("Drive 3 Speed: %f\n", drive3->GetSpeed());
 
 	driveLogCounter++;
 	lastDataLog = GetTime();

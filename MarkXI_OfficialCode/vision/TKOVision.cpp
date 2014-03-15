@@ -14,7 +14,7 @@ TKOVision::TKOVision():
 	lastDist = 0.;
 	lastProcessingTime = 0.;
 	lastTimestamp = 0.;
-	AxisCamera::GetInstance().WriteBrightness(30); //TODO add setting writing
+	/*AxisCamera::GetInstance().WriteBrightness(30); //TODO add setting writing*/
 	AxisCamera::GetInstance().WriteMaxFPS(30);
 	AxisCamera::GetInstance().WriteCompression(30);
 	

@@ -137,9 +137,9 @@ void MarkXI::Autonomous(void)
 		TKOLogger::inst()->addMessage("-----------FMS DETECTED------------");
 		TKOLogger::inst()->addMessage("PROBABLY A SERIOUS MATCH");
 		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kBlue)
-		TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
+			TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
 		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kRed)
-		TKOLogger::inst()->addMessage("RED ALLIANCE!");
+			TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
 
 	/* ---TODO for auton---
@@ -149,10 +149,11 @@ void MarkXI::Autonomous(void)
 	float driveDist = DriverStation::GetInstance()->GetAnalogIn(3);
 	//TKOVision::inst()->StartProcessing();
 	TKOShooter::inst()->Start();
-	//TKOArm::inst()->Start();
-	//TKOArm::inst()->setArmTarget(TKOArm::inst()->);
+	TKOArm::inst()->Start();
+	TKOArm::inst()->setArmTarget(0.);
 	/*TKOArm::inst()->forwardCalibration();
 	Wait(0.1);*/
+	Wait(.5);
 	
 	Molecule* molecule = new Molecule();
 	//Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
@@ -177,7 +178,7 @@ void MarkXI::Autonomous(void)
 	while (IsEnabled())
 	{}
 	TKOShooter::inst()->Stop();
-	//TKOArm::inst()->Stop();
+	TKOArm::inst()->Stop();
 	//TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
 	printf("Ended autonomous\n");
 }
