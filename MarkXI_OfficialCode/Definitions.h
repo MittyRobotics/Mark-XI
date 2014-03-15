@@ -90,7 +90,7 @@ const float kMAX_DRIVE_RPM = 700;
 const float deadzone = 0.1; 
 const int kBURNOUT = 500;
 const int kBURNOUT_CYCLES = 100;
-const float DRIVE_POSITION_INCREMENT = 20.;
+const float DRIVE_POSITION_INCREMENT = 100.;
 
 //Miscelaneous
 const int GYRO_PORT = 1;

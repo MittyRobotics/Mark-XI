@@ -91,8 +91,7 @@ void MarkXI::RobotInit()
 	}
 	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------TIMESTAMP: %f", GetFPGATime());
 	TKOGyro::inst()->reset();
-	TKOArm::inst();
-	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
+	//AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
 
@@ -122,7 +121,7 @@ void MarkXI::Disabled()
 	TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOArm::inst()->Stop();
-	TKOVision::inst()->StopProcessing();
+	//TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
@@ -137,9 +136,9 @@ void MarkXI::Autonomous(void)
 	{
 		TKOLogger::inst()->addMessage("-----------FMS DETECTED------------");
 		TKOLogger::inst()->addMessage("PROBABLY A SERIOUS MATCH");
-		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kBlue);
+		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kBlue)
 		TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
-		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kRed);
+		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kRed)
 		TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
 
@@ -170,8 +169,8 @@ void MarkXI::Autonomous(void)
 	printf("Ending Autonomous \n");
 	//delete cameraWait;
 	//delete driveForward;
-	delete driveAndShoot;
-	delete molecule;
+	//delete driveAndShoot;
+	//delete molecule;
 	//delete shoot;
 	
 	//TKOVision::inst()->StopProcessing();
@@ -179,7 +178,8 @@ void MarkXI::Autonomous(void)
 	{}
 	TKOShooter::inst()->Stop();
 	//TKOArm::inst()->Stop();
-	TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
+	//TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
+	printf("Ended autonomous\n");
 }
 
 void MarkXI::OperatorControl()

@@ -88,7 +88,7 @@ void TKODrive::DriveRunner()
 	while (true)
 	{
 		m_Instance->TankDrive();
-		//m_Instance->LogData();
+		m_Instance->LogData();
 		//m_Instance->VerifyJags();
 		Wait(0.005);
 	}
@@ -215,7 +215,7 @@ void TKODrive::TankDrive()
 	 * robot must be driving full speed and operator must be holding safety for shooter to fire once it reaches target distance
 	 */
 	//printf("Speed1: %f \tSpeed2: %f \tDist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
-	if (drive1->GetSpeed() > 400 && drive3->GetSpeed() > 400 && stick3.GetRawButton(8) && TKOArm::inst()->getDistance() <= 6)
+	if (drive1->GetSpeed() > 300 && drive3->GetSpeed() > 300 && stick3.GetRawButton(8) && TKOArm::inst()->getDistance() <= 6)
 	{
 		printf("Auto fire?\n");if (GetTime() - lastFire <= 1.) return;
 		printf("Going to autofire\n");
