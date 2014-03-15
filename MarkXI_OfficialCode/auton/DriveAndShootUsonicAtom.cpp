@@ -27,14 +27,16 @@ void DriveAndShootUsonicAtom::run()
 	_drive3->EnableControl(0);
 	test.Start();
 	_shifterDoubleSolenoid->Set(_shifterDoubleSolenoid->kForward);	//shift to high gear
-	while (test.Get() < 1.5 /*and usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET > tarDist */and DriverStation::GetInstance()->IsEnabled()) 
+	while (/*test.Get() < 1.5*/ usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET > tarDist and DriverStation::GetInstance()->IsEnabled()) 
 	{
-		_drive1->Set(_drive1->Get() - DRIVE_POSITION_INCREMENT);
+		_drive1->Set(400.);
 		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave			
-		_drive3->Set(_drive3->Get() + DRIVE_POSITION_INCREMENT);
+		_drive3->Set(-400.);
 		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 		//printf("Drive 1: %f\t Drive 3: %f\n", _drive1->GetSpeed(), _drive3->GetSpeed());
 		printf("Timer: %f\n", test.Get());
+		printf("Drive1 speed %f\n", _drive1->GetSpeed());
+		printf("Drive3 speed %f\n", _drive3->GetSpeed());
 	}
 	/*while (_drive1->GetPosition() < 8.9 and _drive3->GetPosition() > -8.9) //thresholds
 	{
@@ -51,13 +53,16 @@ void DriveAndShootUsonicAtom::run()
 		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 	}*/
 	TKOLogger::inst()->addMessage("Drive 1: %f\t Drive 3: %f\n", _drive1->GetPosition(), _drive3->GetPosition());
-	TKOLogger::inst()->addMessage("Drive 2: %f\t Drive 4: %f\n", _drive2->GetPosition(), _drive4->GetPosition());
+	//TKOLogger::inst()->addMessage("Drive 2: %f\t Drive 4: %f\n", _drive2->GetPosition(), _drive4->GetPosition());
+	TKOLogger::inst()->addMessage("Drive 1: %f\t Drive 3: %f\n", _drive1->GetSpeed(), _drive3->GetSpeed());
 	TKOLogger::inst()->addMessage("Auton shot distance %f", usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET);
 	test.Stop();
 	printf("Reached target, firing\n");
 	StateMachine::manualFire();
 	printf("Done firing\n");
 	Wait(0.5);
+	_drive1->Set(0);
+	_drive3->Set(0);
 	_drive1->DisableControl();
 	_drive2->Set(0);
 	_drive3->DisableControl();
