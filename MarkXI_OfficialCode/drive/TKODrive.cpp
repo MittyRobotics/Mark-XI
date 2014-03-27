@@ -49,6 +49,7 @@ void TKODrive::initJaguars()
 	drive2 = new CANJaguar(DRIVE_L2_ID, CANJaguar::kPercentVbus);
 	drive3 = new CANJaguar(DRIVE_R1_ID, CANJaguar::kPercentVbus);
 	drive4 = new CANJaguar(DRIVE_R2_ID, CANJaguar::kPercentVbus);
+	robotDrive = new RobotDrive(drive1, drive2, drive3, drive4);
 	
 	drive1->SetSafetyEnabled(false);
 	drive2->SetSafetyEnabled(false);
@@ -82,6 +83,7 @@ void TKODrive::destroyJaguars()
 	delete drive2;
 	delete drive3;
 	delete drive4;
+	delete robotDrive;
 }
 void TKODrive::DriveRunner()
 {

@@ -19,6 +19,7 @@ public:
 	double maxDrive1RPM, maxDrive3RPM;
 private:
 	CANJaguar* drive1, *drive2, *drive3, *drive4; // define motors
+	RobotDrive *robotDrive;
 	Joystick stick1, stick2, stick3, stick4; // define joysticks
 	DoubleSolenoid shifterDS;
 	Task *driveTask;
