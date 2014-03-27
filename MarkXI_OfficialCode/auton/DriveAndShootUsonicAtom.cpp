@@ -26,8 +26,9 @@ void DriveAndShootUsonicAtom::run()
 	_drive1->EnableControl(0);
 	_drive3->EnableControl(0);
 	test.Start();
-	_shifterDoubleSolenoid->Set(_shifterDoubleSolenoid->kForward);	//shift to high gear
-	while (test.Get() < 1.5 /*and usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET > tarDist */and DriverStation::GetInstance()->IsEnabled()) 
+	if (_shifterDoubleSolenoid)
+		_shifterDoubleSolenoid->Set(_shifterDoubleSolenoid->kForward);	//shift to high gear
+	while (/*test.Get() < 1.5*/ /*and usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET > tarDist and*/ DriverStation::GetInstance()->IsEnabled()) 
 	{
 		_drive1->Set(_drive1->Get() - DRIVE_POSITION_INCREMENT);
 		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave			
