@@ -156,13 +156,15 @@ void MarkXI::Autonomous(void)
 	Wait(.5);
 	
 	Molecule* molecule = new Molecule();
-	//Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
-	Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4, TKODrive::inst()->getShifterDoubleSolenoid());
+	Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	//Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4, TKODrive::inst()->getShifterDoubleSolenoid());
 	//Atom* cameraWait = new CameraShootAtom(TKOArm::inst()->getUsonic());
-	//Atom* shoot = new ShootAtom();
+	Atom* shoot = new ShootAtom();
 
 	//molecule->addAtom(cameraWait);
-	molecule->addAtom(driveAndShoot);
+	//molecule->addAtom(driveAndShoot);
+	molecule->addAtom(driveForward);
+	molecule->addAtom(shoot);
 	molecule->MoleculeInit();
 	
 	molecule->start();

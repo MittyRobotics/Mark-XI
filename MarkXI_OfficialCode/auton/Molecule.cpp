@@ -8,9 +8,9 @@ Molecule::Molecule():
 	/*
 	 * Initialization of motors, creating a list of atoms to form a molecule
 	 */ 
-	drive1(DRIVE_L1_ID, CANJaguar::kSpeed),
+	drive1(DRIVE_L1_ID, CANJaguar::kPosition),
 	drive2(DRIVE_L2_ID, CANJaguar::kPercentVbus),
-	drive3(DRIVE_R1_ID, CANJaguar::kSpeed),
+	drive3(DRIVE_R1_ID, CANJaguar::kPosition),
 	drive4(DRIVE_R2_ID, CANJaguar::kPercentVbus),
 	_list()
 
@@ -21,11 +21,13 @@ void Molecule::MoleculeInit() {
 	
 	//putting the Encoders as 250 tick Encoders, setting the second and fourth motors as slaves 
 	drive1.SetSpeedReference(CANJaguar::kSpeedRef_QuadEncoder);
+	drive1.SetPositionReference(JAG_POSREF);
 	drive1.ConfigEncoderCodesPerRev(250);
 	drive1.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
 	drive1.SetSafetyEnabled(false); //new before true
 
 	drive3.SetSpeedReference(CANJaguar::kSpeedRef_QuadEncoder);
+	drive3.SetPositionReference(JAG_POSREF);
 	drive3.ConfigEncoderCodesPerRev(250);
 	drive3.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
 	drive3.SetSafetyEnabled(false);

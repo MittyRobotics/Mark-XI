@@ -145,7 +145,7 @@ void TKOArm::forwardCalibration()
 	printf("arm tar %f\n", _arm.Get());
 	printf("arm pos %f\n", _arm.GetPosition());
 	_arm.Set(0.);
-	while (_temp.Get() < 5. and limitSwitchArm.Get())
+	while (_temp.Get() < 5. and limitSwitchArm.Get() and DriverStation::GetInstance()->IsEnabled())
 	{
 		//val += 0.00001;
 		printf("arm tar %f\n", _arm.Get());
@@ -180,7 +180,7 @@ void TKOArm::reverseCalibration()
 	printf("arm tar %f\n", _arm.Get());
 	printf("arm pos %f\n", _arm.GetPosition());
 	_arm.Set(0.);
-	while (_temp.Get() < 5. and limitSwitchArm.Get())
+	while (_temp.Get() < 5. and limitSwitchArm.Get() and DriverStation::GetInstance()->IsEnabled())
 	{
 		//val += 0.00001;
 		printf("arm tar %f\n", _arm.Get());
@@ -220,14 +220,19 @@ void TKOArm::currentTimeout()
 	if (_arm.GetOutputCurrent() >= ARM_CURRENT_THRESHOLD)
 	{
 		printf("Arm current timeout\n");
-		//Timer timeout;
-		//timeout.Start();
-		/*while (timeout.Get() <= ARM_CURRENT_TIMEOUT)
+		TKOLogger::inst()->addMessage("CRITICAL: ARM CURRENT TIMEOUT");
+		Timer timeout;
+		timeout.Start();
+		while (timeout.Get() <= ARM_CURRENT_TIMEOUT)
 		{
 			_arm.Set(_arm.GetPosition());
+			_arm.ConfigMaxOutputVoltage(0.);
+			_arm.SetVoltageRampRate(0.1);
 			//TODO Do something here
-		}*/
-		//timeout.Stop();
+		}
+		timeout.Stop();
+		_arm.ConfigMaxOutputVoltage(ARM_MAX_OUTPUT_VOLTAGE);
+		_arm.SetVoltageRampRate(ARM_VOLTAGE_RAMP_RATE);
 		//_arm.EnableControl();
 	}
 }

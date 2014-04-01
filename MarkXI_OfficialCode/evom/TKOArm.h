@@ -30,6 +30,9 @@ class TKORoller
 #include "StateMachine.h"
 #include "../Definitions.h"
 
+#define ARM_MAX_OUTPUT_VOLTAGE 12.
+#define ARM_VOLTAGE_RAMP_RATE 24.
+
 //Code for intake roller and arm movement
 
 class TKOArm: public SensorBase
