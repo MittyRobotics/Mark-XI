@@ -19,7 +19,7 @@ DriveAtomUsonic::~DriveAtomUsonic() {
 void DriveAtomUsonic::run() {
 	
 	//don't forget to divide number of rotations by REVS_PER_FOOT in order to get feet traveled
-	float tarDistE = tarDist;
+	float tarDistE = 18. - tarDist; //We need to drive until we pass x feet, so that we are tarDist away from wall (starting position 18 feet)
 	float AUTON_DRIVE_MAXOUTPUT_VOLTAGE = 12.;
 	_drive1->SetPID(-500., DRIVE_kI, DRIVE_kD);
 	_drive3->SetPID(-500., DRIVE_kI, DRIVE_kD);

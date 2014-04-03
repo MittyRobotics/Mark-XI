@@ -146,6 +146,8 @@ void TKODrive::LogData()
 	TKOLogger::inst()->addMessage("Drive 2 Current Output: %f", drive2->GetOutputCurrent());
 	TKOLogger::inst()->addMessage("Drive 3 Current Output: %f", drive3->GetOutputCurrent());
 	TKOLogger::inst()->addMessage("Drive 4 Current Output: %f\n", drive4->GetOutputCurrent());
+	
+	TKOLogger::inst()->addMessage("Automatic teleop fire joystick value: %d\n", stick3.GetTrigger());
 
 	TKOLogger::inst()->addMessage("Drive 1 Speed: %f", drive1->GetSpeed());
 	TKOLogger::inst()->addMessage("Drive 3 Speed: %f\n", drive3->GetSpeed());
@@ -166,6 +168,8 @@ void TKODrive::LogData()
 	printf("Drive 2 Current Output: %f\n", drive2->GetOutputCurrent());
 	printf("Drive 3 Current Output: %f\n", drive3->GetOutputCurrent());
 	printf("Drive 4 Current Output: %f\n", drive4->GetOutputCurrent());
+	
+	printf("Automatic teleop fire joystick value: %d\n", stick3.GetTrigger());
 
 	printf("Drive 1 Speed: %f\n", drive1->GetSpeed());
 	printf("Drive 3 Speed: %f\n", drive3->GetSpeed());
@@ -235,7 +239,7 @@ void TKODrive::TankDrive()
 	 * robot must be driving full speed and operator must be holding safety for shooter to fire once it reaches target distance
 	 */
 	//printf("Speed1: %f \tSpeed2: %f \tDist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
-	if (drive1->GetSpeed() > 300 && drive3->GetSpeed() > 300 && stick3.GetRawButton(8) && TKOArm::inst()->getDistance() <= 6)
+	if (drive1->GetSpeed() > 300 && drive3->GetSpeed() > 300 && stick3.GetTrigger() && TKOArm::inst()->getDistance() <= 6.) /////ORIGINALLY stick3.GetRawButton(8)
 	{
 		if (GetTime() - lastFire <= 1.) return;
 		printf("Going to autofire\n");

@@ -1,5 +1,5 @@
 //Last edited by Ben Kim
-//on 03/13/14
+//on 04/02/14
 
 Driver Controls:
 * Tank Drive: Stick 1 and 2 *
@@ -21,7 +21,7 @@ Operator Controls:
 Stick 3
 - button 4: roller intake
 - button 5: roller outtake
-- button 8: must be held to fire (for automatic shooting in teleop)
+- TRIGGER: must be held to fire (for automatic shooting in teleop)  //used to be button 8
 Stick 4
 - button 2: move arm to middle
 - button 3: move to DS target

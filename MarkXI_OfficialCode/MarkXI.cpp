@@ -83,12 +83,22 @@ void MarkXI::RobotInit()
 {
 	printf("Initializing MarkXI class \n");
 	if (DriverStation::GetInstance()->GetDigitalIn(1))
-	{
+	/*{
 		printf("----------------------\n");
 		printf("Deleting log...\n");
 		remove("logT.txt");
 		printf("Digital input 1 true\n");
+	}*/
+	{
+		printf("Renaming previous log file\n");		
+		string fileNameDefault = "logT.txt";
+		stringstream fileName;
+		fileName << fileNameDefault << rand();
+		rename(fileNameDefault.c_str(), fileName.str().c_str());
+		printf("Completed with renaming previous log file\n");
+		//maybe use file finding? (find())
 	}
+	
 	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------TIMESTAMP: %f", GetFPGATime());
 	TKOGyro::inst()->reset();
 	//AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
@@ -237,8 +247,8 @@ void MarkXI::Operator()
 	// stick 1 button 10 will use analog input 4 to set drive motors (see TKODrive.cpp)
 	// stick 4 button 9  will use analog input 3 to set arm position (see TKOArm.cpp)
 	
-	if (stick1. GetRawButton(11))
-		TKOGyro::inst()->reset();
+	//if (stick1. GetRawButton(11))
+	//	TKOGyro::inst()->reset();
 
 }
 
