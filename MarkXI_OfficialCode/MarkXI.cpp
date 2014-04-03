@@ -84,7 +84,7 @@ void MarkXI::RobotInit()
 	printf("Initializing MarkXI class \n");
 	if (DriverStation::GetInstance()->GetDigitalIn(1))
 	/*{
-		printf("----------------------\n");
+		printf("----------------------\n"); 
 		printf("Deleting log...\n");
 		remove("logT.txt");
 		printf("Digital input 1 true\n");
@@ -135,7 +135,9 @@ void MarkXI::Disabled()
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
-	{}
+	{
+		//DSLog(6, "") ULTRASONIC VALUE
+	}
 }
 
 void MarkXI::Autonomous(void)

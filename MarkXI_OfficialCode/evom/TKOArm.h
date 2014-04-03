@@ -43,6 +43,7 @@ class TKOArm: public SensorBase
 		bool Start();
 		bool Stop();
 		void switchToPositionMode();
+		float getSmoothValue();
 		void printDSMessages();
 		void switchToVBusMode();
 		float getDistance();

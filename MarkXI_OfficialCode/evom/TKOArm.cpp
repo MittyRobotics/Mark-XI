@@ -103,6 +103,19 @@ bool TKOArm::Stop()
 			return true;
 	return false;
 }
+float TKOArm::getSmoothValue() {
+	float workingAverage = 0.;
+	int count = 10;
+	double sum = 0;
+	for (int i = 0; i < count; i++)
+	{
+		float smoothingFactor = 0.01;
+		float newValue = usonic.GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET;
+		workingAverage = (newValue*smoothingFactor) + (workingAverage * ( 1.0 - smoothingFactor));
+		sum += workingAverage;
+	}
+	return sum/count;
+}
 void TKOArm::printDSMessages()
 {
 	float tempVal = usonic.GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET;
