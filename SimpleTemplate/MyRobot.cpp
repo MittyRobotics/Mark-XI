@@ -1,79 +1,54 @@
 #include "WPILib.h"
+#include "drive/TKODrive.h"
+#include "auton/DriveAtom.h"
+#include "auton/Molecule.h"
 
 class RobotDemo : public SimpleRobot
 {
-	Relay relay2, relay3, relay4, relay5;
-	Compressor comp;
+	Joystick s1, s2;
 public:
 	RobotDemo():
-		relay2(2, Relay::kBothDirections),
-		relay3(3, Relay::kBothDirections),
-		relay4(4, Relay::kBothDirections),
-		relay5(5, Relay::kBothDirections),
-		comp(3,1)
+		s1(1),
+		s2(2)
 	{}
 
 	void Autonomous()
 	{
+		printf("Auton started\n");
+		Molecule* molecule = new Molecule();
+		Atom* driveForward = new DriveAtom(15., &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+		//Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4, TKODrive::inst()->getShifterDoubleSolenoid());
+		//Atom* driveAndShootNoShift = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4, NULL);
+		//Atom* cameraWait = new CameraShootAtom(TKOArm::inst()->getUsonic());
+		//Atom* shoot = new ShootAtom();
 
+		//molecule->addAtom(cameraWait);
+		//molecule->addAtom(driveAndShoot);
+		molecule->addAtom(driveForward);
+		molecule->MoleculeInit();
+		
+		molecule->start();
+		printf("Auton done\n");
 	}
 
 	void OperatorControl()
 	{
 		printf("STARTING OPERATOR\n");
+		TKODrive::inst()->Start();
+		TKOLogger::inst()->Start();
 		while (IsOperatorControl() && IsEnabled())
 		{
-			for (int i = 0; i < 1; i++)
-			{
-				if (true)
-				{
-					printf("Seding data\n");
-				
-					relay2.Set(relay2.kForward);
-					relay3.Set(relay3.kForward);
-					relay4.Set(relay4.kOff);
-					relay5.Set(relay5.kOff);//record data on arduino
-					Wait(0.1);
-					relay5.Set(relay5.kForward);
-					Wait(2.);
-				}
-				relay5.Set(relay5.kForward);
-				relay2.Set(relay2.kForward);
-				relay3.Set(relay3.kForward);
-				relay4.Set(relay4.kForward);
-				Wait(0.1);
-			}
-			Wait(10.);
-			for (int i = 0; i < 1; i++)
-			{
-				if (true)
-				{
-					printf("Seding data\n");
-					relay2.Set(relay2.kForward);
-					relay3.Set(relay3.kOff);
-					relay4.Set(relay4.kOff);
-					relay5.Set(relay5.kOff);//record data on arduino
-					Wait(0.1);
-					relay5.Set(relay5.kForward);
-					Wait(2.);
-				}
-				relay5.Set(relay5.kForward);
-				relay2.Set(relay2.kForward);
-				relay3.Set(relay3.kForward);
-				relay4.Set(relay4.kForward);
-				Wait(0.1);
-			}
-			Wait(10.);
+			
 		}
+		TKODrive::inst()->Stop();
+		TKOLogger::inst()->Stop();
 	}
 
 	void Test() 
 	{
-		comp.Start();
 		while (IsEnabled())
 		{
 		}
-		comp.Stop();
 	}
 };
 
