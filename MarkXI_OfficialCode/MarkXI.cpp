@@ -93,7 +93,7 @@ void MarkXI::RobotInit()
 		printf("Renaming previous log file\n");		
 		string fileNameDefault = "logT.txt";
 		stringstream fileName;
-		fileName << fileNameDefault << rand();
+		fileName << "logT_" << rand() << ".txt";
 		rename(fileNameDefault.c_str(), fileName.str().c_str());
 		printf("Completed with renaming previous log file\n");
 		//maybe use file finding? (find())
@@ -143,6 +143,21 @@ void MarkXI::Disabled()
 void MarkXI::Autonomous(void)
 {
 	printf("Starting Autonomous \n");
+
+	float driveDist = DriverStation::GetInstance()->GetAnalogIn(3); //currently 6.5
+	Molecule* molecule = new Molecule();
+	Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	//Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4, TKODrive::inst()->getShifterDoubleSolenoid());
+	//Atom* cameraWait = new CameraShootAtom(TKOArm::inst()->getUsonic());
+	Atom* shoot = new ShootAtom();
+
+	//molecule->addAtom(cameraWait);
+	//molecule->addAtom(driveAndShoot);
+	molecule->addAtom(driveForward);
+	molecule->addAtom(shoot);
+	molecule->MoleculeInit();
+	
+	TKOLogger::inst()->Start();
 	TKOLogger::inst()->addMessage("--------------Autonomous started-------------");
 	if (DriverStation::GetInstance()->IsFMSAttached())
 	{
@@ -158,35 +173,23 @@ void MarkXI::Autonomous(void)
 	 * insert new PID values
 	 * during auton: shoot & drive forward, calibrate arm?
 	 */
-	float driveDist = DriverStation::GetInstance()->GetAnalogIn(3);
 	//TKOVision::inst()->StartProcessing();
 	TKOShooter::inst()->Start();
 	TKOArm::inst()->Start();
+	Wait(.25);
 	TKOArm::inst()->setArmTarget(0.);
-	/*TKOArm::inst()->forwardCalibration();
-	Wait(0.1);*/
 	Wait(.5);
-	
-	Molecule* molecule = new Molecule();
-	Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
-	//Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4, TKODrive::inst()->getShifterDoubleSolenoid());
-	//Atom* cameraWait = new CameraShootAtom(TKOArm::inst()->getUsonic());
-	Atom* shoot = new ShootAtom();
-
-	//molecule->addAtom(cameraWait);
-	//molecule->addAtom(driveAndShoot);
-	molecule->addAtom(driveForward);
-	molecule->addAtom(shoot);
-	molecule->MoleculeInit();
-	
 	molecule->start();
 
-	printf("Ending Autonomous \n");
+	/*printf("Ending Autonomous \n");
 	//delete cameraWait;
-	//delete driveForward;
+	delete driveForward;
+	printf("Deleted driveforward\n");
 	//delete driveAndShoot;
 	//delete molecule;
-	//delete shoot;
+	delete shoot;
+	printf("Deleted shoot\n");*/
+	delete molecule;
 	
 	//TKOVision::inst()->StopProcessing();
 	while (IsEnabled())

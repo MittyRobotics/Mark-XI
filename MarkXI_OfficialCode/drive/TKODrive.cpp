@@ -89,6 +89,8 @@ void TKODrive::DriveRunner()
 	{
 		m_Instance->TankDrive();
 		m_Instance->LogData();
+		m_Instance->ManualShift();
+		m_Instance->AutoShift();
 		//m_Instance->VerifyJags();
 		Wait(0.005);
 	}
@@ -226,13 +228,11 @@ void TKODrive::TankDrive()
 	}
 	else
 	{
-		drive1->Set(stick1.GetY() * 0.8);
-		drive2->Set(stick1.GetY() * 0.8);
-		drive3->Set(-stick2.GetY() * 0.8);
-		drive4->Set(-stick2.GetY() * 0.8);
+		drive1->Set(stick1.GetY() /* * 0.8*/);
+		drive2->Set(stick1.GetY() /* * 0.8*/);
+		drive3->Set(-stick2.GetY() /* * 0.8*/);
+		drive4->Set(-stick2.GetY() /* * 0.8*/);
 	}
-	TKODrive::ManualShift();
-	TKODrive::AutoShift();
 	
 	/*
 	 * code for shooting while driving:

@@ -232,8 +232,8 @@ void TKOArm::currentTimeout()
 {
 	if (_arm.GetOutputCurrent() >= ARM_CURRENT_THRESHOLD)
 	{
-		printf("Arm current timeout\n");
-		TKOLogger::inst()->addMessage("CRITICAL: ARM CURRENT TIMEOUT");
+		printf("Arm current timeout %f \n", _arm.GetOutputCurrent());
+		TKOLogger::inst()->addMessage("CRITICAL: ARM CURRENT TIMEOUT %f", _arm.GetOutputCurrent());
 		Timer timeout;
 		timeout.Start();
 		while (timeout.Get() <= ARM_CURRENT_TIMEOUT)
@@ -260,6 +260,7 @@ void TKOArm::resetEncoder()
 }
 void TKOArm::runManualArm()
 {	
+	//printf("running manual arm");
 	if (DriverStation::GetInstance()->IsAutonomous())
 		return;
 	if (stick4.GetRawButton(8))
