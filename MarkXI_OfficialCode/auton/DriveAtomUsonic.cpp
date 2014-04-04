@@ -28,7 +28,7 @@ void DriveAtomUsonic::run() {
 	//don't forget to divide number of rotations by REVS_PER_FOOT in order to get feet traveled
 	float tarDistE = 18. - tarDist; //We need to drive until we pass x feet, so that we are tarDist away from wall (starting position 18 feet)
 	//currently tarDistE is 11.5 ft
-	float AUTON_DRIVE_MAXOUTPUT_VOLTAGE = 12.;
+	float AUTON_DRIVE_MAXOUTPUT_VOLTAGE = 13.;
 	_drive1->SetPID(-100., 0., DRIVE_kD);
 	_drive3->SetPID(-100., 0., DRIVE_kD);
 	_drive1->ConfigMaxOutputVoltage(AUTON_DRIVE_MAXOUTPUT_VOLTAGE);
@@ -50,8 +50,8 @@ void DriveAtomUsonic::run() {
 	{
 		printf("In the outer while loop of drive atom!\n");
 		//while current real distance is over target distance and ultrasonic confirms
-		_drive1->Set(_drive1->Get() + 1.);		
-		_drive3->Set(_drive3->Get() - 1.);
+		_drive1->Set(_drive1->Get() + 1.625);		
+		_drive3->Set(_drive3->Get() - 1.625);
 		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave	
 		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 		
@@ -71,10 +71,10 @@ void DriveAtomUsonic::run() {
 			
 			/*if (usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET < 3.2)
 				break;*/
-			if (_drive1->GetPosition() > (_drive1->Get() - 0.01) and _drive3->GetPosition() < (_drive3->Get() + 0.01))
+			if (_drive1->GetPosition() > (_drive1->Get() - 0.3) and _drive3->GetPosition() < (_drive3->Get() + 0.3))
 			{
-				//break;
-				printf("in break!!!\n");
+				TKOLogger::inst()->addMessage("BREAKING FROM SMALL LOOP");
+				break;
 			}
 			//while we havent reached our new small samped target, dont do anything. Otherwise ramp again
 		}

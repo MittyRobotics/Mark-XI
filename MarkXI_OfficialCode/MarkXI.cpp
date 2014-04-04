@@ -101,6 +101,7 @@ void MarkXI::RobotInit()
 	
 	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------TIMESTAMP: %f", GetFPGATime());
 	TKOGyro::inst()->reset();
+	TKORoller::inst();
 	//AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
@@ -136,7 +137,9 @@ void MarkXI::Disabled()
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
 	{
-		//DSLog(6, "") ULTRASONIC VALUE
+		DSClear();
+		//DSLog(6, "Dist: ", TKOArm::inst()->getUsonic()->GetV); //ULTRASONIC VALUE
+		Wait(.1);
 	}
 }
 

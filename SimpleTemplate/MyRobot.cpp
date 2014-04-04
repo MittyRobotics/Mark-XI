@@ -3,6 +3,7 @@
 class RobotDemo : public SimpleRobot
 {
 	Relay relay2, relay3, relay4, relay5;
+	CANJaguar d1, d2, d3, d4;
 	Compressor comp;
 public:
 	RobotDemo():
@@ -10,8 +11,40 @@ public:
 		relay3(3, Relay::kBothDirections),
 		relay4(4, Relay::kBothDirections),
 		relay5(5, Relay::kBothDirections),
+		d1(1, CANJaguar::kPosition),
+		d2(4, CANJaguar::kPercentVbus),
+		d3(2, CANJaguar::kPosition),
+		d4(3, CANJaguar::kPercentVbus),
 		comp(3,1)
-	{}
+	{
+		d1.SetSpeedReference(CANJaguar::kSpeedRef_QuadEncoder);
+		d1.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
+		d1.ConfigEncoderCodesPerRev(250);
+		d1.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
+		d1.SetSafetyEnabled(false); //new before true
+
+		d3.SetSpeedReference(CANJaguar::kSpeedRef_QuadEncoder);
+		d3.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
+		d3.ConfigEncoderCodesPerRev(250);
+		d3.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
+		d3.SetSafetyEnabled(false);
+
+		d2.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
+		d2.SetSafetyEnabled(false);
+
+		d4.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
+		d4.SetSafetyEnabled(false);
+
+		d1.SetExpiration(0.1);
+		d2.SetExpiration(0.1);
+		d3.SetExpiration(0.1);
+		d4.SetExpiration(0.1);
+		
+		d1.SetVoltageRampRate(24.0);
+		d2.SetVoltageRampRate(24.0);
+		d3.SetVoltageRampRate(24.0);
+		d4.SetVoltageRampRate(24.0);
+	}
 
 	void Autonomous()
 	{
@@ -23,47 +56,8 @@ public:
 		printf("STARTING OPERATOR\n");
 		while (IsOperatorControl() && IsEnabled())
 		{
-			for (int i = 0; i < 1; i++)
-			{
-				if (true)
-				{
-					printf("Seding data\n");
-				
-					relay2.Set(relay2.kForward);
-					relay3.Set(relay3.kForward);
-					relay4.Set(relay4.kOff);
-					relay5.Set(relay5.kOff);//record data on arduino
-					Wait(0.1);
-					relay5.Set(relay5.kForward);
-					Wait(2.);
-				}
-				relay5.Set(relay5.kForward);
-				relay2.Set(relay2.kForward);
-				relay3.Set(relay3.kForward);
-				relay4.Set(relay4.kForward);
-				Wait(0.1);
-			}
-			Wait(10.);
-			for (int i = 0; i < 1; i++)
-			{
-				if (true)
-				{
-					printf("Seding data\n");
-					relay2.Set(relay2.kForward);
-					relay3.Set(relay3.kOff);
-					relay4.Set(relay4.kOff);
-					relay5.Set(relay5.kOff);//record data on arduino
-					Wait(0.1);
-					relay5.Set(relay5.kForward);
-					Wait(2.);
-				}
-				relay5.Set(relay5.kForward);
-				relay2.Set(relay2.kForward);
-				relay3.Set(relay3.kForward);
-				relay4.Set(relay4.kForward);
-				Wait(0.1);
-			}
-			Wait(10.);
+			printf("d1 pos: %f\n", d1.GetPosition());
+			printf("d3 pos: %f\n", d3.GetPosition());
 		}
 	}
 
