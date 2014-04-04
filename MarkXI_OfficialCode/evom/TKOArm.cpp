@@ -334,8 +334,8 @@ void TKOArm::runManualArm()
 		moveToMid();
 	if (stick4.GetRawButton(4))
 		moveToBack();
-	if (stick4.GetRawButton(3))
-		moveToDSTarget();
+	/*if (stick4.GetRawButton(3))
+		moveToDSTarget();*/
 	/*else
 		moveToMid();*/
 	if (GetTime() - lastInc <= 1.){}

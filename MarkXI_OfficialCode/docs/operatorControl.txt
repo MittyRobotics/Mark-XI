@@ -14,17 +14,15 @@ Stick 2
 - button 3: manually shift to high gear
 - button 4: set ramping to 0
 - button 5: set ramping to 12
-- button 10: reverse calibration
 - button 11: forward calibration
 
 Operator Controls:
 Stick 3
 - button 4: roller intake
 - button 5: roller outtake
-- TRIGGER: must be held to fire (for automatic shooting in teleop)  //used to be button 8
+- trigger: (if auto shooting in teleop using ultrasonic and drive motor speed) must be held to fire
 Stick 4
 - button 2: move arm to middle
-- button 3: move to DS target
 - button 4: move arm to back
 - button 5: move arm to front
 - button 6: move arm one increment backwards
