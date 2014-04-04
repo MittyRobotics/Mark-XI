@@ -59,7 +59,9 @@ class TKOArm: public SensorBase
 		void forwardCalibration();
 		void reverseCalibration();
 		void resetEncoder();
+		void logArmData();
 		AnalogChannel* getUsonic();
+		DigitalInput limitSwitchArm;
 	private:
 		TKOArm();
 		DISALLOW_COPY_AND_ASSIGN(TKOArm);
@@ -67,7 +69,7 @@ class TKOArm: public SensorBase
 		static void ArmRunner();
 		const float minArmPos, maxArmPos;
 		Task *armTask;
-		float lastInc, lastCalib;
+		float lastInc, lastCalib, lastLog;
 		bool armEnabled;
 		queue<float> usonicVals;
 		float armTargetCurrent;
@@ -75,7 +77,6 @@ class TKOArm: public SensorBase
 		float usonicAvr;
 	
 		CANJaguar _arm;
-		DigitalInput limitSwitchArm;
 		AnalogChannel usonic;
 		Joystick stick1, stick2, stick3, stick4;
 };

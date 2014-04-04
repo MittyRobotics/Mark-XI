@@ -89,7 +89,9 @@ void DriveAtomUsonic::run() {
 				break;
 			}
 			//while we havent reached our new small samped target, dont do anything. Otherwise ramp again
+			Wait(0.005);
 		}
+		Wait(0.005);
 		
 	}
 	temp.Stop();

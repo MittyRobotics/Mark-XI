@@ -16,10 +16,10 @@ TKOArm* TKOArm::m_Instance = NULL;
  */
 
 TKOArm::TKOArm() :
+	limitSwitchArm(ARM_OPTICAL_SWITCH), // Optical limit switch
 	minArmPos(ARM_MINIMUM_POSITION), //TODO Critical, find out what these are...
 	maxArmPos(ARM_MAXIMUM_POSITION),
 	_arm(ARM_JAGUAR_ID, CANJaguar::kPosition), 
-	limitSwitchArm(ARM_OPTICAL_SWITCH), // Optical limit switch
 	usonic(ULTRASONIC_PORT),
 	stick1(STICK_1_PORT),
 	stick2(STICK_2_PORT),
@@ -39,6 +39,7 @@ TKOArm::TKOArm() :
 	_arm.EnableControl(0.);
 	lastInc = GetTime();
 	lastCalib = GetTime();
+	lastLog = GetTime();
 	//switchToPositionMode();
 	armTask = new Task("TKOArm", (FUNCPTR) ArmRunner, 1);
 	armEnabled = true;
@@ -78,6 +79,7 @@ void TKOArm::ArmRunner()
 		m_Instance->printDSMessages();
 		m_Instance->currentTimeout();
 		m_Instance->armTargetUpdate();
+		m_Instance->logArmData();
 		Wait(0.005);
 	}
 }
@@ -116,6 +118,22 @@ float TKOArm::getSmoothValue() {
 	}
 	return sum/count;
 }
+void TKOArm::logArmData()
+{
+	if (GetTime() - lastLog < 1.)
+		return;
+	
+	TKOLogger::inst()->addMessage("-----ARM DATA------");
+
+	TKOLogger::inst()->addMessage("Arm voltage output: %f", _arm.GetOutputVoltage());
+	TKOLogger::inst()->addMessage("Arm current output: %f", _arm.GetOutputCurrent());
+	TKOLogger::inst()->addMessage("Arm target: %f", _arm.Get());
+	TKOLogger::inst()->addMessage("Arm position: %f", _arm.GetPosition());
+	TKOLogger::inst()->addMessage("Arm jaguar temp: %f", _arm.GetTemperature());
+	TKOLogger::inst()->addMessage("Arm battery bus voltage: %f\n", _arm.GetBusVoltage());
+	
+	lastLog = GetTime();
+}
 void TKOArm::printDSMessages()
 {
 	float tempVal = usonic.GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET;
@@ -138,6 +156,7 @@ void TKOArm::printDSMessages()
 	DSLog(4, "Arm Tar %f", _arm.Get());
 	//DSLog(5, "DistR %f", avr); //gets feet
 	DSLog(6, "Dist %f", tempVal); //gets feet
+	//printf("Running arm, ready to fire %d\n", armInFiringRange());
 	
 }
 void TKOArm::forwardCalibration()
@@ -163,7 +182,7 @@ void TKOArm::forwardCalibration()
 		//val += 0.00001;
 		printf("arm tar %f\n", _arm.Get());
 		printf("arm pos %f\n", _arm.GetPosition());
-		_arm.Set(_arm.Get() - 0.0001);
+		_arm.Set(_arm.Get() - 0.0002);
 		//_arm.Set(val);
 	}
 	printf("Out of while loop calib\n");
@@ -198,7 +217,7 @@ void TKOArm::reverseCalibration()
 		//val += 0.00001;
 		printf("arm tar %f\n", _arm.Get());
 		printf("arm pos %f\n", _arm.GetPosition());
-		_arm.Set(_arm.Get() + 0.0001);
+		_arm.Set(_arm.Get() + 0.0002);
 		//_arm.Set(val);
 	}
 	printf("Out of while loop calib\n");
@@ -234,11 +253,12 @@ void TKOArm::currentTimeout()
 	{
 		printf("Arm current timeout %f \n", _arm.GetOutputCurrent());
 		TKOLogger::inst()->addMessage("CRITICAL: ARM CURRENT TIMEOUT %f", _arm.GetOutputCurrent());
+		TKOLogger::inst()->addMessage("ARM TARGET: %f\t ARM POSITION: %f\t ARM VOLTAGE: %f", _arm.Get(), _arm.GetPosition(), _arm.GetOutputVoltage());
 		Timer timeout;
 		timeout.Start();
 		while (timeout.Get() <= ARM_CURRENT_TIMEOUT)
 		{
-			_arm.Set(_arm.GetPosition());
+			_arm.Set(ARM_MID_POSITION);
 			_arm.ConfigMaxOutputVoltage(0.);
 			_arm.SetVoltageRampRate(0.1);
 			//TODO Do something here
@@ -269,7 +289,7 @@ void TKOArm::runManualArm()
 	}
 	if (stick2.GetRawButton(10))
 	{
-		reverseCalibration();
+		//reverseCalibration();
 		return;
 	}
 	if (stick2.GetRawButton(11))
@@ -346,7 +366,7 @@ void TKOArm::moveToMid()
 {
 	/*if (_arm.GetControlMode() == _arm.kPercentVbus)
 		TKOArm::switchToPositionMode();*/
-	setArmTarget(0.);
+	setArmTarget(ARM_MID_POSITION);
 }
 void TKOArm::moveToBack()
 {
@@ -362,9 +382,9 @@ void TKOArm::moveToDSTarget()
 }
 bool TKOArm::armInFiringRange()
 {
-	/*if (not limitSwitchArm.Get())
-		return false;*/
-	return true;
+	if (limitSwitchArm.Get())
+		return false;
+	//return true;
 	
 	if (_arm.GetPosition() >= ARM_FIRING_LEFT_BOUND and _arm.GetPosition() <= ARM_FIRING_RIGHT_BOUND)
 		return true;

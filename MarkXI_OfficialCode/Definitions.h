@@ -55,12 +55,13 @@ const int ARM_JAGUAR_ID = 7;
 const float ARM_MINIMUM_POSITION = 0.12;
 const float ARM_MAXIMUM_POSITION = -0.18;
 const float ARM_SPEED_MULTIPLIER = -.9;
-const float ARM_FIRING_LEFT_BOUND = -0.015;//-0.015;
-const float ARM_FIRING_RIGHT_BOUND = 0.0;// -0.025;
+const float ARM_FIRING_LEFT_BOUND = -0.03;//-0.015; // -0.015991   
+const float ARM_FIRING_RIGHT_BOUND = 0.;// -0.025;
 const float ARM_CURRENT_THRESHOLD = 50.;
-const float ARM_CURRENT_TIMEOUT = 1.;
+const float ARM_CURRENT_TIMEOUT = 5.;
 const float ARM_TARGET_RAMP_INCREMENT = 0.0015;
 const float ARM_MANUAL_DRIVE_INCREMENT = 0.0025;
+const float ARM_MID_POSITION = -0.014;//0.0025;
 // Spinner constants
 const float RADIUS_WHEELS = 4;
 const float TAN_SPINNER_THETA = tan(57.5);

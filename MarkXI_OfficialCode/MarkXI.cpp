@@ -82,22 +82,25 @@ public:
 void MarkXI::RobotInit()
 {
 	printf("Initializing MarkXI class \n");
-	if (DriverStation::GetInstance()->GetDigitalIn(1))
+	//if (DriverStation::GetInstance()->GetDigitalIn(1))
 	/*{
 		printf("----------------------\n"); 
 		printf("Deleting log...\n");
 		remove("logT.txt");
 		printf("Digital input 1 true\n");
 	}*/
+	/*for (int i = 0; i < 100; i++)
+		rand();
+	
 	{
 		printf("Renaming previous log file\n");		
 		string fileNameDefault = "logT.txt";
 		stringstream fileName;
 		fileName << "logT_" << rand() << ".txt";
 		rename(fileNameDefault.c_str(), fileName.str().c_str());
-		printf("Completed with renaming previous log file\n");
+		printf("Completed with renaming previous log file %s\n", fileName.str().c_str());
 		//maybe use file finding? (find())
-	}
+	}*/
 	
 	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------TIMESTAMP: %f", GetFPGATime());
 	TKOGyro::inst()->reset();
@@ -180,7 +183,7 @@ void MarkXI::Autonomous(void)
 	TKOShooter::inst()->Start();
 	TKOArm::inst()->Start();
 	Wait(.25);
-	TKOArm::inst()->setArmTarget(0.);
+	TKOArm::inst()->setArmTarget(ARM_MID_POSITION);
 	Wait(.5);
 	molecule->start();
 
