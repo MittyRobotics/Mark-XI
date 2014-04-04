@@ -35,7 +35,7 @@ TKOArm::TKOArm() :
 	_arm.ConfigEncoderCodesPerRev(250);
 	//_arm.ConfigSoftPositionLimits(maxArmPos, minArmPos);
 	//_arm.SetPID(-10000., -1., 0.);
-	_arm.SetPID(-5000., -.5, 0.);
+	_arm.SetPID(-2500., -.5, 0.); //USED TO BE -5000
 	_arm.EnableControl(0.);
 	lastInc = GetTime();
 	lastCalib = GetTime();

@@ -46,6 +46,8 @@ void DriveAtomUsonic::run() {
 	TKOLogger::inst()->addMessage("Drive 1 Position: %f\n", _drive1->GetPosition());
 	TKOLogger::inst()->addMessage("Drive 3 Position: %f\n", _drive3->GetPosition());
 	TKOLogger::inst()->addMessage("Entering first while loop");
+	Timer temp;
+	temp.Start();
 	while ((/*usonic->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET > tarDist and */(_drive3->GetPosition() > -tarDistE + 0.1 and _drive1->GetPosition() < tarDistE - 0.1)) and DriverStation::GetInstance()->IsEnabled()) 
 	{
 		printf("In the outer while loop of drive atom!\n");
@@ -54,7 +56,12 @@ void DriveAtomUsonic::run() {
 		_drive3->Set(_drive3->Get() - 1.625);
 		_drive2->Set(_drive1->GetOutputVoltage() / _drive1->GetBusVoltage()); //sets second jag to slave	
 		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
-		
+
+		if (temp.Get() > 6.)///////CRITICAL FIGURE THIS OUT
+		{
+			TKOLogger::inst()->addMessage("TIMEOUT BREAKING FROM SMALL LOOP");
+			break;
+		}
 		while (DriverStation::GetInstance()->IsEnabled())
 		{
 			printf("Autonomous driving inner while loop\n");
@@ -76,10 +83,17 @@ void DriveAtomUsonic::run() {
 				TKOLogger::inst()->addMessage("BREAKING FROM SMALL LOOP");
 				break;
 			}
+			if (temp.Get() > 6.)
+			{
+				TKOLogger::inst()->addMessage("TIMEOUT BREAKING FROM SMALL LOOP");
+				break;
+			}
 			//while we havent reached our new small samped target, dont do anything. Otherwise ramp again
 		}
 		
 	}
+	temp.Stop();
+	temp.Reset();
 	_drive1->DisableControl();
 	_drive2->Set(0);
 	_drive3->DisableControl();

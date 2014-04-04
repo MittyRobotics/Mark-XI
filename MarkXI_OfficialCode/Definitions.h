@@ -52,14 +52,14 @@ const int ROLLER_2_JAGUAR_ID = 6;
 const int ARM_JAGUAR_ID = 7;
 
 //Arm constants
-const float ARM_MINIMUM_POSITION = 0.06;
-const float ARM_MAXIMUM_POSITION = -0.09;
+const float ARM_MINIMUM_POSITION = 0.12;
+const float ARM_MAXIMUM_POSITION = -0.18;
 const float ARM_SPEED_MULTIPLIER = -.9;
 const float ARM_FIRING_LEFT_BOUND = -0.015;//-0.015;
 const float ARM_FIRING_RIGHT_BOUND = 0.0;// -0.025;
 const float ARM_CURRENT_THRESHOLD = 50.;
 const float ARM_CURRENT_TIMEOUT = 1.;
-const float ARM_TARGET_RAMP_INCREMENT = 0.001;
+const float ARM_TARGET_RAMP_INCREMENT = 0.0015;
 const float ARM_MANUAL_DRIVE_INCREMENT = 0.0025;
 // Spinner constants
 const float RADIUS_WHEELS = 4;

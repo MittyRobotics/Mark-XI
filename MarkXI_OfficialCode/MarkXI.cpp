@@ -137,7 +137,7 @@ void MarkXI::Disabled()
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
 	{
-		DSClear();
+		//DSClear();
 		//DSLog(6, "Dist: ", TKOArm::inst()->getUsonic()->GetV); //ULTRASONIC VALUE
 		Wait(.1);
 	}
