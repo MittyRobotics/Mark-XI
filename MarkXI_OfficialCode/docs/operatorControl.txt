@@ -39,7 +39,7 @@ Digital Inputs:
 - 5: arm override
 - 6: log the drive data
 - 7: shoot wait
-- 8: uncock
+- 8: toggle for firing in auton
 
 Digital Outputs:
 - 1: 

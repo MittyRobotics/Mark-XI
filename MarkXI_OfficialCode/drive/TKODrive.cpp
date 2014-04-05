@@ -245,10 +245,10 @@ void TKODrive::TankDrive()
 		printf("Going to autofire\n");
 		TKOLogger::inst()->addMessage("Automatic teleop firing! D1 Speed: %f \t D3 Speed: %f \t Dist: %f", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
 		printf("Automatic teleop firing! D1 Speed: %f \t D3 Speed: %f \t Dist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
-		if (not DriverStation::GetInstance()->GetDigitalIn(8))
+		//if (not DriverStation::GetInstance()->GetDigitalIn(8))
 			StateMachine::manualFire();
-		else
-			printf("NOT DOING TELEOP AUTOFIRE\n");
+		//else
+		//	printf("NOT DOING TELEOP AUTOFIRE\n");
 		drive1->Set(0);
 		drive2->Set(0);
 		drive3->Set(0);

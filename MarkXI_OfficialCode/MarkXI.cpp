@@ -160,6 +160,7 @@ void MarkXI::Autonomous(void)
 	//molecule->addAtom(cameraWait);
 	//molecule->addAtom(driveAndShoot);
 	molecule->addAtom(driveForward);
+	//if (DriverStation::GetInstance()->GetDigitalIn(8))
 	molecule->addAtom(shoot);
 	molecule->MoleculeInit();
 	
