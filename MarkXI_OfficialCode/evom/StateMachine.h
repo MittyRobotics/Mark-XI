@@ -10,7 +10,7 @@
 #include "../Definitions.h"
 #include "../log/TKOLogger.h"
 #include "TKOArm.h"
-//#include "TKOLEDArduino.h"
+#include "TKOLEDArduino.h"
 
 /*
  * 0b | IC | LL | PE | PR |
@@ -38,12 +38,12 @@
 #define LATCH_LOCKED_PISTON_RETRACTED 5	// LL and PR
 #define CONST_READY_TO_FIRE 14	// IC and LL and PE
 
-#define PISTON_RETRACT_TIMEOUT 5.
-#define LATCH_LOCK_FORWARD_TIMEOUT 3.
-#define PISTON_EXTEND_TIMEOUT 5.
-#define LATCH_UNLOCK_REVERSE_TIMEOUT 3.
+#define PISTON_RETRACT_TIMEOUT 15.
+#define LATCH_LOCK_FORWARD_TIMEOUT 10.
+#define PISTON_EXTEND_TIMEOUT 15.
+#define LATCH_UNLOCK_REVERSE_TIMEOUT 10.
 #define POST_SHOOT_WAIT_TIME 1.
-#define SHOOT_ROLLER_PRERUN_TIME .1
+#define SHOOT_ROLLER_PRERUN_TIME .15
 
 // Define the states
 typedef enum {
@@ -87,6 +87,7 @@ public:
     static string state_to_string(instance_data_t *data);
     static void sensors_to_string(instance_data_t *data);
     static void updateDriverStationSwitchDisplay();
+    static DigitalInput* getCockingSwitch();
 private:
     static state_t do_state_piston_retract(instance_data_t *data);
     static state_t do_state_piston_extend(instance_data_t *data);

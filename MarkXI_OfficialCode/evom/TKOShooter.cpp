@@ -58,7 +58,10 @@ bool TKOShooter::startStateMachine()
 	initStateMachine();
 	if (not stateMachineTask->Verify())
 		if (stateMachineTask->Start())
+		{
+			TKOLEDArduino::inst()->Start();
 			return true;
+		}
 	
 	return false;
 }
@@ -66,7 +69,10 @@ bool TKOShooter::stopStateMachine()
 {
 	//if (stateMachineTask->Verify())
 		if (stateMachineTask->Stop())
+		{
+			TKOLEDArduino::inst()->Stop();
 			return true;
+		}
 	
 	return false;
 }
@@ -75,6 +81,11 @@ int TKOShooter::runStateMachine()
 	DSLog(4, "");
 	DSLog(5, "");
 	DSLog(6, "");
+	if (stick4.GetRawButton(11))
+	{
+		printf("Resetting state machine\n");
+		initStateMachine();
+	}
 	cur_state = s.run_state(cur_state,&data);
 	//logging here
 	return -1;

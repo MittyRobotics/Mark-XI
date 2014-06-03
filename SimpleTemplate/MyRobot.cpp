@@ -2,31 +2,48 @@
 
 class RobotDemo : public SimpleRobot
 {
-	CANJaguar _arm;
-	DigitalInput armOpt, pistRetract, pistExtend, latch, isCocked, ballLim;
-	/*const int PISTON_SWITCH_RETRACT_CHANNEL = 7;
-	const int PISTON_SWITCH_EXTEND_CHANNEL = 6;
-	const int LATCH_PISTON_LOCK_SWITCH_CHANNEL = 1;
-	const int IS_COCKED_SWITCH_CHANNEL = 2;
-	const int BALL_LIMIT_SWITCH = 10;
-	const int ARM_OPTICAL_SWITCH = 11;
-	const int ULTRASONIC_PORT = 7;*/
-	
+	Relay relay2, relay3, relay4, relay5;
+	CANJaguar d1, d2, d3, d4;
+	Compressor comp;
 public:
 	RobotDemo():
-		_arm(7, CANJaguar::kPercentVbus),
-		armOpt(11),
-		pistRetract(7),
-		pistExtend(6),
-		latch(1),
-		isCocked(2),
-		ballLim(10)
-	{}
-	
-	void RobotInit()
+		relay2(2, Relay::kBothDirections),
+		relay3(3, Relay::kBothDirections),
+		relay4(4, Relay::kBothDirections),
+		relay5(5, Relay::kBothDirections),
+		d1(1, CANJaguar::kPosition),
+		d2(4, CANJaguar::kPercentVbus),
+		d3(2, CANJaguar::kPosition),
+		d4(3, CANJaguar::kPercentVbus),
+		comp(3,1)
 	{
-		_arm.SetPositionReference(_arm.kPosRef_QuadEncoder);
-		_arm.ConfigEncoderCodesPerRev(250);
+		d1.SetSpeedReference(CANJaguar::kSpeedRef_QuadEncoder);
+		d1.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
+		d1.ConfigEncoderCodesPerRev(250);
+		d1.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
+		d1.SetSafetyEnabled(false); //new before true
+
+		d3.SetSpeedReference(CANJaguar::kSpeedRef_QuadEncoder);
+		d3.SetPositionReference(CANJaguar::kPosRef_QuadEncoder);
+		d3.ConfigEncoderCodesPerRev(250);
+		d3.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
+		d3.SetSafetyEnabled(false);
+
+		d2.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
+		d2.SetSafetyEnabled(false);
+
+		d4.ConfigNeutralMode(CANJaguar::kNeutralMode_Brake);
+		d4.SetSafetyEnabled(false);
+
+		d1.SetExpiration(0.1);
+		d2.SetExpiration(0.1);
+		d3.SetExpiration(0.1);
+		d4.SetExpiration(0.1);
+		
+		d1.SetVoltageRampRate(24.0);
+		d2.SetVoltageRampRate(24.0);
+		d3.SetVoltageRampRate(24.0);
+		d4.SetVoltageRampRate(24.0);
 	}
 
 	void Autonomous()
@@ -39,19 +56,18 @@ public:
 		printf("STARTING OPERATOR\n");
 		while (IsOperatorControl() && IsEnabled())
 		{
-			printf("arm: %f\n", _arm.GetPosition());
-			DriverStation::GetInstance()->SetDigitalOut(1, armOpt.Get());
-			DriverStation::GetInstance()->SetDigitalOut(2, pistRetract.Get());
-			DriverStation::GetInstance()->SetDigitalOut(3, pistExtend.Get());
-			DriverStation::GetInstance()->SetDigitalOut(4, latch.Get());
-			DriverStation::GetInstance()->SetDigitalOut(5, isCocked.Get());
-			DriverStation::GetInstance()->SetDigitalOut(6, ballLim.Get());
+			printf("d1 pos: %f\n", d1.GetPosition());
+			printf("d3 pos: %f\n", d3.GetPosition());
 		}
 	}
 
 	void Test() 
 	{
-
+		comp.Start();
+		while (IsEnabled())
+		{
+		}
+		comp.Stop();
 	}
 };
 

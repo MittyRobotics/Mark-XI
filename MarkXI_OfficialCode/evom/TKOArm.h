@@ -30,6 +30,9 @@ class TKORoller
 #include "StateMachine.h"
 #include "../Definitions.h"
 
+#define ARM_MAX_OUTPUT_VOLTAGE 12.
+#define ARM_VOLTAGE_RAMP_RATE 24.
+
 //Code for intake roller and arm movement
 
 class TKOArm: public SensorBase
@@ -40,6 +43,7 @@ class TKOArm: public SensorBase
 		bool Start();
 		bool Stop();
 		void switchToPositionMode();
+		float getSmoothValue();
 		void printDSMessages();
 		void switchToVBusMode();
 		float getDistance();
@@ -52,7 +56,12 @@ class TKOArm: public SensorBase
 		void currentTimeout();
 		void armTargetUpdate();
 		void setArmTarget(float target);
+		void forwardCalibration();
+		void reverseCalibration();
+		void resetEncoder();
+		void logArmData();
 		AnalogChannel* getUsonic();
+		DigitalInput limitSwitchArm;
 	private:
 		TKOArm();
 		DISALLOW_COPY_AND_ASSIGN(TKOArm);
@@ -60,7 +69,7 @@ class TKOArm: public SensorBase
 		static void ArmRunner();
 		const float minArmPos, maxArmPos;
 		Task *armTask;
-		float lastInc;
+		float lastInc, lastCalib, lastLog;
 		bool armEnabled;
 		queue<float> usonicVals;
 		float armTargetCurrent;
@@ -68,8 +77,7 @@ class TKOArm: public SensorBase
 		float usonicAvr;
 	
 		CANJaguar _arm;
-		DigitalInput limitSwitchArm;
 		AnalogChannel usonic;
-		Joystick stick3, stick4;
+		Joystick stick1, stick2, stick3, stick4;
 };
 #endif

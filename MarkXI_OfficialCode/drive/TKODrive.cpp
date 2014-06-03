@@ -15,6 +15,7 @@ TKODrive::TKODrive() :
 {	
 	printf("Initializing drive\n");
 	driveTask = new Task("TKODrive", (FUNCPTR) DriveRunner, 1);
+	shifterDS.Set(shifterDS.kForward);
 
 	maxDrive1RPM = 0;
 	maxDrive3RPM = 0;
@@ -57,10 +58,10 @@ void TKODrive::initJaguars()
 	drive2->ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);   
 	drive3->ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
 	drive4->ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
-	drive1->SetVoltageRampRate(0.0);
-	drive2->SetVoltageRampRate(0.0);
-	drive3->SetVoltageRampRate(0.0);
-	drive4->SetVoltageRampRate(0.0);
+	drive1->SetVoltageRampRate(24.0);
+	drive2->SetVoltageRampRate(24.0);
+	drive3->SetVoltageRampRate(24.0);
+	drive4->SetVoltageRampRate(24.0);
 	drive1->ConfigFaultTime(0.1);
 	drive2->ConfigFaultTime(0.1);
 	drive3->ConfigFaultTime(0.1);
@@ -87,7 +88,9 @@ void TKODrive::DriveRunner()
 	while (true)
 	{
 		m_Instance->TankDrive();
-		//m_Instance->LogData();
+		m_Instance->LogData();
+		m_Instance->ManualShift();
+		m_Instance->AutoShift();
 		//m_Instance->VerifyJags();
 		Wait(0.005);
 	}
@@ -145,9 +148,33 @@ void TKODrive::LogData()
 	TKOLogger::inst()->addMessage("Drive 2 Current Output: %f", drive2->GetOutputCurrent());
 	TKOLogger::inst()->addMessage("Drive 3 Current Output: %f", drive3->GetOutputCurrent());
 	TKOLogger::inst()->addMessage("Drive 4 Current Output: %f\n", drive4->GetOutputCurrent());
+	
+	TKOLogger::inst()->addMessage("Automatic teleop fire joystick value: %d\n", stick3.GetTrigger());
 
 	TKOLogger::inst()->addMessage("Drive 1 Speed: %f", drive1->GetSpeed());
 	TKOLogger::inst()->addMessage("Drive 3 Speed: %f\n", drive3->GetSpeed());
+	
+	printf("-----DRIVE DATA------\n");
+
+	printf("Drive 1 Vbus Percent Output: %f\n", drive1->Get());
+	printf("Drive 2 Vbus Percent Output: %f\n", drive2->Get());
+	printf("Drive 3 Vbus Percent Output: %f\n", drive3->Get());
+	printf("Drive 4 Vbus Percent Output: %f\n", drive4->Get());
+
+	printf("Drive 1 Voltage Output: %f\n", drive1->GetOutputVoltage());
+	printf("Drive 2 Voltage Output: %f\n", drive2->GetOutputVoltage());
+	printf("Drive 3 Voltage Output: %f\n", drive3->GetOutputVoltage());
+	printf("Drive 4 Voltage Output: %f\n", drive4->GetOutputVoltage());
+
+	printf("Drive 1 Current Output: %f\n", drive1->GetOutputCurrent());
+	printf("Drive 2 Current Output: %f\n", drive2->GetOutputCurrent());
+	printf("Drive 3 Current Output: %f\n", drive3->GetOutputCurrent());
+	printf("Drive 4 Current Output: %f\n", drive4->GetOutputCurrent());
+	
+	printf("Automatic teleop fire joystick value: %d\n", stick3.GetTrigger());
+
+	printf("Drive 1 Speed: %f\n", drive1->GetSpeed());
+	printf("Drive 3 Speed: %f\n", drive3->GetSpeed());
 
 	driveLogCounter++;
 	lastDataLog = GetTime();
@@ -157,14 +184,14 @@ void TKODrive::TankDrive()
 {
 	if (!DriverStation::GetInstance()->IsEnabled()) return;
 	
-	if (stick1.GetRawButton(10))
+	/*if (stick1.GetRawButton(10))
 	{
 		drive1->Set(DriverStation::GetInstance()->GetAnalogIn(4));
 		drive2->Set(drive1->GetOutputVoltage() / drive1->GetBusVoltage());
 		drive3->Set(-(DriverStation::GetInstance()->GetAnalogIn(4)));
 		drive4->Set(drive3->GetOutputVoltage() / drive3->GetBusVoltage());
-	}
-	else if (stick2.GetRawButton(4))
+	}*/
+	if (stick2.GetRawButton(4))
 	{
 		drive1->SetVoltageRampRate(0.0);
 		drive2->SetVoltageRampRate(0.0);
@@ -173,10 +200,10 @@ void TKODrive::TankDrive()
 	}
 	else if (stick2.GetRawButton(5))
 	{
-		drive1->SetVoltageRampRate(12.0);
-		drive2->SetVoltageRampRate(12.0);
-		drive3->SetVoltageRampRate(12.0);
-		drive4->SetVoltageRampRate(12.0);
+		drive1->SetVoltageRampRate(24.0);
+		drive2->SetVoltageRampRate(24.0);
+		drive3->SetVoltageRampRate(24.0);
+		drive4->SetVoltageRampRate(24.0);
 	}
 	else if (stick1.GetTrigger())
 	{
@@ -201,25 +228,27 @@ void TKODrive::TankDrive()
 	}
 	else
 	{
-		drive1->Set(stick1.GetY() * 0.8);
-		drive2->Set(stick1.GetY() * 0.8);
-		drive3->Set(-stick2.GetY() * 0.8);
-		drive4->Set(-stick2.GetY() * 0.8);
+		drive1->Set(stick1.GetY() /* * 0.8*/);
+		drive2->Set(stick1.GetY() /* * 0.8*/);
+		drive3->Set(-stick2.GetY() /* * 0.8*/);
+		drive4->Set(-stick2.GetY() /* * 0.8*/);
 	}
-	TKODrive::ManualShift();
-	TKODrive::AutoShift();
 	
 	/*
 	 * code for shooting while driving:
 	 * robot must be driving full speed and operator must be holding safety for shooter to fire once it reaches target distance
 	 */
 	//printf("Speed1: %f \tSpeed2: %f \tDist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
-	if (drive1->GetSpeed() > 400 && drive3->GetSpeed() > 400 && stick3.GetRawButton(8) && TKOArm::inst()->getDistance() <= 6)
+	if (drive1->GetSpeed() > 300 && drive3->GetSpeed() > 300 && stick3.GetTrigger() && TKOArm::inst()->getDistance() <= 6.) /////ORIGINALLY stick3.GetRawButton(8)
 	{
-		printf("Auto fire?\n");
 		if (GetTime() - lastFire <= 1.) return;
 		printf("Going to autofire\n");
-		StateMachine::manualFire();
+		TKOLogger::inst()->addMessage("Automatic teleop firing! D1 Speed: %f \t D3 Speed: %f \t Dist: %f", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
+		printf("Automatic teleop firing! D1 Speed: %f \t D3 Speed: %f \t Dist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
+		//if (not DriverStation::GetInstance()->GetDigitalIn(8))
+			StateMachine::manualFire();
+		//else
+		//	printf("NOT DOING TELEOP AUTOFIRE\n");
 		drive1->Set(0);
 		drive2->Set(0);
 		drive3->Set(0);
@@ -238,12 +267,14 @@ void TKODrive::ManualShift()
 		shifterDS.Set(shifterDS.kForward);
 		lastShift = GetTime();
 		printf("Manually shifted backwards (high gear)\n");
+		TKOLogger::inst()->addMessage("Manually shifted backwards (high gear)\n");
 	}
 	if (stick2.GetRawButton(3)) 
 	{
 		shifterDS.Set(shifterDS.kReverse);
 		lastShift = GetTime();
 		printf("Manually shifted forward (low gear)\n");
+		TKOLogger::inst()->addMessage("Manually shifted backwards (low gear)\n");
 	}
 }
 void TKODrive::AutoShift()
@@ -255,12 +286,14 @@ void TKODrive::AutoShift()
 		shifterDS.Set(shifterDS.kForward);
 		lastShift = GetTime();
 		printf("Auto shifted backwards (high gear)\n");
+		TKOLogger::inst()->addMessage("Auto shifted backwards (high gear)\n");
 	}
 	else if (drive1->GetSpeed() < speedShiftRPM and drive3->GetSpeed() < speedShiftRPM and shifterDS.Get() != shifterDS.kReverse)
 	{
 		shifterDS.Set(shifterDS.kReverse);
 		lastShift = GetTime();
 		printf("Auto shifted forward (low gear)\n");
+		TKOLogger::inst()->addMessage("Auto shifted backwards (low gear)\n");
 	}
 }
 

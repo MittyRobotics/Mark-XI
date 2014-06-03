@@ -21,20 +21,23 @@
 #include "auton/CameraShootAtom.h"
 
 /*---------------MarkXI-Things-to-Do(TODO)---------------------* 
- * At beginning of auton, shift to high gear	DONE
- * 
  * Add driving jaguar current logging/burnout
+ * ADD BATERY VOLTAGE LOGGING
  * 
  * FOR 2014 OffSeason: take over scouting?
  * 
  * Test the wait time for how long the roller spins before the shooter fires
  * 
- * CRITICAL: StateMachine initialization conflicts with MarkXI solenoid initialization
- * Does it fail because of static object initialization, or is it due to conflict?
- * 
  * Determine default pneumatic states on initialization
  * 
  * -----------------------------LAST DONE-------------------------------*
+ * Last Match SVR
+ * 
+ * 	CRITICAL: StateMachine initialization conflicts with MarkXI solenoid initialization
+ * 	Does it fail because of static object initialization, or is it due to conflict? DONE
+ * 	
+ * 	At beginning of auton, shift to high gear	DONE
+ * 
  * 02/07
  *  StateMachine::initPneumatics() --> sets pneumatics to default positions
  * 	Creating duplicate static pneumatics objects in statemachine and in markxi
@@ -81,16 +84,30 @@ public:
 void MarkXI::RobotInit()
 {
 	printf("Initializing MarkXI class \n");
-	if (DriverStation::GetInstance()->GetDigitalIn(1))
+	
+	int fileNum = 0;
+	stringstream fileName;
+	while (true)
 	{
-		printf("----------------------\n");
-		printf("Deleting log...\n");
-		remove("logT.txt");
-		printf("Digital input 1 true\n");
+		fileName << "logT_" << fileNum << ".txt";
+		if (access(fileName.str().c_str(), F_OK) != -1)
+		{
+			//file exists
+			fileNum += 1;
+		}
+		else
+			break;
 	}
+
+	printf("Renaming previous log file\n");		
+	string fileNameDefault = "logT.txt";
+	rename(fileNameDefault.c_str(), fileName.str().c_str());
+	printf("Completed with renaming previous log file %s\n", fileName.str().c_str());
+	
 	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------TIMESTAMP: %f", GetFPGATime());
 	TKOGyro::inst()->reset();
-	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
+	TKORoller::inst();
+	//AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
 	printf("Initialized the MarkXI class \n");
 }
 
@@ -104,7 +121,6 @@ void MarkXI::Test()
 	{
 		DSClear();
 		StateMachine::updateDriverStationSwitchDisplay();
-		//StateMachine::
 	}
 	printf("Stopped testing \n");
 	compressor.Stop();
@@ -120,57 +136,76 @@ void MarkXI::Disabled()
 	TKOShooter::inst()->Stop();
 	TKODrive::inst()->Stop();
 	TKOArm::inst()->Stop();
-	TKOVision::inst()->StopProcessing();
+	//TKOVision::inst()->StopProcessing();
 	TKOLogger::inst()->Stop();
 	printf("Robot successfully died!\n");
 	while (IsDisabled())
-	{}
+	{
+		//DSClear();
+		//DSLog(6, "Dist: ", TKOArm::inst()->getUsonic()->GetV); //ULTRASONIC VALUE
+		Wait(.1);
+	}
 }
 
 void MarkXI::Autonomous(void)
 {
 	printf("Starting Autonomous \n");
+
+	float driveDist = DriverStation::GetInstance()->GetAnalogIn(3); //currently 6.5
+	Molecule* molecule = new Molecule();
+	Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
+	//Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4, TKODrive::inst()->getShifterDoubleSolenoid());
+	//Atom* cameraWait = new CameraShootAtom(TKOArm::inst()->getUsonic());
+	Atom* shoot = new ShootAtom();
+
+	//molecule->addAtom(cameraWait);
+	//molecule->addAtom(driveAndShoot);
+	molecule->addAtom(driveForward);
+	//if (DriverStation::GetInstance()->GetDigitalIn(8))
+	molecule->addAtom(shoot);
+	molecule->MoleculeInit();
+	
+	TKOLogger::inst()->Start();
 	TKOLogger::inst()->addMessage("--------------Autonomous started-------------");
 	if (DriverStation::GetInstance()->IsFMSAttached())
 	{
 		TKOLogger::inst()->addMessage("-----------FMS DETECTED------------");
 		TKOLogger::inst()->addMessage("PROBABLY A SERIOUS MATCH");
-		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kBlue);
-		TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
-		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kRed);
-		TKOLogger::inst()->addMessage("RED ALLIANCE!");
+		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kBlue)
+			TKOLogger::inst()->addMessage("BLUE ALLIANCE!");
+		if (DriverStation::GetInstance()->GetAlliance() == DriverStation::GetInstance()->kRed)
+			TKOLogger::inst()->addMessage("RED ALLIANCE!");
 	}
 
 	/* ---TODO for auton---
 	 * insert new PID values
 	 * during auton: shoot & drive forward, calibrate arm?
 	 */
-	float driveDist = 3.;
 	//TKOVision::inst()->StartProcessing();
 	TKOShooter::inst()->Start();
-	
-	Molecule* molecule = new Molecule();
-	//Atom* driveForward = new DriveAtomUsonic(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4);
-	Atom* driveAndShoot = new DriveAndShootUsonicAtom(driveDist, TKOArm::inst()->getUsonic(), &molecule->drive1, &molecule->drive2, &molecule->drive3, &molecule->drive4, TKODrive::inst()->getShifterDoubleSolenoid());
-	Atom* cameraWait = new CameraShootAtom(TKOArm::inst()->getUsonic());
-	//Atom* shoot = new ShootAtom();
-
-	//molecule->addAtom(cameraWait);
-	molecule->addAtom(driveAndShoot);
-	molecule->MoleculeInit();
-	
+	TKOArm::inst()->Start();
+	Wait(.25);
+	TKOArm::inst()->setArmTarget(ARM_MID_POSITION);
+	Wait(.5);
 	molecule->start();
 
-	printf("Ending Autonomous \n");
+	/*printf("Ending Autonomous \n");
+	//delete cameraWait;
+	delete driveForward;
+	printf("Deleted driveforward\n");
+	//delete driveAndShoot;
+	//delete molecule;
+	delete shoot;
+	printf("Deleted shoot\n");*/
 	delete molecule;
-	delete cameraWait;
-	//delete driveForward;
-	delete driveAndShoot;
-	//delete shoot;
 	
 	//TKOVision::inst()->StopProcessing();
+	while (IsEnabled())
+	{}
 	TKOShooter::inst()->Stop();
-	TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
+	TKOArm::inst()->Stop();
+	//TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
+	printf("Ended autonomous\n");
 }
 
 void MarkXI::OperatorControl()
@@ -201,6 +236,11 @@ void MarkXI::OperatorControl()
 		//DSLog(4, "Clock %f\n", GetClock());
 		Wait(LOOPTIME - loopTimer.Get());
 		loopTimer.Reset();
+		
+		if (DriverStation::GetInstance()->GetBatteryVoltage() < 8.)
+		{
+			TKOLogger::inst()->addMessage("Battery voltage very low: %f\n", DriverStation::GetInstance()->GetBatteryVoltage());
+		}
 	}
 
 	TKOShooter::inst()->Stop();
@@ -220,8 +260,8 @@ void MarkXI::Operator()
 	// stick 1 button 10 will use analog input 4 to set drive motors (see TKODrive.cpp)
 	// stick 4 button 9  will use analog input 3 to set arm position (see TKOArm.cpp)
 	
-	if (stick1. GetRawButton(11))
-		TKOGyro::inst()->reset();
+	//if (stick1. GetRawButton(11))
+	//	TKOGyro::inst()->reset();
 
 }
 

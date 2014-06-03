@@ -97,7 +97,10 @@ state_t StateMachine::run_state( state_t cur_state, instance_data_t *data ) {
 	updateDriverStationSwitchDisplay();
     return _state_table[ cur_state ]( data );
 };
-
+DigitalInput* StateMachine::getCockingSwitch()
+{
+	return _is_cocked;
+}
 
 int StateMachine::getSensorData(instance_data_t *data)
 {
@@ -131,9 +134,6 @@ state_t StateMachine::init(instance_data_t *data, Joystick *stick)
     //sensors_to_string(data);
     printf("\n %d \n", sensors);
     TKOLogger::inst()->addMessage("Sensors at initialization: %d \n", sensors);
-    printf("Turning on LED Arduino control");
-    TKOLogger::inst()->addMessage("Turning on LED Arduino control");
-    //TKOLEDArduino::inst()->Start();
     
     switch (sensors) {
       case DONE_FIRING:
@@ -156,8 +156,8 @@ state_t StateMachine::init(instance_data_t *data, Joystick *stick)
 
 state_t StateMachine::do_state_piston_retract(instance_data_t *data)
 {
-	//TKOLEDArduino::inst()->setMode(1);
 	setArmMoveable(false);
+	TKOLEDArduino::inst()->setMode(1);
 	TKOLogger::inst()->addMessage("STATE ENTER Piston retract; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     // reason is that 0b0010 = 2 is piston extended
     if (createIntFromBoolArray(data) != DONE_FIRING) {
@@ -165,6 +165,7 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
         return STATE_ERR;
     }
     data->curState = STATE_PISTON_RETRACT;
+    _timer->Reset();
     _timer->Start();
 
     _piston_retract_extend->Set(DoubleSolenoid::kReverse);
@@ -173,7 +174,7 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
     int sensors = 0;
     // reason for 8 is that piston is retracted then
     while (sensors = getSensorData(data), sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING) ) {
-    	printf("Piston Retract running: %d  Sensors: %d\n", sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING), sensors);
+    	//printf("Piston Retract running: %d  Sensors: %d\n", sensors != PISTON_RETRACTED && (sensors == 0 || sensors == DONE_FIRING), sensors);
         if (_timer->Get() > PISTON_RETRACT_TIMEOUT) {
             _timer->Stop();
             _timer->Reset();
@@ -197,15 +198,16 @@ state_t StateMachine::do_state_piston_retract(instance_data_t *data)
 
 state_t StateMachine::do_state_latch_lock(instance_data_t * data)
 {
-	//TKOLEDArduino::inst()->setMode(2);
 	TKOLogger::inst()->addMessage("STATE ENTER Latch lock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
 	setArmMoveable(false);
+	TKOLEDArduino::inst()->setMode(2);
     // reason is that 0b0100 = 4 is piston extended
     if (createIntFromBoolArray(data) != PISTON_RETRACTED) {
     	TKOLogger::inst()->addMessage("STATE ERROR ENTER Latch lock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
         return STATE_ERR;
     }
     data->curState = STATE_LATCH_LOCK;
+    _timer->Reset();
     _timer->Start();
 
     _latch_lock_unlock->Set(DoubleSolenoid::kForward);
@@ -215,7 +217,7 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
 
     // reason for 8 is that piston is retracted then
     while (sensors = getSensorData(data), sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED)) {
-    	printf("latch_lock running: %d\n", sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED));
+    	//printf("latch_lock running: %d\n", sensors != LATCH_LOCKED_PISTON_RETRACTED && (sensors == PISTON_RETRACTED));
     	      
     	if (_timer->Get() > LATCH_LOCK_FORWARD_TIMEOUT) {
             _timer->Stop();
@@ -239,9 +241,9 @@ state_t StateMachine::do_state_latch_lock(instance_data_t * data)
 
 state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 {
-	//TKOLEDArduino::inst()->setMode(3);
 	TKOLogger::inst()->addMessage("STATE ENTER Piston extend; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
 	setArmMoveable(false);
+	TKOLEDArduino::inst()->setMode(3);
 	
     // reason is that 0b0100 = 4 is piston extended
     if (createIntFromBoolArray(data) != LATCH_LOCKED_PISTON_RETRACTED) {
@@ -249,6 +251,7 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
         return STATE_ERR;
     }
     data->curState = STATE_PISTON_EXTEND;
+    _timer->Reset();
     _timer->Start();
 
     _piston_retract_extend->Set(DoubleSolenoid::kForward);
@@ -258,7 +261,7 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 
     // reason for 8 is that piston is retracted then
     while (sensors = getSensorData(data), sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6)) {
-    	printf("piston_extend running: %d\n", sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6));
+    	//printf("piston_extend running: %d\n", sensors != CONST_READY_TO_FIRE && (sensors == 12 || sensors == LATCH_LOCKED_PISTON_RETRACTED || sensors == 4 || sensors == 6));
     	    	 
     	if (_timer->Get() > PISTON_EXTEND_TIMEOUT) {
             _timer->Stop();
@@ -282,8 +285,8 @@ state_t StateMachine::do_state_piston_extend(instance_data_t * data)
 
 state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 {
-	//TKOLEDArduino::inst()->setMode(4);
 	setArmMoveable(false);
+	TKOLEDArduino::inst()->setMode(4);
 	TKOLogger::inst()->addMessage("STATE ENTER Ready to Fire; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
     if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE) {
@@ -301,7 +304,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
     {
     	/*DSLog(4, "READY TO FIRE");
     	DSLog(5, "Arm status: %d", TKOArm::inst()->armInFiringRange());*/
-    	if (StateMachine::forceFire)
+    	if (StateMachine::forceFire and TKOArm::inst()->armInFiringRange())
     	{
     		StateMachine::forceFire = false;
     		break;
@@ -314,8 +317,8 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 
 state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
 {
-	//TKOLEDArduino::inst()->setMode(5);
 	setArmMoveable(false);
+	TKOLEDArduino::inst()->setMode(5);
 	TKOLogger::inst()->addMessage("STATE ENTER Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     // reason is that 0b0111 = 7 is piston extended, is cocked, and latch locked
     if (createIntFromBoolArray(data) != CONST_READY_TO_FIRE or !TKOArm::inst()->armInFiringRange()) {
@@ -325,7 +328,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     }
     
     data->curState = STATE_LATCH_UNLOCK;
-    
+    _timer->Reset();
     _timer->Start();
     
     TKORoller::inst()->override = true;
@@ -365,6 +368,7 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
 
     TKOLogger::inst()->addMessage("STATE SUCCESS EXIT Latch Unlock; state: %s; sensors: %d", state_to_string(data).c_str(), createIntFromBoolArray(data));
     TKOLogger::inst()->addMessage("!!!SUCCESSFUL SHOT!!!");
+    TKOLogger::inst()->addMessage("!!!Shot Distance: %f\n", (TKOArm::inst()->getUsonic()->GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET));
     StateMachine::autonFired = true;
     return STATE_PISTON_RETRACT;
 }
@@ -421,7 +425,7 @@ void StateMachine::sensors_to_string(instance_data_t *data)
 state_t StateMachine::do_err_state(instance_data_t *data)
 {
 	//GetSensorData(data);
-	//TKOLEDArduino::inst()->setMode(6);
+	TKOLEDArduino::inst()->setMode(6);
 	if (GetTime() - lastSensorStringPrint > 1.)
 	{
 		printf("%s\n",state_to_string(data).c_str());
