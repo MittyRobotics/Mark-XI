@@ -57,7 +57,6 @@ class TKOArm: public SensorBase
 		void armTargetUpdate();
 		void setArmTarget(float target);
 		void forwardCalibration();
-		void reverseCalibration();
 		void resetEncoder();
 		void logArmData();
 		AnalogChannel* getUsonic();

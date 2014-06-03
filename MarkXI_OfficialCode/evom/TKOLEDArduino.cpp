@@ -3,6 +3,11 @@
 #include "TKOLEDArduino.h"
 
 TKOLEDArduino* TKOLEDArduino::m_Instance = NULL;
+/*
+ * 
+ * THIS CLASS IS STARTED FROM TKOShooter::startStateMachine()
+ * 
+ */
 
 TKOLEDArduino::TKOLEDArduino():
 		data1(2, Relay::kBothDirections),

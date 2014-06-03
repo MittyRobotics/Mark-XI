@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 03/01/14
+//on 06/03/14
 #include "TKOArm.h"
 
 TKOArm* TKOArm::m_Instance = NULL;
@@ -47,7 +47,7 @@ TKOArm::TKOArm() :
 	armTargetFinal = armTargetCurrent;
 	if (limitSwitchArm.Get())
 	{
-		printf("ARM NOT IN SWITCH\n");
+		printf("ARM NOT IN SWITCH ON START\n");
 		//kill the arm? because init position not in center
 		//TODO Maybe remove this for testing
 		/*armEnabled = false;
@@ -137,26 +137,13 @@ void TKOArm::logArmData()
 void TKOArm::printDSMessages()
 {
 	float tempVal = usonic.GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET;
-	/*float avr = 0.;
-	while (usonicVals.size() < 10)
-	{
-		usonicVals.push(usonic.GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET);
-		usonicAvr += tempVal;
-	}
 	
-	usonicAvr -= usonicVals.back();
-	usonicAvr += tempVal;
-	usonicVals.push(tempVal);
-	usonicVals.pop();
-	avr = usonicAvr / usonicVals.size();*/
 	DriverStation::GetInstance()->SetDigitalOut(8,limitSwitchArm.Get());
 	DSClear();
 	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
 	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
 	DSLog(4, "Arm Tar %f", _arm.Get());
-	//DSLog(5, "DistR %f", avr); //gets feet
 	DSLog(6, "Dist %f", tempVal); //gets feet
-	//printf("Running arm, ready to fire %d\n", armInFiringRange());
 	
 }
 void TKOArm::forwardCalibration()
@@ -179,11 +166,10 @@ void TKOArm::forwardCalibration()
 	_arm.Set(0.);
 	while (_temp.Get() < 5. and limitSwitchArm.Get() and DriverStation::GetInstance()->IsEnabled())
 	{
-		//val += 0.00001;
 		printf("arm tar %f\n", _arm.Get());
 		printf("arm pos %f\n", _arm.GetPosition());
-		_arm.Set(_arm.Get() - 0.0002);
-		//_arm.Set(val);
+		//_arm.Set(_arm.Get() - 0.0002);
+		_arm.Set(_arm.GetPosition() - 0.0002);
 	}
 	printf("Out of while loop calib\n");
 	_arm.Set(_arm.GetPosition());
@@ -193,41 +179,6 @@ void TKOArm::forwardCalibration()
 	armEnabled = true;
 	printf("Done with front calib!\n");
 	TKOLogger::inst()->addMessage("Done with front calib");
-}
-void TKOArm::reverseCalibration()
-{
-	if (GetTime() - lastCalib < 1.)
-		return;
-	printf("Running rev calib\n");
-	TKOLogger::inst()->addMessage("Running rev calib");
-	armEnabled = false;
-	resetEncoder();
-	printf("arm tar %f\n", _arm.Get());
-	printf("arm pos %f\n", _arm.GetPosition());
-	_arm.Set(0.);
-	Timer _temp;
-	_temp.Start();
-	//float val = _arm.Get();
-	Wait(.1);
-	printf("arm tar %f\n", _arm.Get());
-	printf("arm pos %f\n", _arm.GetPosition());
-	_arm.Set(0.);
-	while (_temp.Get() < 5. and limitSwitchArm.Get() and DriverStation::GetInstance()->IsEnabled())
-	{
-		//val += 0.00001;
-		printf("arm tar %f\n", _arm.Get());
-		printf("arm pos %f\n", _arm.GetPosition());
-		_arm.Set(_arm.Get() + 0.0002);
-		//_arm.Set(val);
-	}
-	printf("Out of while loop calib\n");
-	_arm.Set(_arm.GetPosition());
-	_temp.Stop();
-	resetEncoder();
-	lastCalib = GetTime();
-	armEnabled = true;
-	printf("Done with rev calib!\n");
-	TKOLogger::inst()->addMessage("Done with rev calib");
 }
 void TKOArm::setArmTarget(float target)
 {
@@ -258,10 +209,11 @@ void TKOArm::currentTimeout()
 		timeout.Start();
 		while (timeout.Get() <= ARM_CURRENT_TIMEOUT)
 		{
-			_arm.Set(ARM_MID_POSITION);
+			_arm.Set(ARM_MID_POSITION); //TODO IS THIS WHAT CAUSES JERKING
 			_arm.ConfigMaxOutputVoltage(0.);
 			_arm.SetVoltageRampRate(0.1);
-			//TODO Do something here
+			//TODO Do something here.
+			//TODO test configmaxoutputvoltage to see if it works how i think it should (same for setvoltageramprate
 		}
 		timeout.Stop();
 		_arm.ConfigMaxOutputVoltage(ARM_MAX_OUTPUT_VOLTAGE);
@@ -299,10 +251,6 @@ void TKOArm::runManualArm()
 	}
 	
 	TKORoller::inst()->rollerSimpleMove();
-	//TKORoller::inst()->rollerManualMove();
-	/*if (_arm.GetPosition() <= -0.05)
-		TKORoller::inst()->rollerIn();*/
-	//TODO ^
 	
 	if (DriverStation::GetInstance()->GetDigitalIn(5))//if override running
 	{
@@ -316,28 +264,15 @@ void TKOArm::runManualArm()
 		return;
 	}
 	
-	/*if (stick4.GetRawButton(9))
-	{
-		while (limitSwitchArm.Get() and DriverStation::GetInstance()->IsEnabled())
-		{
-			_arm.Set(.9);
-			if (_arm.GetOutputCurrent() >= 30.)
-				break;
-		}
-		_arm.Set(_arm.Get());
-		return;
-	}*/
-	
 	if (stick4.GetRawButton(5))
 		moveToFront();
 	if (stick4.GetRawButton(2))
 		moveToMid();
 	if (stick4.GetRawButton(4))
 		moveToBack();
-	/*if (stick4.GetRawButton(3))
-		moveToDSTarget();*/
 	/*else
 		moveToMid();*/
+	
 	if (GetTime() - lastInc <= 1.){}
 	else
 	{
@@ -358,35 +293,26 @@ void TKOArm::runManualArm()
 }
 void TKOArm::moveToFront()
 {
-	/*if (_arm.GetControlMode() == _arm.kPercentVbus)
-		TKOArm::switchToPositionMode();*/
 	setArmTarget(maxArmPos);
 }
 void TKOArm::moveToMid()
 {
-	/*if (_arm.GetControlMode() == _arm.kPercentVbus)
-		TKOArm::switchToPositionMode();*/
 	setArmTarget(ARM_MID_POSITION);
 }
 void TKOArm::moveToBack()
 {
-	/*if (_arm.GetControlMode() == _arm.kPercentVbus)
-		TKOArm::switchToPositionMode();*/
 	setArmTarget(minArmPos);
 }
 void TKOArm::moveToDSTarget()
 {
-	/*if (_arm.GetControlMode() == _arm.kPercentVbus)
-		TKOArm::switchToPositionMode();*/
 	setArmTarget(DriverStation::GetInstance()->GetAnalogIn(4));
 }
-bool TKOArm::armInFiringRange()
+bool TKOArm::armInFiringRange() //TODO TEST THIS FUNCTION
 {
 	if (limitSwitchArm.Get())
 		return false;
-	//return true;
 	
-	if (_arm.GetPosition() >= ARM_FIRING_LEFT_BOUND and _arm.GetPosition() <= ARM_FIRING_RIGHT_BOUND)
+	if (_arm.GetPosition() >= ARM_FIRING_LEFT_BOUND and _arm.GetPosition() <= ARM_FIRING_RIGHT_BOUND and !limitSwitchArm.Get())
 		return true;
 	return false;
 }

@@ -1,5 +1,5 @@
 //Last edited by Vadim Korolik
-//on 02/06/2014
+//on 06/03/2014
 //@author Matthew Pleva
 
 /*
@@ -23,7 +23,6 @@ Joystick* StateMachine::_triggerJoystick = NULL;
 
 DoubleSolenoid* StateMachine::_piston_retract_extend = NULL;//new DoubleSolenoid(PISTON_RETRACT_SOLENOID_A, PISTON_RETRACT_SOLENOID_B);
 DoubleSolenoid* StateMachine::_latch_lock_unlock = NULL;//new DoubleSolenoid(LATCH_RETRACT_SOLENOID_A, LATCH_RETRACT_SOLENOID_B);
-//TODO CRITICAL If this still doesn't work, ^^  set them to null here, initialize in constructor?
 float StateMachine::lastSensorStringPrint = 0.;
 bool StateMachine::armCanMove = false;
 bool StateMachine::hasSetPneumatics = false;
@@ -302,8 +301,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 	
 	while (!_triggerJoystick->GetTrigger()/* or !_triggerJoystick->GetRawButton(3) */or !TKOArm::inst()->armInFiringRange()) 
     {
-    	/*DSLog(4, "READY TO FIRE");
-    	DSLog(5, "Arm status: %d", TKOArm::inst()->armInFiringRange());*/
+    	DSLog(5, "Arm status: %d", TKOArm::inst()->armInFiringRange());
     	if (StateMachine::forceFire and TKOArm::inst()->armInFiringRange())
     	{
     		StateMachine::forceFire = false;

@@ -40,10 +40,6 @@ void DriveAtom::run() {
 		_drive3->Set(-_distance);
 		_drive4->Set(_drive3->GetOutputVoltage() / _drive3->GetBusVoltage()); //sets fourth jag to slave
 		
-		printf("drive 1: %f, drive 3: %f, distance: %f\n", _drive1->GetPosition(), _drive3->GetPosition(), _distance);
-		//TODO what is this for???
-		//printf("breaking? %d\n", !((_drive1->GetPosition() <= _distance + 0.5) and (_drive1->GetPosition() >= _distance - 0.5)));
-		
 	}
 	printf("drive 1: %f, drive 3: %f, distance: %f\n", _drive1->GetPosition(), _drive3->GetPosition(), _distance);
 	//printf("broke %d\n", !((_drive1->GetPosition() <= _distance + 0.5) and (_drive1->GetPosition() >= _distance - 0.5)));

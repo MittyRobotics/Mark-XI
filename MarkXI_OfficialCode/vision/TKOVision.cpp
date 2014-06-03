@@ -90,7 +90,14 @@ bool TKOVision::ProccessImageFromCamera()
 	
 	if (stick4.GetRawButton(10))	// TODO figure out why writing images to file fails
 	{
-		Wait(1.);
+		printf("Starting to write files\n");
+		remove("/pics/thresholdImage.bmp");
+		remove("/pics/hullImage.bmp");
+		remove("/pics/filteredImage.bmp");
+		remove("/pics/rawImage.bmp");
+		Wait(.1);
+		printf("Files deleted, writing\n");
+		Wait(0.1);
 		thresholdImage->Write("/pics/thresholdImage.bmp");
 		convexHullImage->Write("/pics/hullImage.bmp");
 		filteredImage->Write("/pics/filteredImage.bmp");
@@ -267,9 +274,10 @@ vector<ParticleAnalysisReport> * TKOVision::getLastParticleReport()
 }
 void TKOVision::ProcessRunner()
 {
+	//This is the processing TASK function (loop)
 	printf("Running vision runner\n");
 	Timer processingTime;
-	while (true)
+	while (true) //should this be just true?
 	{
 		if (not AxisCamera::GetInstance().IsFreshImage())
 		{
@@ -288,6 +296,6 @@ void TKOVision::ProcessRunner()
 			}
 			processingTime.Stop();
 		}
-		//Wait(5. - processingTime.Get()); //wait for 5 secs total
+		Wait(5. - processingTime.Get()); //wait for 5 secs total
 	}
 }
