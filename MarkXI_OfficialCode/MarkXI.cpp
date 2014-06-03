@@ -21,8 +21,6 @@
 #include "auton/CameraShootAtom.h"
 
 /*---------------MarkXI-Things-to-Do(TODO)---------------------* 
- * At beginning of auton, shift to high gear	DONE
- * 
  * Add driving jaguar current logging/burnout
  * ADD BATERY VOLTAGE LOGGING
  * 
@@ -30,12 +28,16 @@
  * 
  * Test the wait time for how long the roller spins before the shooter fires
  * 
- * CRITICAL: StateMachine initialization conflicts with MarkXI solenoid initialization
- * Does it fail because of static object initialization, or is it due to conflict?
- * 
  * Determine default pneumatic states on initialization
  * 
  * -----------------------------LAST DONE-------------------------------*
+ * Last Match SVR
+ * 
+ * 	CRITICAL: StateMachine initialization conflicts with MarkXI solenoid initialization
+ * 	Does it fail because of static object initialization, or is it due to conflict? DONE
+ * 	
+ * 	At beginning of auton, shift to high gear	DONE
+ * 
  * 02/07
  *  StateMachine::initPneumatics() --> sets pneumatics to default positions
  * 	Creating duplicate static pneumatics objects in statemachine and in markxi
@@ -82,25 +84,25 @@ public:
 void MarkXI::RobotInit()
 {
 	printf("Initializing MarkXI class \n");
-	//if (DriverStation::GetInstance()->GetDigitalIn(1))
-	/*{
-		printf("----------------------\n"); 
-		printf("Deleting log...\n");
-		remove("logT.txt");
-		printf("Digital input 1 true\n");
-	}*/
-	/*for (int i = 0; i < 100; i++)
-		rand();
 	
+	int fileNum = 0;
+	stringstream fileName;
+	while (true)
 	{
-		printf("Renaming previous log file\n");		
-		string fileNameDefault = "logT.txt";
-		stringstream fileName;
-		fileName << "logT_" << rand() << ".txt";
-		rename(fileNameDefault.c_str(), fileName.str().c_str());
-		printf("Completed with renaming previous log file %s\n", fileName.str().c_str());
-		//maybe use file finding? (find())
-	}*/
+		fileName << "logT_" << fileNum << ".txt";
+		if (access(fileName.str().c_str(), F_OK) != -1)
+		{
+			//file exists
+			fileNum += 1;
+		}
+		else
+			break;
+	}
+
+	printf("Renaming previous log file\n");		
+	string fileNameDefault = "logT.txt";
+	rename(fileNameDefault.c_str(), fileName.str().c_str());
+	printf("Completed with renaming previous log file %s\n", fileName.str().c_str());
 	
 	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------TIMESTAMP: %f", GetFPGATime());
 	TKOGyro::inst()->reset();
@@ -119,7 +121,6 @@ void MarkXI::Test()
 	{
 		DSClear();
 		StateMachine::updateDriverStationSwitchDisplay();
-		//StateMachine::
 	}
 	printf("Stopped testing \n");
 	compressor.Stop();
