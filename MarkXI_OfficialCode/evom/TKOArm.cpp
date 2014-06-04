@@ -252,17 +252,14 @@ void TKOArm::runManualArm()
 	
 	TKORoller::inst()->rollerSimpleMove();
 	
-	if (DriverStation::GetInstance()->GetDigitalIn(5))//if override running
-	{
-		setArmTarget(stick4.GetY() * ARM_SPEED_MULTIPLIER);
-		return;
-	}
 	if (/*not StateMachine::armCanMove or*/ StateMachine::getCockingSwitch()->Get() or not armEnabled)
 	{
 		printf("Arm can't move, \n");
-		setArmTarget(_arm.GetPosition());
+		_arm.SetVoltageRampRate(0.001);
+		//setArmTarget(_arm.GetPosition());
 		return;
 	}
+	_arm.SetVoltageRampRate(0.0);
 	
 	if (stick4.GetRawButton(5))
 		moveToFront();

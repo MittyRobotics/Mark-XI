@@ -98,6 +98,7 @@ void MarkXI::RobotInit()
 	stringstream fileName;
 	while (true)
 	{
+		fileName.str("");
 		fileName << "logT_" << fileNum << ".txt";
 		if (access(fileName.str().c_str(), F_OK) != -1)
 		{
@@ -117,6 +118,7 @@ void MarkXI::RobotInit()
 	TKOGyro::inst()->reset();
 	TKORoller::inst();
 	AxisCamera::GetInstance(); //boot up camera, maybe add check to see if it worked?
+	printf("Code edited 06/03/14\n");
 	printf("Initialized the MarkXI class \n");
 }
 
@@ -198,7 +200,7 @@ void MarkXI::Autonomous(void)
 	{}
 	TKOShooter::inst()->Stop();
 	TKOArm::inst()->Stop();
-	TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
+	//TKOLogger::inst()->addMessage("--------------Autonomous ended-------------");
 	printf("Ended autonomous\n");
 }
 
@@ -210,7 +212,7 @@ void MarkXI::OperatorControl()
 	compressor.Start();
 	TKOShooter::inst()->Start();
 	TKOArm::inst()->Start();
-	TKOVision::inst()->StartProcessing();  //NEW VISION START
+	//TKOVision::inst()->StartProcessing();  //NEW VISION START
 	TKODrive::inst()->Start();
 	Timer loopTimer;
 	loopTimer.Start();
