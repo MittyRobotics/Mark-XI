@@ -182,7 +182,7 @@ void TKOArm::forwardCalibration()
 		//val += 0.00001;
 		printf("arm tar %f\n", _arm.Get());
 		printf("arm pos %f\n", _arm.GetPosition());
-		_arm.Set(_arm.GetPosition() - 0.0002);
+		_arm.Set(_arm.Get() - 0.0002);
 		//_arm.Set(val);
 	}
 	printf("Out of while loop calib\n");
