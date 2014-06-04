@@ -182,7 +182,7 @@ void TKOArm::forwardCalibration()
 		//val += 0.00001;
 		printf("arm tar %f\n", _arm.Get());
 		printf("arm pos %f\n", _arm.GetPosition());
-		_arm.Set(_arm.Get() - 0.0002);
+		_arm.Set(_arm.GetPosition() - 0.0002);
 		//_arm.Set(val);
 	}
 	printf("Out of while loop calib\n");
@@ -299,35 +299,14 @@ void TKOArm::runManualArm()
 	}
 	
 	TKORoller::inst()->rollerSimpleMove();
-	//TKORoller::inst()->rollerManualMove();
-	/*if (_arm.GetPosition() <= -0.05)
-		TKORoller::inst()->rollerIn();*/
-	//TODO ^
-	
-	if (DriverStation::GetInstance()->GetDigitalIn(5))//if override running
-	{
-		setArmTarget(stick4.GetY() * ARM_SPEED_MULTIPLIER);
-		return;
-	}
 	if (/*not StateMachine::armCanMove or*/ StateMachine::getCockingSwitch()->Get() or not armEnabled)
 	{
 		printf("Arm can't move, \n");
-		setArmTarget(_arm.GetPosition());
+		//setArmTarget(_arm.GetPosition());
+		_arm.SetVoltageRampRate(0.001);
 		return;
 	}
-	
-	/*if (stick4.GetRawButton(9))
-	{
-		while (limitSwitchArm.Get() and DriverStation::GetInstance()->IsEnabled())
-		{
-			_arm.Set(.9);
-			if (_arm.GetOutputCurrent() >= 30.)
-				break;
-		}
-		_arm.Set(_arm.Get());
-		return;
-	}*/
-	
+	_arm.SetVoltageRampRate(0.0);
 	if (stick4.GetRawButton(5))
 		moveToFront();
 	if (stick4.GetRawButton(2))
