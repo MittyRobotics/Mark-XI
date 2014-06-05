@@ -136,14 +136,14 @@ void TKOArm::logArmData()
 }
 void TKOArm::printDSMessages()
 {
-	float tempVal = usonic.GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET;
+	//float tempVal = usonic.GetVoltage() / ULTRASONIC_CONVERSION_TO_FEET;
 	
 	DriverStation::GetInstance()->SetDigitalOut(8,limitSwitchArm.Get());
 	DSClear();
 	DSLog(1, "Arm Pos: %f", _arm.GetPosition());
 	DSLog(3, "Arm Curr %f", _arm.GetOutputCurrent());
 	DSLog(4, "Arm Tar %f", _arm.Get());
-	DSLog(6, "Dist %f", tempVal); //gets feet
+	//DSLog(6, "Dist %f", tempVal); //gets feet
 	
 }
 void TKOArm::forwardCalibration()
@@ -169,7 +169,7 @@ void TKOArm::forwardCalibration()
 		printf("arm tar %f\n", _arm.Get());
 		printf("arm pos %f\n", _arm.GetPosition());
 		//_arm.Set(_arm.Get() - 0.0002);
-		_arm.Set(_arm.GetPosition() - 0.0002);
+		_arm.Set(_arm.Get() - 0.0002);
 	}
 	printf("Out of while loop calib\n");
 	_arm.Set(_arm.GetPosition());

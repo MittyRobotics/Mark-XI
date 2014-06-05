@@ -301,7 +301,7 @@ state_t StateMachine::do_state_ready_to_fire(instance_data_t * data)
 	
 	while (!_triggerJoystick->GetTrigger()/* or !_triggerJoystick->GetRawButton(3) */or !TKOArm::inst()->armInFiringRange()) 
     {
-    	DSLog(5, "Arm status: %d", TKOArm::inst()->armInFiringRange());
+    	//DSLog(5, "Arm status: %d", TKOArm::inst()->armInFiringRange());
     	if (StateMachine::forceFire and TKOArm::inst()->armInFiringRange())
     	{
     		StateMachine::forceFire = false;
