@@ -50,7 +50,7 @@ public class DriveTrain extends Subsystem
             drive2.configFaultTime(0.1);
             drive3.configFaultTime(0.1);
             drive4.configFaultTime(0.1);
-            drive1.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder); 
+            drive1.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
             drive3.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
             drive1.configEncoderCodesPerRev(250);
             drive3.configEncoderCodesPerRev(250);
@@ -74,40 +74,36 @@ public class DriveTrain extends Subsystem
     public void tankDrive() throws CANTimeoutException
     {
         if (OI.stick2.getRawButton(4))
-	{
-		drive1.setVoltageRampRate(0.0);
-		drive2.setVoltageRampRate(0.0);
-		drive3.setVoltageRampRate(0.0);
-		drive4.setVoltageRampRate(0.0);
-	}
-	else if (OI.stick2.getRawButton(5))
-	{
-		drive1.setVoltageRampRate(24.0);
-		drive2.setVoltageRampRate(24.0);
-		drive3.setVoltageRampRate(24.0);
-		drive4.setVoltageRampRate(24.0);
-	}
-	else if (OI.stick1.getTrigger())
-	{
-		drive1.setX(OI.stick1.getY() * 0.4);
-		drive2.setX(OI.stick1.getY() * 0.4);
-		drive3.setX(-OI.stick2.getY() * 0.4);
-		drive4.setX(-OI.stick2.getY() * 0.4);
-	}
-	else if (OI.stick1.getRawButton(2))
-	{
-		drive1.setX(OI.stick1.getY() * 0.2);
-		drive2.setX(OI.stick1.getY() * 0.2);
-		drive3.setX(-OI.stick2.getY() * 0.2);
-		drive4.setX(-OI.stick2.getY() * 0.2);
-	}
-	else
-	{
-		drive1.setX(OI.stick1.getY());
-		drive2.setX(OI.stick1.getY());
-		drive3.setX(-OI.stick2.getY());
-		drive4.setX(-OI.stick2.getY());
-	}
+        {
+            drive1.setVoltageRampRate(0.0);
+            drive2.setVoltageRampRate(0.0);
+            drive3.setVoltageRampRate(0.0);
+            drive4.setVoltageRampRate(0.0);
+        } else if (OI.stick2.getRawButton(5))
+        {
+            drive1.setVoltageRampRate(24.0);
+            drive2.setVoltageRampRate(24.0);
+            drive3.setVoltageRampRate(24.0);
+            drive4.setVoltageRampRate(24.0);
+        } else if (OI.stick1.getTrigger())
+        {
+            drive1.setX(OI.stick1.getY() * 0.4);
+            drive2.setX(OI.stick1.getY() * 0.4);
+            drive3.setX(-OI.stick2.getY() * 0.4);
+            drive4.setX(-OI.stick2.getY() * 0.4);
+        } else if (OI.stick1.getRawButton(2))
+        {
+            drive1.setX(OI.stick1.getY() * 0.2);
+            drive2.setX(OI.stick1.getY() * 0.2);
+            drive3.setX(-OI.stick2.getY() * 0.2);
+            drive4.setX(-OI.stick2.getY() * 0.2);
+        } else
+        {
+            drive1.setX(OI.stick1.getY());
+            drive2.setX(OI.stick1.getY());
+            drive3.setX(-OI.stick2.getY());
+            drive4.setX(-OI.stick2.getY());
+        }
     }
 
     public void logData()
@@ -115,14 +111,21 @@ public class DriveTrain extends Subsystem
 
     }
 
-    public void manualShift()
+    public void manualShiftUp(boolean direction)//false is shift backwards, true is shift forwards (up)
     {
-
+        if (direction)
+        {
+            shifterDoubleSolenoid.set(DoubleSolenoid.Value.kForward);
+            System.out.println("Manually shifted forwards (high gear)\n");
+        } else
+        {
+            shifterDoubleSolenoid.set(DoubleSolenoid.Value.kReverse);
+            System.out.println("Manually shifted backwards (low gear)\n");
+        }
     }
 
     public void autoShift()
     {
-
     }
 
     public boolean verifyJaguars()
