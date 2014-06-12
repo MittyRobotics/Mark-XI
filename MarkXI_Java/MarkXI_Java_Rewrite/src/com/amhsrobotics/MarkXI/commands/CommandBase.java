@@ -1,9 +1,9 @@
 package com.amhsrobotics.MarkXI.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.amhsrobotics.MarkXI.main.OI;
 import com.amhsrobotics.MarkXI.subsystems.ExampleSubsystem;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The base for all commands. All atomic commands should subclass CommandBase.
@@ -24,7 +24,6 @@ public abstract class CommandBase extends Command {
         // yet. Thus, their requires() statements may grab null pointers. Bad
         // news. Don't move it.
         oi = new OI();
-
         // Show what command your subsystem is running on the SmartDashboard
         SmartDashboard.putData(exampleSubsystem);
     }
