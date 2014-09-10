@@ -111,7 +111,7 @@ public class DriveTrain extends Subsystem
 
     }
 
-    public void manualShiftUp(boolean direction)//false is shift backwards, true is shift forwards (up)
+    public void manualShift(boolean direction)//false is shift backwards, true is shift forwards (up)
     {
         if (direction)
         {
