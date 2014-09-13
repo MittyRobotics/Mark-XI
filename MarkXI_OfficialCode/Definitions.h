@@ -43,13 +43,21 @@ const int STICK_3_PORT = 3;
 const int STICK_4_PORT = 4;
 
 //Jaguar ports
-const int DRIVE_L1_ID = 1;
+/*const int DRIVE_L1_ID = 1; //has encoder
 const int DRIVE_L2_ID = 4;
-const int DRIVE_R1_ID = 2;
+const int DRIVE_R1_ID = 2; //has encoder
 const int DRIVE_R2_ID = 3;
 const int ROLLER_1_JAGUAR_ID = 5;
 const int ROLLER_2_JAGUAR_ID = 6;
-const int ARM_JAGUAR_ID = 7;
+const int ARM_JAGUAR_ID = 7; */
+///ROBOT 2
+const int DRIVE_L1_ID = 5; //has encoder
+const int DRIVE_L2_ID = 7;
+const int DRIVE_R1_ID = 3; //has encoder
+const int DRIVE_R2_ID = 4;
+const int ROLLER_1_JAGUAR_ID = 2;
+const int ROLLER_2_JAGUAR_ID = 6;
+const int ARM_JAGUAR_ID = 1;
 
 //Arm constants
 const float ARM_MINIMUM_POSITION = 0.12;
