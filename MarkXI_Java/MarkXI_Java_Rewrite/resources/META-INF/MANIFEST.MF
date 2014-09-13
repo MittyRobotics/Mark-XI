@@ -1,6 +1,6 @@
 MIDlet-Name: MarkXI_Java_Rewrite
 MIDlet-Version: 1.0.0
 MIDlet-Vendor: FIRST
-MIDlet-1: RobotTemplate, ,  com.amhsrobotics.MarkXI.main.RobotTemplate
+MIDlet-1: MarkXI, , com.amhsrobotics.MarkXI.main.MarkXI
 MicroEdition-Profile: IMP-1.0
 MicroEdition-Configuration: CLDC-1.1

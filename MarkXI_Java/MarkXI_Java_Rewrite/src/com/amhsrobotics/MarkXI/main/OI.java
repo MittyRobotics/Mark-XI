@@ -12,10 +12,10 @@ public class OI {
     // One type of button is a joystick button which is any button on a joystick.
     // You create one by telling it which joystick it's on and which button
     // number it is.
-    public static final Joystick stick1 = new Joystick(RobotMap.STICK_1_PORT);
-    public static final Joystick stick2 = new Joystick(RobotMap.STICK_2_PORT);
-    public static final Joystick stick3 = new Joystick(RobotMap.STICK_3_PORT);
-    public static final Joystick stick4 = new Joystick(RobotMap.STICK_4_PORT);
+    public static final Joystick stick1 = new Joystick(Definitions.STICK_1_PORT);
+    public static final Joystick stick2 = new Joystick(Definitions.STICK_2_PORT);
+    public static final Joystick stick3 = new Joystick(Definitions.STICK_3_PORT);
+    public static final Joystick stick4 = new Joystick(Definitions.STICK_4_PORT);
     // Button button = new JoystickButton(stick, buttonNumber);
     
     // Another type of button you can create is a DigitalIOButton, which is
