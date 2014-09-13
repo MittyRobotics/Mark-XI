@@ -9,6 +9,7 @@ package com.amhsrobotics.MarkXI.main;
 
 
 import com.amhsrobotics.MarkXI.commands.CommandBase;
+import com.amhsrobotics.MarkXI.commands.TankDrive;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  */
 public class MarkXI extends IterativeRobot {
 
+    Command driveCommand;
     //Command autonomousCommand;
 
     /**
@@ -32,6 +34,7 @@ public class MarkXI extends IterativeRobot {
     public void robotInit() {
         // instantiate the command used for the autonomous period
         //autonomousCommand = new ExampleCommand();
+        driveCommand = new TankDrive();
         // Initialize all subsystems
         CommandBase.init();
     }
@@ -54,6 +57,7 @@ public class MarkXI extends IterativeRobot {
         // continue until interrupted by another command, remove
         // this line or comment it out.
         //autonomousCommand.cancel();
+        driveCommand.start();
     }
 
     /**

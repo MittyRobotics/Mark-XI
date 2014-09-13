@@ -2,7 +2,6 @@
 package com.amhsrobotics.MarkXI.commands;
 
 import com.amhsrobotics.MarkXI.main.OI;
-import com.amhsrobotics.MarkXI.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.can.CANTimeoutException;
 
 /**
@@ -55,6 +54,11 @@ public class TankDrive extends CommandBase {
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
+        if (OI.stick1.getRawButton(2))
+            driveTrain.manualShift(false);
+        else if (OI.stick1.getRawButton(4))
+            driveTrain.manualShift(true);
+        
         tankDrive(OI.stick1.getY(), OI.stick2.getY());
     }
 
