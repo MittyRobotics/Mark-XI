@@ -332,8 +332,8 @@ state_t StateMachine::do_state_latch_unlock(instance_data_t * data)
     _timer->Start();
     
     TKORoller::inst()->override = true;
-    TKORoller::inst()->_roller1.Set(1.);
-    TKORoller::inst()->_roller2.Set(-1.);
+    TKORoller::inst()->_roller1.Set(-1.);
+    TKORoller::inst()->_roller2.Set(1.);
     Wait(SHOOT_ROLLER_PRERUN_TIME); //timing for roller prerun
     
     _latch_lock_unlock->Set(DoubleSolenoid::kReverse);

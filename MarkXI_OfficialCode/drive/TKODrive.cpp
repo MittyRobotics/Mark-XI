@@ -131,6 +131,7 @@ void TKODrive::LogData()
 
 	if (!DriverStation::GetInstance()->IsEnabled()) return;
 	if (GetTime() - lastDataLog <= 1.) return; //1.0 means logs every 1 second
+	return;
 
 	TKOLogger::inst()->addMessage("-----DRIVE DATA------\n");
 

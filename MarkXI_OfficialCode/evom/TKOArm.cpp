@@ -253,6 +253,7 @@ void TKOArm::armTargetUpdate()
 }
 void TKOArm::currentTimeout()
 {
+	return; ////!!!!TODO THIS IS A TEMP FIX
 	if (_arm.GetOutputCurrent() >= ARM_CURRENT_THRESHOLD)
 	{
 		printf("Arm current timeout %f \n", _arm.GetOutputCurrent());
