@@ -61,6 +61,7 @@ class TKOArm: public SensorBase
 		void resetEncoder();
 		void logArmData();
 		AnalogChannel* getUsonic();
+		DigitalInput* getArmLS();
 		DigitalInput limitSwitchArm;
 	private:
 		TKOArm();

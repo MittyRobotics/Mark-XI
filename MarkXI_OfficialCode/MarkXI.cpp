@@ -89,6 +89,8 @@ void MarkXI::RobotInit()
 	stringstream fileName;
 	while (true)
 	{
+		fileName.flush();
+		fileName.clear();
 		fileName << "logT_" << fileNum << ".txt";
 		if (access(fileName.str().c_str(), F_OK) != -1)
 		{
@@ -114,18 +116,34 @@ void MarkXI::RobotInit()
 void MarkXI::Test()
 {	
 	printf("Calling test function \n");
-	TKOLogger::inst()->Start();
+	//TKOLogger::inst()->Start();
 	if (DriverStation::GetInstance()->GetDigitalIn(2))
 		compressor.Start();
+	
+	//DigitalInput arm(2);
+	/*CANJaguar *drive1 = new CANJaguar(3, CANJaguar::kPercentVbus);
+	drive1->SetSafetyEnabled(false);
+	drive1->ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
+	drive1->ConfigFaultTime(0.1);
+	
+	CANJaguar *drive2 = new CANJaguar(7, CANJaguar::kPercentVbus);
+	drive2->SetSafetyEnabled(false);
+	drive2->ConfigNeutralMode(CANJaguar::kNeutralMode_Coast);
+	drive2->ConfigFaultTime(0.1);*/
+
 	while (IsEnabled())
 	{
+		//drive1->Set(1.);
+		//drive2->Set(1.);
+		//DriverStation::GetInstance()->SetDigitalOut(8, arm.Get());
+		DriverStation::GetInstance()->SetDigitalOut(8, TKOArm::inst()->getArmLS()->Get());
 		DSClear();
 		StateMachine::updateDriverStationSwitchDisplay();
 	}
 	printf("Stopped testing \n");
 	compressor.Stop();
-	TKOLogger::inst()->addMessage("ENDED TEST MODE");
-	TKOLogger::inst()->Stop();
+	//TKOLogger::inst()->addMessage("ENDED TEST MODE");
+	//TKOLogger::inst()->Stop();
 }
 
 void MarkXI::Disabled()

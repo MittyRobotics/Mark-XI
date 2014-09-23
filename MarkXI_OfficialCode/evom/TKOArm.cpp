@@ -118,6 +118,10 @@ float TKOArm::getSmoothValue() {
 	}
 	return sum/count;
 }
+DigitalInput* TKOArm::getArmLS()
+{
+	return &limitSwitchArm;
+}
 void TKOArm::logArmData()
 {
 	if (GetTime() - lastLog < 1.)
@@ -302,6 +306,7 @@ void TKOArm::runManualArm()
 	if (/*not StateMachine::armCanMove or*/ StateMachine::getCockingSwitch()->Get() or not armEnabled)
 	{
 		printf("Arm can't move, \n");
+		Wait(0.25);
 		//setArmTarget(_arm.GetPosition());
 		_arm.SetVoltageRampRate(0.001);
 		return;

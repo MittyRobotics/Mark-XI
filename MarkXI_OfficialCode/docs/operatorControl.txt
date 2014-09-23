@@ -35,7 +35,7 @@ Digital Inputs:
 - 1: clear log file
 - 2: run compressor
 - 3: start shooter
-- 4: start arm
+- 4: start arms
 - 5: arm override
 - 6: log the drive data
 - 7: shoot wait
