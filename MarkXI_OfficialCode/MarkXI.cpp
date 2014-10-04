@@ -86,9 +86,10 @@ void MarkXI::RobotInit()
 	printf("Initializing MarkXI class \n");
 	
 	int fileNum = 0;
-	stringstream fileName;
+	stringstream fileNameGood;
 	while (true)
 	{
+		stringstream fileName;
 		fileName << "logT_" << fileNum << ".txt";
 		if (access(fileName.str().c_str(), F_OK) != -1)
 		{
@@ -96,13 +97,16 @@ void MarkXI::RobotInit()
 			fileNum += 1;
 		}
 		else
+		{
+			fileNameGood << fileName.str().c_str();
 			break;
+		}
 	}
 
 	printf("Renaming previous log file\n");		
 	string fileNameDefault = "logT.txt";
-	rename(fileNameDefault.c_str(), fileName.str().c_str());
-	printf("Completed with renaming previous log file %s\n", fileName.str().c_str());
+	rename(fileNameDefault.c_str(), fileNameGood.str().c_str());
+	printf("Completed with renaming previous log file %s\n", fileNameGood.str().c_str());
 	
 	TKOLogger::inst()->addMessage("----------ROBOT BOOT-----------TIMESTAMP: %f", GetFPGATime());
 	TKOGyro::inst()->reset();
@@ -221,6 +225,7 @@ void MarkXI::OperatorControl()
 	TKODrive::inst()->Start();
 	Timer loopTimer;
 	loopTimer.Start();
+	double lastCompUpdateTime = GetTime();
 
 	TKOLogger::inst()->addMessage("--------------Teleoperated started-------------");
 
@@ -240,6 +245,11 @@ void MarkXI::OperatorControl()
 		if (DriverStation::GetInstance()->GetBatteryVoltage() < 8.)
 		{
 			TKOLogger::inst()->addMessage("Battery voltage very low: %f\n", DriverStation::GetInstance()->GetBatteryVoltage());
+		}
+		if (GetTime() - lastCompUpdateTime > 5.)
+		{
+			TKOLogger::inst()->addMessage("Full pressure?: %d\n", compressor.GetPressureSwitchValue());
+			lastCompUpdateTime = GetTime();
 		}
 	}
 

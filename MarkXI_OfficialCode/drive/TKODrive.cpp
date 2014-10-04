@@ -75,6 +75,14 @@ void TKODrive::initJaguars()
 	drive3->ConfigEncoderCodesPerRev(250);
 	drive1->EnableControl();
 	drive3->EnableControl();
+	
+	driving = new RobotDrive(drive1, drive2, drive3, drive4);
+	driving->SetSafetyEnabled(false);
+	driving->SetExpiration(1.);
+	driving->SetInvertedMotor(RobotDrive::kFrontLeftMotor, false);
+	driving->SetInvertedMotor(RobotDrive::kRearLeftMotor, false);
+	driving->SetInvertedMotor(RobotDrive::kFrontRightMotor, false);
+	driving->SetInvertedMotor(RobotDrive::kRearRightMotor, false);
 }
 void TKODrive::destroyJaguars()
 {
@@ -82,12 +90,14 @@ void TKODrive::destroyJaguars()
 	delete drive2;
 	delete drive3;
 	delete drive4;
+	delete driving;
 }
 void TKODrive::DriveRunner()
 {
 	while (true)
 	{
-		m_Instance->TankDrive();
+		//m_Instance->TankDrive();
+		m_Instance->ArcadeDrive();
 		m_Instance->LogData();
 		m_Instance->ManualShift();
 		m_Instance->AutoShift();
@@ -180,6 +190,42 @@ void TKODrive::LogData()
 	lastDataLog = GetTime();
 }
 
+void TKODrive::autoDriveShoot()
+{
+	/*
+	 * code for shooting while driving:
+	 * robot must be driving full speed and operator must be holding safety for shooter to fire once it reaches target distance
+	 */
+	//printf("Speed1: %f \tSpeed2: %f \tDist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
+	if (drive1->GetSpeed() > 300 && drive3->GetSpeed() > 300 && stick3.GetTrigger() && TKOArm::inst()->getDistance() <= 6.) /////ORIGINALLY stick3.GetRawButton(8)
+	{
+		if (GetTime() - lastFire <= 1.) return;
+		printf("Going to autofire\n");
+		TKOLogger::inst()->addMessage("Automatic teleop firing! D1 Speed: %f \t D3 Speed: %f \t Dist: %f", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
+		printf("Automatic teleop firing! D1 Speed: %f \t D3 Speed: %f \t Dist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
+		//if (not DriverStation::GetInstance()->GetDigitalIn(8))
+			StateMachine::manualFire();
+		//else
+		//	printf("NOT DOING TELEOP AUTOFIRE\n");
+		drive1->Set(0);
+		drive2->Set(0);
+		drive3->Set(0);
+		drive4->Set(0);
+		lastFire = GetTime();
+		Wait(1.);
+	}
+}
+
+void TKODrive::ArcadeDrive()
+{
+	if (!DriverStation::GetInstance()->IsEnabled()) return;
+	
+	if (stick1.GetRawButton(4))
+		driving->ArcadeDrive(stick1.GetY(), stick2.GetX() * 0.6);
+	else
+		driving->ArcadeDrive(stick1.GetY(), stick2.GetX());
+}
+
 void TKODrive::TankDrive()
 {
 	if (!DriverStation::GetInstance()->IsEnabled()) return;
@@ -233,29 +279,7 @@ void TKODrive::TankDrive()
 		drive3->Set(-stick2.GetY() /* * 0.8*/);
 		drive4->Set(-stick2.GetY() /* * 0.8*/);
 	}
-	
-	/*
-	 * code for shooting while driving:
-	 * robot must be driving full speed and operator must be holding safety for shooter to fire once it reaches target distance
-	 */
-	//printf("Speed1: %f \tSpeed2: %f \tDist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
-	if (drive1->GetSpeed() > 300 && drive3->GetSpeed() > 300 && stick3.GetTrigger() && TKOArm::inst()->getDistance() <= 6.) /////ORIGINALLY stick3.GetRawButton(8)
-	{
-		if (GetTime() - lastFire <= 1.) return;
-		printf("Going to autofire\n");
-		TKOLogger::inst()->addMessage("Automatic teleop firing! D1 Speed: %f \t D3 Speed: %f \t Dist: %f", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
-		printf("Automatic teleop firing! D1 Speed: %f \t D3 Speed: %f \t Dist: %f\n", drive1->GetSpeed(), drive3->GetSpeed(), TKOArm::inst()->getDistance());
-		//if (not DriverStation::GetInstance()->GetDigitalIn(8))
-			StateMachine::manualFire();
-		//else
-		//	printf("NOT DOING TELEOP AUTOFIRE\n");
-		drive1->Set(0);
-		drive2->Set(0);
-		drive3->Set(0);
-		drive4->Set(0);
-		lastFire = GetTime();
-		Wait(1.);
-	}
+	autoDriveShoot();
 }
 void TKODrive::ManualShift()
 {

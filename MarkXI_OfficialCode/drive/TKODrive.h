@@ -22,12 +22,15 @@ private:
 	Joystick stick1, stick2, stick3, stick4; // define joysticks
 	DoubleSolenoid shifterDS;
 	Task *driveTask;
+	RobotDrive *driving;
 	
 	long driveLogCounter;
 	float lastShift, lastDataLog, lastFire;
 	const float speedShiftRPM;
 	void initJaguars();
 	void destroyJaguars();
+	void ArcadeDrive();
+	void autoDriveShoot();
 	void TankDrive();
 	void LogData();
 	void ManualShift();
