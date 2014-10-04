@@ -225,8 +225,9 @@ void MarkXI::OperatorControl()
 	TKODrive::inst()->Start();
 	Timer loopTimer;
 	loopTimer.Start();
-	double lastCompUpdateTime = GetTime();
-
+	//double lastCompUpdateTime = GetTime();
+	bool lastCompressorChange = compressor.GetPressureSwitchValue();
+	
 	TKOLogger::inst()->addMessage("--------------Teleoperated started-------------");
 
 	while (IsOperatorControl() && IsEnabled())
@@ -246,10 +247,18 @@ void MarkXI::OperatorControl()
 		{
 			TKOLogger::inst()->addMessage("Battery voltage very low: %f\n", DriverStation::GetInstance()->GetBatteryVoltage());
 		}
-		if (GetTime() - lastCompUpdateTime > 5.)
+		/*if (GetTime() - lastCompUpdateTime > 5.)
 		{
 			TKOLogger::inst()->addMessage("Full pressure?: %d\n", compressor.GetPressureSwitchValue());
 			lastCompUpdateTime = GetTime();
+		}*/
+		if (compressor.GetPressureSwitchValue() != lastCompressorChange)
+		{
+			lastCompressorChange = compressor.GetPressureSwitchValue();
+			if (lastCompressorChange == 1)
+				TKOLogger::inst()->addMessage("PRESSURE FULL; COMPRESSOR DISABLED");
+			else
+				TKOLogger::inst()->addMessage("PRESSURE LOW; COMPRESSOR ENABLED");
 		}
 	}
 
